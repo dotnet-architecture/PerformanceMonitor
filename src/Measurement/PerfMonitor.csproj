@@ -8,4 +8,8 @@
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ClassLibrary1\Shared.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,9 +1,8 @@
 ﻿using System.Data.Entity;
+using PerfMonitor;
 
-namespace PerfMonitor
+
+public class CPUContext : DbContext
 {
-    public class CPUContext : DbContext
-    {
-        public DbSet<CPU_Usage> CPU_Data { get; set; }
-    }
+    public DbSet<CPU_Usage> CPU_Data { get; set; }
 }

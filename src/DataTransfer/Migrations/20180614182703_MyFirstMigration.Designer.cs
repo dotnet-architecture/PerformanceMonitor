@@ -4,10 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Monitor.Models;
 
-namespace Monitor.Migrations
+namespace PerfMonitor.Migrations
 {
     [DbContext(typeof(CPUContext))]
     [Migration("20180614182703_MyFirstMigration")]

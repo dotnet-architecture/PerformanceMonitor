@@ -4,9 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-using PerfMonitor;
 
-namespace PerformanceMonitorAPI
+namespace PerfMonitor
 {
     public class Startup
     {
@@ -22,7 +21,7 @@ namespace PerformanceMonitorAPI
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             var connection = @"Server = 10.0.75.1,1433; Initial Catalog =  ; User Id = sa; Password = JBKmichigan20";
-            services.AddDbContext<MonitorPerformance>(options => options.UseSqlServer(connection));
+            services.AddDbContext<CPUContext>(options => options.UseSqlServer(connection));
 
         }
 

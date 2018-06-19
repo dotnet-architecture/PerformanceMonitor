@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Monitor.Migrations
+namespace PerfMonitor.Migrations
 {
     public partial class Initial : Migration
     {
