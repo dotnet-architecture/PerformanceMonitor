@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Monitor. ;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +24,7 @@ namespace PerfMonitor.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> getCPUDataByTimerange(DateTime start, DateTime end)
         {
-            var data = await _CPUContext.CPU_Data.Where(d => (d.date > start && d.date < end)).ToListAsync();
+            var data = await _CPUContext.CPU_Data.Where(d => (d.timestamp > start && d.timestamp < end)).ToListAsync();
                 
             return Ok(data);
         }
@@ -36,7 +34,7 @@ namespace PerfMonitor.Controllers
         [ProducesResponseType( (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetCPUDataByTime(DateTime d)
         {
-            var point = await _CPUContext.CPU_Data.SingleOrDefaultAsync(cpu => cpu.date == d);
+            var point = await _CPUContext.CPU_Data.SingleOrDefaultAsync(cpu => cpu.timestamp == d);
             return Ok(point);
         }
 
@@ -53,16 +51,16 @@ namespace PerfMonitor.Controllers
 
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.Created)]
-        public async Task<IActionResult> CreateCPUDatapoint([FromBody]CPU c)
+        public async Task<IActionResult> CreateCPUDatapoint([FromBody]CPU_Usage c)
         {
-            CPU point = new CPU
+            CPU_Usage point = new CPU_Usage
             {
-                CPU_Usage = c.CPU_Usage,
-                date = c.date
+                usage = c.usage,
+                timestamp = c.timestamp
             };
-            _CPUContext.Add(point);
+            _CPUContext.CPU_Data.Add(point);
             await _CPUContext.SaveChangesAsync();
-            return CreatedAtAction("CPU Data Created", new { date = point.date }, null);
+            return CreatedAtAction("CPU Data Created", new { date = point.timestamp }, null);
         }
 
     }
