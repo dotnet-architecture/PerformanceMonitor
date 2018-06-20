@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 
 namespace PerfMonitor.Controllers
@@ -24,10 +26,12 @@ namespace PerfMonitor.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> getCPUDataByTimerange(DateTime start, DateTime end)
         {
-            var data = await _CPUContext.CPU_Data.Where(d => (d.timestamp > start && d.timestamp < end)).ToListAsync();
-                
-            return Ok(data);
+            List<CPU_Usage> data = await _CPUContext.CPU_Data.Where(d => (d.timestamp > start && d.timestamp < end)).ToListAsync();
+            string jsonOfData = JsonConvert.SerializeObject(data);
+            return Ok(jsonOfData);
         }
+
+
 
         [HttpGet]
         [Route("CPU")]
@@ -38,16 +42,20 @@ namespace PerfMonitor.Controllers
             return Ok(point);
         }
 
-        //[HttpPost]
-        //[ProducesResponseType((int)HttpStatusCode.Created)]
-        //public async Task<IActionResult> createCPUDatapointFromJSON([FromBody] string JSON)
-        //{
-        //    //parse string
-        //    CPU point = new CPU(JSON);
-        //    _CPUContext.Add(point);
-        //    await _CPUContext.SaveChangesAsync();
-        //    return CreatedAtAction("CPU Datapoint Created", new { date = point.date }, null);
-        //}
+        [HttpPost]
+        [Route("CPUJSON")]
+        [ProducesResponseType((int)HttpStatusCode.Created)]
+        public async Task<IActionResult> CreateCPUDatapointFromJSON([FromBody]string j)
+        {
+            Metric_List met = new Metric_List();
+            met = JsonConvert.DeserializeObject<Metric_List>(j);
+            foreach(CPU_Usage point in met.cpu)
+            {
+                _CPUContext.CPU_Data.Add(point);
+                await _CPUContext.SaveChangesAsync();
+            }
+            return CreatedAtAction("CPU Data Created", new { obj = j }, null);
+        }
 
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.Created)]
