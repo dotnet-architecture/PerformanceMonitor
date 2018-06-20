@@ -9,6 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerfMonitor", "Measurement\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication", "WebApplication\WebApplication.csproj", "{FF9F473F-FB88-482D-91C1-A1AC5785BFC7}"
 EndProject
+<<<<<<< HEAD
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csproj", "{66296F2A-D127-4724-AFAF-7D9AC80C5300}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonitorTest", "..\test\Measurement\MonitorTest.csproj", "{BC7A40A4-0558-49CA-8657-49BA4ABE9512}"
