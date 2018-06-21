@@ -5,11 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebApplication.Pages.Metrics
+namespace WebApplication.Pages
 {
-    public class CPU_MemoryModel : PageModel
+    public class _ViewStartModel : PageModel
     {
-        //HttpClient httpClient = new HttpClient();
         public void OnGet()
         {
 
