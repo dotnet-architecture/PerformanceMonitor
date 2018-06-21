@@ -9,6 +9,7 @@ namespace WebApplication.Pages.Metrics
 {
     public class CPU_MemoryModel : PageModel
     {
+        //HttpClient httpClient = new HttpClient();
         public void OnGet()
         {
 
