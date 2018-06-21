@@ -1,47 +1,10 @@
 ﻿@page
-@model WebApplication.Pages.IndexModel
+@model IndexModel
 @{
+    ViewData["Title"] = "Home page";
 }
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>.NET Performance Monitor</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href= "~/css/sidebar.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Yantramanav:300" rel="stylesheet">
-</head>
-<body>
-    <div id="sidebar-wrapper">
-        <ul class="sidebar-nav">
-            <li class="sidebar-brand">
-                @Html.ActionLink(".NET Performance Monitor", "Index", "Metrics")
-            </li>
-            <li>
-                @Html.ActionLink("CPU and Memory Usage", "CPU_Memory", "Metrics")
-                <a href="CPU_Memory.cshtml">CPU and Memory Usage</a>
-            </li>
-            <li>
-                <a href="HTTP_Requests.cshtml">HTTP Requests</a>
-            </li>
-            <li>
-                <a href="Exceptions.cshtml">Exceptions</a>
-            </li>
-            <li>
-                <a href="Contentions.cshtml">Contentions</a>
-            </li>
-            <li>
-                <a href="Garbage_Collection.cshtml">Garbage Collection</a>
-            </li>
-            <li>
-                <a href="JIT.html">JIT</a>
-            </li>
-        </ul>
-    </div>
-
-    <div class="main">
-        <font size="50">.NET Performance Monitor</font>
-        <p>Check your app's performance by navigating the sidebar.</p>
-    </div>
-</body>
-</html>
+<div class="main">
+    <font size="50">.NET Performance Monitor</font>
+    <p>Check your app's performance by navigating the sidebar.</p>
+</div>
