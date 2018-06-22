@@ -13,11 +13,11 @@ namespace WebApplication.Pages.Metrics
 {
     public class CPU_MemoryModel : PageModel
     {
-        private readonly IMetricService _metricService; 
+        private readonly IMetricService _metricService;
 
         public CPU_MemoryModel(IMetricService metricService)
         {
-            _metricService = metricService; 
+            _metricService = metricService;
         }
         public CPU_Usage cpu { get; set; } = new CPU_Usage();
 
