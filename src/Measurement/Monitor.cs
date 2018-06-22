@@ -62,7 +62,7 @@ namespace PerfMonitor
                 Console.WriteLine(output);
                 //var stringContent = new StringContent(output);
                 // sends POST request to server, containing JSON representation of events
-                //HttpResponseMessage response = await client.PostAsync("sample uri", stringContent);
+                HttpResponseMessage response = await client.PostAsync("sample uri", stringContent);
                 CPUVals.Clear();
                 MemVals.Clear();
             }

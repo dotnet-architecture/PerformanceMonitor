@@ -9,10 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerfMonitor", "Measurement\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication", "WebApplication\WebApplication.csproj", "{FF9F473F-FB88-482D-91C1-A1AC5785BFC7}"
 EndProject
-<<<<<<< HEAD
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csproj", "{66296F2A-D127-4724-AFAF-7D9AC80C5300}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonitorTest", "..\test\Measurement\MonitorTest.csproj", "{BC7A40A4-0558-49CA-8657-49BA4ABE9512}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestingHTTP", "..\test\TestingHTTP\TestingHTTP.csproj", "{9F2653A5-853B-4591-961E-D2FAED226555}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,6 +41,10 @@ Global
 		{BC7A40A4-0558-49CA-8657-49BA4ABE9512}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC7A40A4-0558-49CA-8657-49BA4ABE9512}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC7A40A4-0558-49CA-8657-49BA4ABE9512}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F2653A5-853B-4591-961E-D2FAED226555}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F2653A5-853B-4591-961E-D2FAED226555}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F2653A5-853B-4591-961E-D2FAED226555}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F2653A5-853B-4591-961E-D2FAED226555}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
