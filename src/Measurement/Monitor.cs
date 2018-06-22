@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Timers;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Net.Http;
 using Newtonsoft.Json;
@@ -17,6 +17,8 @@ namespace PerfMonitor
 
         // creates an HTTP client so that server requests can be made
         private static readonly HttpClient client = new HttpClient();
+        // time object used to check if data should be transmitted (would be done every five seconds)
+        public static DateTime httpTime = DateTime.Now;
 
         // CPU block:
         // fetches the processor count for the machine for total CPU calculation
@@ -28,17 +30,14 @@ namespace PerfMonitor
         static DateTime newStamp = DateTime.Now;
         static double change = 0;
         static double period = 0;
-        // timer for collecting machine data (every 1000 milliseconds)
-        private static Timer dataTimer = new Timer(1000);
+        // time object used to check if data should be collected (would be done every second)
+        public static DateTime metricTime = DateTime.Now;
         // list containing instances of CPU readings
         public static List<CPU_Usage> CPUVals = new List<CPU_Usage>();
 
         // Mem block:
         // list containing instances of Memory readings
         public static List<Mem_Usage> MemVals = new List<Mem_Usage>();
-
-        // timer for sending of HTTP requests (every 5000 milliseconds)
-        private static Timer HttpTimer = new Timer(5000);
 
 
 
@@ -47,34 +46,43 @@ namespace PerfMonitor
          */ 
         public void Record()  // sets timer that calls Collect every five seconds
         {
-            Run();  // initiates data collection
-            HttpTimer.Elapsed += Collect;
-            HttpTimer.AutoReset = true;
-            HttpTimer.Enabled = true;  // sets timer for data transmission
-        }
-        public async void Collect(object source, ElapsedEventArgs e)  // sends collected data to API
-        {
-            list.cpu = CPUVals;
-            list.mem = MemVals;
-            if (list.cpu.Count != 0)
+            while (true)
             {
-                string output = JsonConvert.SerializeObject(list);
+                // if a second has passed since data collection
+                if (DateTime.Now.Subtract(metricTime).TotalMilliseconds >= 1000)
+                {
+                    metricTime = DateTime.Now;
+                    FetchCPU();
+                    FetchMem();
+
+                    // if five seconds have passed since HTTP request was made
+                    if (DateTime.Now.Subtract(httpTime).TotalMilliseconds >= 5000)
+                    {
+                        Task.Factory.StartNew(() =>
+                        {
+                            httpTime = DateTime.Now;
+                            list.cpu = CPUVals;
+                            list.mem = MemVals;
+                            Send_HTTP(list);
+                            CPUVals.Clear();
+                            MemVals.Clear();
+                        });
+                    }
+                }
+            }
+        }
+        public async void Send_HTTP(Metric_List metricList)  // sends collected data to API
+        {
+            if (metricList.cpu.Count != 0)
+            {
+                string output = JsonConvert.SerializeObject(metricList);
                 Console.WriteLine(output);
                 //var stringContent = new StringContent(output);
                 // sends POST request to server, containing JSON representation of events
                 //HttpResponseMessage response = await client.PostAsync("sample uri", stringContent);
-                CPUVals.Clear();
-                MemVals.Clear();
             }
         }
-        private static void Run()  // sets timer that calls FetchCPU every second
-        {
-            // timer will call FetchCPU every second. note: FetchCPU calls FetchMem as well
-            dataTimer.Elapsed += FetchCPU;
-            dataTimer.AutoReset = true;
-            dataTimer.Enabled = true;
-        }
-        private static void FetchCPU(object source, ElapsedEventArgs e)  // calculates CPU usage and calls other data collection functions
+        private static void FetchCPU()  // calculates CPU usage
         {
             // clear the process' cached information
             process.Refresh();
@@ -94,8 +102,6 @@ namespace PerfMonitor
             // adds CPU value to list of instances
             CPUVals.Add(cpu);
             Console.WriteLine("CPU: {0}; time: {1}", cpu.usage, cpu.timestamp);
-            // fetches memory usage (called here to be done every second without another timer)
-            FetchMem();
         }
         private static void FetchMem()  // fetches Memory usage
         {
