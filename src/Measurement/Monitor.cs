@@ -11,12 +11,9 @@ namespace PerfMonitor
     {
         /*
          * VARIABLE DECLARATION BLOCK
-         */ 
-        // creates object that will store all event instances
-        public static Metric_List list = new Metric_List();
-
+         */
         // creates an HTTP client so that server requests can be made
-        private static readonly HttpClient client = new HttpClient();
+        HttpClient client = new HttpClient();
         // time object used to check if data should be transmitted (would be done every five seconds)
         public static DateTime httpTime = DateTime.Now;
 
@@ -46,6 +43,7 @@ namespace PerfMonitor
          */ 
         public void Record()  // sets timer that calls Collect every five seconds
         {
+            client.BaseAddress = new Uri("http://localhost:51249/");
             while (true)
             {
                 // if a second has passed since data collection
@@ -61,6 +59,8 @@ namespace PerfMonitor
                         Task.Factory.StartNew(() =>
                         {
                             httpTime = DateTime.Now;
+                            // creates object that will store all event instances
+                            Metric_List list = new Metric_List();
                             list.cpu = CPUVals;
                             list.mem = MemVals;
                             Send_HTTP(list);
@@ -71,15 +71,18 @@ namespace PerfMonitor
                 }
             }
         }
-        public async void Send_HTTP(Metric_List metricList)  // sends collected data to API
+        public void Send_HTTP(Metric_List metricList)  // sends collected data to API
         {
             if (metricList.cpu.Count != 0)
             {
+                // converts list of metric measurements into a JSON object string
                 string output = JsonConvert.SerializeObject(metricList);
-                Console.WriteLine(output);
-                //var stringContent = new StringContent(output);
+                // escapes string so that JSON object is interpreted as a single string
+                output = JsonConvert.ToString(output);
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "api/v1/CPU/CPUJSON/");
+                request.Content = new StringContent(output, System.Text.Encoding.UTF8, "application/json");
                 // sends POST request to server, containing JSON representation of events
-                //HttpResponseMessage response = await client.PostAsync("sample uri", stringContent);
+                HttpResponseMessage response = client.SendAsync(request).Result;
             }
         }
         private static void FetchCPU()  // calculates CPU usage
