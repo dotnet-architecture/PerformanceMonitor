@@ -10,24 +10,31 @@
 </div>
 
 <div class="body">
-    @if (Model.cpu)
+    <p>Log of Time and CPU Usage</p>
+    @if (Model.cpu != null)
+    {
+    <p>@Model.cpu.usage @Model.cpu.timestamp</p>
+    }
+    else
+    {
+    <p>Unable to retrieve data</p>
+
+    }
 
 
 </div>
-        <!--
-            if (Model.CPUModel.___)
-            {
-            <p>Log of Time and CPU Usage</p>
-                foreach (var CPUPoint in Model.CPUModel.Items)
-                {
-                    <ul>
-                         <li>Model.CPUModel.___.TimeStamp  Model.CPUModel.___.CPUUsage</li>
-                    </ul>
-                }
-            }
-            else
-            {
-                <p>Unable to retrieve data</p>
-            }-->
-
-
+<!--
+    if (Model.CPUModel.___)
+    {
+    <p>Log of Time and CPU Usage</p>
+        foreach (var CPUPoint in Model.CPUModel.Items)
+        {
+            <ul>
+                 <li>Model.CPUModel.___.TimeStamp  Model.CPUModel.___.CPUUsage</li>
+            </ul>
+        }
+    }
+    else
+    {
+        <p>Unable to retrieve data</p>
+    }-->
