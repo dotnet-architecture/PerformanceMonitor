@@ -25,7 +25,6 @@ namespace WebApplication.Services
             // Updates cpu and mem
             cpu = objects.CPU;
             mem = objects.Memory; 
-
         }
         public async Task<CPU_Usage> getCPUUsage()
         {

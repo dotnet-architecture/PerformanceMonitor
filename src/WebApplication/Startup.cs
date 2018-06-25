@@ -10,7 +10,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WebApplication.Services;
+<<<<<<< HEAD
 using WebApplication.Interfaces; 
+=======
+using WebApplication.Interfaces;
+>>>>>>> 1c3f91cbd581e527182249bd9f5384a3114948e7
 
 namespace WebApplication
 {
@@ -54,7 +58,11 @@ namespace WebApplication
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
+<<<<<<< HEAD
             // Services.AddTransient<IMetricService, MetricService>(); 
+=======
+            //Services.AddTransient<IMetricService, MetricService>(); 
+>>>>>>> 1c3f91cbd581e527182249bd9f5384a3114948e7
 
             app.UseMvc();
         }

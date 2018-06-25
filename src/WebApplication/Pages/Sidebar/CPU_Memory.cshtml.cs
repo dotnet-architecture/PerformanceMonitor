@@ -9,7 +9,6 @@ using PerfMonitor;
 using WebApplication.Interfaces;
 using WebApplication.Services; 
 
-
 namespace WebApplication.Pages.Metrics
 {
     public class CPU_MemoryModel : PageModel
@@ -22,7 +21,6 @@ namespace WebApplication.Pages.Metrics
             _metricService = metricService;
         }
         */
-
         public CPU_Usage cpu { get; set; } = new CPU_Usage();
 
         public Mem_Usage mem { get; set; } = new Mem_Usage();
