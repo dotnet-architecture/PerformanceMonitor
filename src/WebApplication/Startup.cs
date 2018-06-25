@@ -54,7 +54,7 @@ namespace WebApplication
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
-            Services.AddTransient<IMetricService, MetricService>(); 
+            // Services.AddTransient<IMetricService, MetricService>(); 
 
             app.UseMvc();
         }

@@ -16,10 +16,12 @@ namespace WebApplication.Pages.Metrics
     {
         private readonly IMetricService _metricService;
 
+        /*
         public CPU_MemoryModel(IMetricService metricService)
         {
             _metricService = metricService;
         }
+        */
 
         public CPU_Usage cpu { get; set; } = new CPU_Usage();
 
@@ -29,9 +31,10 @@ namespace WebApplication.Pages.Metrics
         {
             HttpClient client = new HttpClient();
 
-            client.BaseAddress = new Uri("http://localhost:44334/");
+            client.BaseAddress = new Uri("http://localhost:58026/");
 
             HttpResponseMessage response = await client.GetAsync("api/v1/CPU/CPU");
+            Console.WriteLine(response);
             response.EnsureSuccessStatusCode();
 
             _metricService.updateUsingHttpResponse(response);
