@@ -32,6 +32,8 @@ namespace WebApplication.Pages.Metrics
             HttpResponseMessage response = await client.GetAsync("api/v1/CPU/CPU");
             response.EnsureSuccessStatusCode();
 
+            _metricService.updateUsingHttpResponse(response); 
+
             // Deserialize JSON object from response and update cpu and mem
             cpu = await _metricService.getCPUUsage();
             mem = await _metricService.getMemUsage();
