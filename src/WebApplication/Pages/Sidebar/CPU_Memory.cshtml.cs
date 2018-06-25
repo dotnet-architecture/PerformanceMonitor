@@ -15,12 +15,12 @@ namespace WebApplication.Pages.Metrics
     {
         private readonly IMetricService _metricService;
 
-        /*
+        /* 
         public CPU_MemoryModel(IMetricService metricService)
         {
             _metricService = metricService;
         }
-        */
+        */        
         public CPU_Usage cpu { get; set; } = new CPU_Usage();
 
         public Mem_Usage mem { get; set; } = new Mem_Usage();
