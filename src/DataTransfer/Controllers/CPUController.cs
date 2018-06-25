@@ -52,8 +52,8 @@ namespace PerfMonitor.Controllers
             foreach(CPU_Usage point in met.cpu)
             {
                 _CPUContext.CPU_Data.Add(point);
-                await _CPUContext.SaveChangesAsync();
             }
+            await _CPUContext.SaveChangesAsync();
             return CreatedAtAction("CPU Data Created", new { obj = j }, null);
         }
 

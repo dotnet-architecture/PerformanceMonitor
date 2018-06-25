@@ -11,17 +11,24 @@
 
 <div class="body">
     <p>Log of Time and CPU Usage</p>
-    @if (Model.cpu != null)
-    {
-        <p>@Model.cpu.usage @Model.cpu.timestamp</p>
-    }
-    else
-    {
-        <p>Unable to retrieve data</p>
+    <table style="width:100%">
+        <tr>
+            <th>CPU</th>
+            <th>Timestamp</th>
+        </tr>
+        @if (Model.cpu != null)
+        {
+            <tr>
+                <td>@Model.cpu.usage</td>
+                <td>@Model.cpu.timestamp</td>
+            </tr>
+        }
+        else
+        {
+            <p>Unable to retrieve data</p>
 
-    }
-
-
+        }
+    </table>
 </div>
         <!--
             if (Model.CPUModel.___)
