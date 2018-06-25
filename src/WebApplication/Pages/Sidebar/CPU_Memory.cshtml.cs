@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using PerfMonitor;
 using WebApplication.Interfaces;
+using WebApplication.Services; 
 
 
 namespace WebApplication.Pages.Metrics
@@ -19,10 +20,11 @@ namespace WebApplication.Pages.Metrics
         {
             _metricService = metricService;
         }
+
         public CPU_Usage cpu { get; set; } = new CPU_Usage();
 
         public Mem_Usage mem { get; set; } = new Mem_Usage();
-
+        
         public async Task OnGet()
         {
             HttpClient client = new HttpClient();
