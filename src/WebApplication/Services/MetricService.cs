@@ -6,28 +6,41 @@ using System.Net.Http;
 using PerfMonitor;
 using WebApplication.Interfaces;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace WebApplication.Services
 {
     public class MetricService : IMetricService
     {
-        private Boolean hasUpdated; 
-
         private CPU_Usage cpu = new CPU_Usage();
 
         private Mem_Usage mem = new Mem_Usage();
-
         public void updateUsingHttpResponse(HttpResponseMessage response)
         {
-            String string_response = response.Content.ReadAsAsync<String>().Result;
+
+            var result = response.Content.ReadAsStringAsync().Result;
+
+            Console.WriteLine("string_response: " + result);
 
             // Desearilizes response JSON file 
-            User objects = JsonConvert.DeserializeObject<User>(string_response);
+            var deserial_obj = JsonConvert.DeserializeObject<CPU_Usage>(result, new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            });
+
+            Console.WriteLine("deserialized JSON object has " + deserial_obj);
 
             // Updates cpu and mem
-            cpu = objects.CPU;
-            mem = objects.Memory;
+            cpu = deserial_obj;
+            //mem = deserial_obj.Memory;
 
+            if (cpu != null)
+            {
+                Console.WriteLine("testing CPU output: " + cpu.ToString());
+            } else
+            {
+                Console.WriteLine("failure CPU output is null");
+            }
         }
         public async Task<CPU_Usage> getCPUUsage()
         {
@@ -39,7 +52,11 @@ namespace WebApplication.Services
         }
     }
 
-    public class User
+    public class MetricWrapper
+    {
+        public List<Metric> metric { get; set; }
+    }
+    public class Metric
     {
         [JsonProperty("CPU")]
         public CPU_Usage CPU { get; set; }
