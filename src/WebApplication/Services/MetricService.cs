@@ -11,6 +11,8 @@ namespace WebApplication.Services
 {
     public class MetricService : IMetricService
     {
+        private Boolean hasUpdated; 
+
         private CPU_Usage cpu = new CPU_Usage();
 
         private Mem_Usage mem = new Mem_Usage();
