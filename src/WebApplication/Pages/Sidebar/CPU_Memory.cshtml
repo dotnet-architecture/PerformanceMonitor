@@ -8,7 +8,7 @@
     <font size="50">CPU and Memory Usage</font>
     <p>Average CPU Usage:</p>
 
-    <p>Log of Time and CPU Usage</p>
+    <p>Log of CPU Usage</p>
     <table style="width:100%">
         <tr>
             <th>CPU</th>
@@ -19,6 +19,26 @@
             <tr>
                 <td>@Model.cpu.usage</td>
                 <td>@Model.cpu.timestamp</td>
+            </tr>
+        }
+        else
+        {
+            <tr>Unable to retrieve data</tr>
+
+        }
+    </table>
+
+    <p>Log of Memory Usage</p>
+    <table style="width:100%">
+        <tr>
+            <th>Memory</th>
+            <th>Timestamp</th>
+        </tr>
+        @if (Model.mem != null)
+        {
+            <tr>
+                <td>@Model.mem.usage</td>
+                <td>@Model.mem.timestamp</td>
             </tr>
         }
         else

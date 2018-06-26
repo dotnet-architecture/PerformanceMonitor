@@ -13,15 +13,8 @@ namespace WebApplication.Pages.Metrics
 {
     public class CPU_MemoryModel : PageModel
     {
-        private readonly IMetricService _metricService = new MetricService();
-
-        /*  
-        public CPU_MemoryModel(IMetricService metricService)
-        {
-            _metricService = metricService;
-        }
-        */
-
+        private readonly ICPUService _cpu_metricService = new CPUService();
+        private readonly IMemoryService _mem_metricService = new MemoryService();
         public CPU_Usage cpu { get; set; } = new CPU_Usage();
         public Mem_Usage mem { get; set; } = new Mem_Usage();
         
@@ -31,14 +24,22 @@ namespace WebApplication.Pages.Metrics
 
             client.BaseAddress = new Uri("http://localhost:58026/");
 
-            HttpResponseMessage response = await client.GetAsync("api/v1/CPU/CPUBYUSAGE?usage=0");
-            response.EnsureSuccessStatusCode();
+            HttpResponseMessage cpu_response = await client.GetAsync("api/v1/CPU/CPUBYUSAGE?usage=0");
+            _cpu_metricService.updateUsingHttpResponse(cpu_response);
 
-            _metricService.updateUsingHttpResponse(response);
+            HttpResponseMessage mem_response = await client.GetAsync("api/v1/Memory/MEMBYUSAGE?usage=0");
+            _mem_metricService.updateUsingHttpResponse(mem_response);
 
-            // Deserialize JSON object from response and update cpu and mem
-            cpu = await _metricService.getCPUUsage();
-            mem = await _metricService.getMemUsage();
+            // Deserialize JSON object from response and update cpu and mem if response is successfull
+            if (cpu_response.IsSuccessStatusCode)
+            {
+                cpu = await _cpu_metricService.getCPUUsage();
+            }
+
+            if (mem_response.IsSuccessStatusCode)
+            {
+                mem = await _mem_metricService.getMemoryUsage();
+            }
 
         }
     }
