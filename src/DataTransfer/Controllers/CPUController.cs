@@ -42,6 +42,16 @@ namespace PerfMonitor.Controllers
             return Ok(point);
         }
 
+        [HttpGet]
+        [Route("CPUBYUSAGE")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetCPUDataByUsage(float usage)
+        {
+            var point = await _CPUContext.CPU_Data.SingleOrDefaultAsync(cpu => cpu.usage == usage);
+            return Ok(point);
+        }
+
+
         [HttpPost]
         [Route("CPUJSON")]
         [ProducesResponseType((int)HttpStatusCode.Created)]
