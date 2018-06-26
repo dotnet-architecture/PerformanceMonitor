@@ -22,15 +22,10 @@ namespace PerfMonitor
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-<<<<<<< HEAD
             var connection = "Server = 10.0.75.1,1433; Initial Catalog = PerformanceData  ; User Id = sa; Password = Abc12345";
 
             services.AddDbContext<MetricContext>(options => options.UseSqlServer(connection));
-            
-=======
-            var connection = "Server = 10.0.75.1,1433; Initial Catalog = PerformanceData  ; User Id = sa; Password = CheekyKitty25!";
-            services.AddDbContext<MetricContext>(options => options.UseSqlServer(connection));
->>>>>>> upstream/master
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
