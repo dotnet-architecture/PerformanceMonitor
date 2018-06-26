@@ -21,8 +21,9 @@ namespace PerfMonitor
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            var connection = "Server = 10.0.75.1,1433; Initial Catalog = PerformanceData  ; User Id = sa; Password = CheekyKitty25!";
-            services.AddDbContext<Mem_Usage>(options => options.UseSqlServer(connection));
+
+            var connection = "Server = 10.0.75.1,1433; Initial Catalog = PerformanceData  ; User Id = sa; Password = Abc12345";
+
             services.AddDbContext<CPUContext>(options => options.UseSqlServer(connection));
             
             services.AddSwaggerGen(c =>

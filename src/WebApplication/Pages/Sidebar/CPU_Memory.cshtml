@@ -8,20 +8,25 @@
     <font size="50">CPU and Memory Usage</font>
     <p>Average CPU Usage:</p>
 </div>
-        <!--
-            if (Model.CPUModel.___)
-            {
-            <p>Log of Time and CPU Usage</p>
-                foreach (var CPUPoint in Model.CPUModel.Items)
-                {
-                    <ul>
-                         <li>Model.CPUModel.___.TimeStamp  Model.CPUModel.___.CPUUsage</li>
-                    </ul>
-                }
-            }
-            else
-            {
-                <p>Unable to retrieve data</p>
-            }-->
 
+<div class="body">
+    <p>Log of Time and CPU Usage</p>
+    <table style="width:100%">
+        <tr>
+            <th>CPU</th>
+            <th>Timestamp</th>
+        </tr>
+        @if (Model.cpu != null)
+        {
+            <tr>
+                <td>@Model.cpu.usage</td>
+                <td>@Model.cpu.timestamp</td>
+            </tr>
+        }
+        else
+        {
+            <tr>Unable to retrieve data</tr>
 
+        }
+    </table>
+</div>
