@@ -13,7 +13,10 @@ public class MetricContext : DbContext
     }
     public DbSet<CPU_Usage> CPU_Data { get; set; }
     public DbSet<Mem_Usage> MEM_Data { get; set; }
+<<<<<<< HEAD
     public DbSet<Exceptions> Exception_Data { get; set; }
+=======
+>>>>>>> modified Metrics and deleted context for CPU and Memory
 }
 
 class CPUContextEntityTypeConfiguration
@@ -41,6 +44,7 @@ class MEMContextEntityTypeConfiguration
         builder.HasIndex(ci => ci.timestamp);
     }
 }
+<<<<<<< HEAD
 
 class ExceptionContextEntityTypeConfiguration 
     : IEntityTypeConfiguration<Exceptions>
@@ -54,3 +58,5 @@ class ExceptionContextEntityTypeConfiguration
     }
 
 }
+=======
+>>>>>>> modified Metrics and deleted context for CPU and Memory
