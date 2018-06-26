@@ -32,14 +32,13 @@ namespace WebApplication.Pages.Metrics
             client.BaseAddress = new Uri("http://localhost:58026/");
 
             HttpResponseMessage response = await client.GetAsync("api/v1/CPU/CPUBYUSAGE?usage=0");
-            Console.WriteLine("************" + response);
             response.EnsureSuccessStatusCode();
 
             _metricService.updateUsingHttpResponse(response);
 
             // Deserialize JSON object from response and update cpu and mem
             cpu = await _metricService.getCPUUsage();
-            // = await _metricService.getMemUsage();
+            mem = await _metricService.getMemUsage();
 
         }
     }
