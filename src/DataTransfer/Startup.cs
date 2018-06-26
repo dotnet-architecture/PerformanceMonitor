@@ -24,7 +24,7 @@ namespace PerfMonitor
 
             var connection = "Server = 10.0.75.1,1433; Initial Catalog = PerformanceData  ; User Id = sa; Password = Abc12345";
 
-            services.AddDbContext<CPUContext>(options => options.UseSqlServer(connection));
+            services.AddDbContext<MetricContext>(options => options.UseSqlServer(connection));
             
             services.AddSwaggerGen(c =>
             {
