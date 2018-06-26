@@ -1,11 +1,11 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Net;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 
 
 namespace PerfMonitor.Controllers
@@ -14,11 +14,11 @@ namespace PerfMonitor.Controllers
     [ApiController]
     public class CPUController : ControllerBase
     {
-        public CPUContext _CPUContext;
+        public MetricContext _MetricContext;
 
-        public CPUController(CPUContext context)
+        public CPUController(MetricContext context)
         {
-            _CPUContext = context ?? throw new ArgumentNullException(nameof(context));
+            _MetricContext = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         [HttpGet]
@@ -26,7 +26,7 @@ namespace PerfMonitor.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> getCPUDataByTimerange(DateTime start, DateTime end)
         {
-            List<CPU_Usage> data = await _CPUContext.CPU_Data.Where(d => (d.timestamp > start && d.timestamp < end)).ToListAsync();
+            List<CPU_Usage> data = await _MetricContext.CPU_Data.Where(d => (d.timestamp > start && d.timestamp < end)).ToListAsync();
             string jsonOfData = JsonConvert.SerializeObject(data);
             return Ok(jsonOfData);
         }
@@ -38,7 +38,7 @@ namespace PerfMonitor.Controllers
         [ProducesResponseType( (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetCPUDataByTime(DateTime d)
         {
-            var point = await _CPUContext.CPU_Data.SingleOrDefaultAsync(cpu => cpu.timestamp == d);
+            var point = await _MetricContext.CPU_Data.SingleOrDefaultAsync(cpu => cpu.timestamp == d);
             return Ok(point);
         }
 
@@ -47,7 +47,7 @@ namespace PerfMonitor.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetCPUDataByUsage(float usage)
         {
-            var point = await _CPUContext.CPU_Data.SingleOrDefaultAsync(cpu => cpu.usage == usage);
+            var point = await _MetricContext.CPU_Data.SingleOrDefaultAsync(cpu => cpu.usage == usage);
             return Ok(point);
         }
 
@@ -61,9 +61,9 @@ namespace PerfMonitor.Controllers
             met = JsonConvert.DeserializeObject<Metric_List>(j);
             foreach(CPU_Usage point in met.cpu)
             {
-                _CPUContext.CPU_Data.Add(point);
+                _MetricContext.CPU_Data.Add(point);
             }
-            await _CPUContext.SaveChangesAsync();
+            await _MetricContext.SaveChangesAsync();
             return CreatedAtAction("CPU Data Created", new { obj = j }, null);
         }
 
@@ -76,8 +76,8 @@ namespace PerfMonitor.Controllers
                 usage = c.usage,
                 timestamp = c.timestamp
             };
-            _CPUContext.CPU_Data.Add(point);
-            await _CPUContext.SaveChangesAsync();
+            _MetricContext.CPU_Data.Add(point);
+            await _MetricContext.SaveChangesAsync();
             return CreatedAtAction("CPU Data Created", new { date = point.timestamp }, null);
         }
 
