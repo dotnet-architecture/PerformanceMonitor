@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PerfMonitor;
 
 
-public class CPUContext : DbContext
+public class MetricContext : DbContext
 {
-    public CPUContext(DbContextOptions<CPUContext> options) : base(options)
+    public MetricContext(DbContextOptions<MetricContext> options) : base(options)
     { }
     protected override void OnModelCreating(ModelBuilder builder)
     {
