@@ -10,6 +10,6 @@ namespace WebApplication.Interfaces
     public interface ICPUService
     {
         void updateUsingHttpResponse(HttpResponseMessage response);
-        Task<CPU_Usage> getCPUUsage();
+        Task<List<CPU_Usage>> getCPUUsage();
     }
 }

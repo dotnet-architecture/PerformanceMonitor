@@ -12,14 +12,14 @@ namespace WebApplication.Services
 {
     public class CPUService : ICPUService
     {
-        private CPU_Usage cpu = new CPU_Usage();
+        private List<CPU_Usage> cpu = new List<CPU_Usage>();
         public void updateUsingHttpResponse(HttpResponseMessage response)
         {
 
             var result = response.Content.ReadAsStringAsync().Result;
 
             // Desearilizes response JSON file 
-            var deserial_obj = JsonConvert.DeserializeObject<CPU_Usage>(result, new JsonSerializerSettings
+            var deserial_obj = JsonConvert.DeserializeObject<List<CPU_Usage>>(result, new JsonSerializerSettings
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore
             });
@@ -27,7 +27,7 @@ namespace WebApplication.Services
             // Updates cpu
             cpu = deserial_obj;
         }
-        public async Task<CPU_Usage> getCPUUsage()
+        public async Task<List<CPU_Usage>> getCPUUsage()
         {
             return cpu;
         }

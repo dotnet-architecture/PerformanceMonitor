@@ -1,5 +1,6 @@
 ﻿@page
 @model WebApplication.Pages.Metrics.CPU_MemoryModel
+@using PerfMonitor;
 @{
     ViewData["Title"] = "CPU_Memory";
 }
@@ -16,11 +17,15 @@
         </tr>
         @if (Model.cpu != null)
         {
-            <tr>
-                <td>@Model.cpu.usage</td>
-                <td>@Model.cpu.timestamp</td>
-            </tr>
-        }
+            @foreach (CPU_Usage c in Model.cpu)
+            {
+                <tr>
+                    <td>@c.usage</td>
+                    <td>@c.timestamp</td>
+                </tr>
+
+             }
+         }
         else
         {
             <tr>Unable to retrieve data</tr>
