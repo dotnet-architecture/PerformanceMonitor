@@ -24,8 +24,8 @@
                     <td>@c.timestamp</td>
                 </tr>
 
-             }
-         }
+            }
+        }
         else
         {
             <tr>Unable to retrieve data</tr>
@@ -41,10 +41,14 @@
         </tr>
         @if (Model.mem != null)
         {
-            <tr>
-                <td>@Model.mem.usage</td>
-                <td>@Model.mem.timestamp</td>
-            </tr>
+            @foreach (Mem_Usage m in Model.mem)
+            {
+                <tr>
+                    <td>@m.usage</td>
+                    <td>@m.timestamp</td>
+                </tr>
+
+            }
         }
         else
         {
@@ -52,4 +56,5 @@
 
         }
     </table>
+
 </div>

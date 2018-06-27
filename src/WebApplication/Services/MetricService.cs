@@ -10,26 +10,25 @@ using Newtonsoft.Json.Linq;
 
 namespace WebApplication.Services
 {
-    public class MemoryService : IMemoryService
+    public class MetricService<T> : IMetricService<T>
     {
-        private List<Mem_Usage> mem = new List<Mem_Usage>();
+        private List<T> data = new List<T>();
         public void updateUsingHttpResponse(HttpResponseMessage response)
         {
-
             var result = response.Content.ReadAsStringAsync().Result;
 
             // Desearilizes response JSON file 
-            var deserial_obj = JsonConvert.DeserializeObject<List<Mem_Usage>>(result, new JsonSerializerSettings
+            var deserial_obj = JsonConvert.DeserializeObject<List<T>>(result, new JsonSerializerSettings
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore
             });
 
-            // Updates cpu
-            mem = deserial_obj;
+            // Updates data
+            data = deserial_obj;
         }
-        public async Task<List<Mem_Usage>> getMemoryUsage()
+        public async Task<List<T>> getServiceUsage()
         {
-            return mem;
+            return data;
         }
     }
 }

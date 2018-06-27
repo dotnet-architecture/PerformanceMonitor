@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Net.Http;
-using PerfMonitor;
 
 namespace WebApplication.Interfaces
 {
-    public interface IMemoryService
+    public interface IMetricService<T>
     {
         void updateUsingHttpResponse(HttpResponseMessage response);
-        Task<List<Mem_Usage>> getMemoryUsage();
+        Task<List<T>> getServiceUsage();
     }
 }
