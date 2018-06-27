@@ -1,5 +1,9 @@
-﻿using System;
+﻿using Microsoft.Diagnostics.Tracing;
+using Microsoft.Diagnostics.Tracing.Parsers;
+using Microsoft.Diagnostics.Tracing.Session;
+using System;
 using System.Diagnostics;
+using System.Diagnostics.Tracing;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -43,35 +47,61 @@ namespace PerfMonitor
          */ 
         public void Record()  // sets timer that calls Collect every five seconds
         {
+            // sets base address for HTTP requests - in local testing, this will need to be changed periodically
             client.BaseAddress = new Uri("http://localhost:51249/");
-            while (true)
-            {
-                // if a second has passed since data collection
-                if (DateTime.Now.Subtract(metricTime).TotalMilliseconds >= 1000)
-                {
-                    metricTime = DateTime.Now;
-                    FetchCPU();
-                    FetchMem();
 
-                    // if five seconds have passed since HTTP request was made
-                    if (DateTime.Now.Subtract(httpTime).TotalMilliseconds >= 5000)
+            Task.Factory.StartNew(() =>
+            {
+                while (true)
+                {
+                    // if a second has passed since data collection
+                    if (DateTime.Now.Subtract(metricTime).TotalMilliseconds >= 1000)
                     {
-                        Task.Factory.StartNew(() =>
+                        metricTime = DateTime.Now;
+                        FetchCPU();
+                        FetchMem();
+
+                        // if five seconds have passed since HTTP request was made
+                        if (DateTime.Now.Subtract(httpTime).TotalMilliseconds >= 5000)
                         {
-                            httpTime = DateTime.Now;
-                            // creates object that will store all event instances
-                            Metric_List list = new Metric_List();
-                            list.cpu = CPUVals;
-                            list.mem = MemVals;
-                            Send_HTTP(list);
-                            CPUVals.Clear();
-                            MemVals.Clear();
-                        });
+                            Task.Factory.StartNew(() =>
+                            {
+                                // starts event collection via TraceEvent
+                                TraceEvents();
+
+                                httpTime = DateTime.Now;
+                                // creates object that will store all event instances
+                                Metric_List list = new Metric_List();
+                                list.cpu = CPUVals;
+                                list.mem = MemVals;
+                                CPUVals.Clear();
+                                MemVals.Clear();
+                                SendHTTP(list);
+                            });
+                        }
                     }
                 }
+            });
+        }
+        public void TraceEvents()
+        {
+            using (var source = new ETWTraceEventSource("MyEventData.etl"))
+            {
+                // Connect a parser that understands threading events
+                //var threadParser = new TplEtwProviderTraceEventParser(source);
+
+                // Subscribe to a particular task event
+                source.Dynamic.All += delegate (TraceEvent data) {
+                    if (data.EventName.Contains("RequestStart"))
+                    {
+                        Console.WriteLine("EVENT FOUND: {0}", data.EventName);
+                    }
+                };
+
+                source.Process();    // call the callbacks for each event
             }
         }
-        public void Send_HTTP(Metric_List metricList)  // sends collected data to API
+        public void SendHTTP(Metric_List metricList)  // sends collected data to API
         {
             if (metricList.cpu.Count != 0)
             {
