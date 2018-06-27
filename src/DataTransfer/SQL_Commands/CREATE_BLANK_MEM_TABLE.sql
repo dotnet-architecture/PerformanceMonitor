@@ -1,0 +1,5 @@
+DROP TABLE MEM_Data
+CREATE TABLE MEM_Data (
+"usage" FLOAT,
+"timestamp" DATETIME PRIMARY KEY
+)
