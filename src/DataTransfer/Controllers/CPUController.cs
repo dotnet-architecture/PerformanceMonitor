@@ -26,7 +26,7 @@ namespace PerfMonitor.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> getCPUDataByTimerange(DateTime start, DateTime end)
         {
-            List<CPU_Usage> data = await _MetricContext.CPU_Data.Where(d => (d.timestamp > start && d.timestamp < end)).ToListAsync();
+            List<CPU_Usage> data = await _MetricContext.CPU_Data.Where(d => (d.timestamp.ToUniversalTime() > start.ToUniversalTime() && d.timestamp.ToUniversalTime() < end.ToUniversalTime())).ToListAsync();
             string jsonOfData = JsonConvert.SerializeObject(data);
             return Ok(jsonOfData);
         }
@@ -38,7 +38,9 @@ namespace PerfMonitor.Controllers
         [ProducesResponseType( (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetCPUDataByTime(DateTime d)
         {
-            CPU_Usage point = await _MetricContext.CPU_Data.SingleOrDefaultAsync(cpu => cpu.timestamp == d);
+
+            CPU_Usage point =  await _MetricContext.CPU_Data.SingleOrDefaultAsync(cpu => (cpu.timestamp.ToUniversalTime() == d.ToUniversalTime()));
+
             return Ok(point);
         }
 
@@ -74,7 +76,7 @@ namespace PerfMonitor.Controllers
             CPU_Usage point = new CPU_Usage
             {
                 usage = c.usage,
-                timestamp = c.timestamp
+                timestamp = c.timestamp.ToUniversalTime()
             };
             _MetricContext.CPU_Data.Add(point);
             await _MetricContext.SaveChangesAsync();
