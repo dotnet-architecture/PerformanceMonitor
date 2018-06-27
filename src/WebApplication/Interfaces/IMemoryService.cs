@@ -7,11 +7,9 @@ using PerfMonitor;
 
 namespace WebApplication.Interfaces
 {
-    public interface IMetricService
+    public interface IMemoryService
     {
         void updateUsingHttpResponse(HttpResponseMessage response);
-        Task<CPU_Usage> getCPUUsage();
-        Task<Mem_Usage> getMemUsage();
-
+        Task<Mem_Usage> getMemoryUsage();
     }
 }
