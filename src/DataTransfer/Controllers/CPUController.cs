@@ -38,7 +38,9 @@ namespace PerfMonitor.Controllers
         [ProducesResponseType( (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetCPUDataByTime(DateTime d)
         {
+
             CPU_Usage point =  await _MetricContext.CPU_Data.SingleOrDefaultAsync(cpu => (cpu.timestamp.ToUniversalTime() == d.ToUniversalTime()));
+
             return Ok(point);
         }
 
