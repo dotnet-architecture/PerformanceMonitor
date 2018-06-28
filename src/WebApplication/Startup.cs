@@ -7,10 +7,13 @@ using Microsoft.Extensions.DependencyInjection;
 <<<<<<< HEAD
 using WebApplication.Services;
 using WebApplication.Interfaces;
+<<<<<<< HEAD
 =======
 using Microsoft.AspNetCore.Owin;
 
 >>>>>>> upstream/master
+=======
+>>>>>>> d34f7269f6fba9971274f4aa975bce2207983eaf
 
 namespace WebApplication
 {

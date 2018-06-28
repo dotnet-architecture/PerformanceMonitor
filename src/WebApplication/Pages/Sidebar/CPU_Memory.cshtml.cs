@@ -13,7 +13,6 @@ namespace WebApplication.Pages.Metrics
 {
     public class CPU_MemoryModel : PageModel
     {
-
         private readonly IMetricService<CPU_Usage> _cpuMetricService = new MetricService<CPU_Usage>();
         private readonly IMetricService<Mem_Usage> _memMetricService = new MetricService<Mem_Usage>();
         public List<CPU_Usage> cpu { get; set; } = new List<CPU_Usage>();
