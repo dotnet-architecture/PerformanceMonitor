@@ -10,26 +10,25 @@ using Newtonsoft.Json.Linq;
 
 namespace WebApplication.Services
 {
-    public class CPUService : ICPUService
+    public class MetricService<T> : IMetricService<T>
     {
-        private List<CPU_Usage> cpu = new List<CPU_Usage>();
+        private List<T> data = new List<T>();
         public void updateUsingHttpResponse(HttpResponseMessage response)
         {
-
             var result = response.Content.ReadAsStringAsync().Result;
 
             // Desearilizes response JSON file 
-            var deserial_obj = JsonConvert.DeserializeObject<List<CPU_Usage>>(result, new JsonSerializerSettings
+            var deserial_obj = JsonConvert.DeserializeObject<List<T>>(result, new JsonSerializerSettings
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore
             });
 
-            // Updates cpu
-            cpu = deserial_obj;
+            // Updates data
+            data = deserial_obj;
         }
-        public async Task<List<CPU_Usage>> getCPUUsage()
+        public async Task<List<T>> getServiceUsage()
         {
-            return cpu;
+            return data;
         }
     }
 }
