@@ -11,7 +11,7 @@ using Newtonsoft.Json.Linq;
 namespace WebApplication.Services
 {
     public class MetricService<T> : IMetricService<T>
-    {    
+    {
         private List<T> data = new List<T>();
         public void updateUsingHttpResponse(HttpResponseMessage response)
         {
