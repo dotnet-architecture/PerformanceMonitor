@@ -1,0 +1,5 @@
+DROP TABLE CPU_Data
+CREATE TABLE CPU_Data (
+"usage" FLOAT, 
+"timestamp" DATETIME PRIMARY KEY 
+)

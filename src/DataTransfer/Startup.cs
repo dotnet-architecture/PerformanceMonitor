@@ -14,15 +14,17 @@ namespace PerfMonitor
         {
             Configuration = configuration;
         }
-
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
             var connection = "Server = 10.0.75.1,1433; Initial Catalog = PerformanceData  ; User Id = sa; Password = Abc12345";
-            services.AddDbContext<CPUContext>(options => options.UseSqlServer(connection));
+
+            services.AddDbContext<MetricContext>(options => options.UseSqlServer(connection));
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });

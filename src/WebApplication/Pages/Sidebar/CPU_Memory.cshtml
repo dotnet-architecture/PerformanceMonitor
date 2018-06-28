@@ -1,5 +1,6 @@
 ﻿@page
 @model WebApplication.Pages.Metrics.CPU_MemoryModel
+@using PerfMonitor;
 @{
     ViewData["Title"] = "CPU_Memory";
 }
@@ -8,33 +9,52 @@
     <font size="50">CPU and Memory Usage</font>
     <p>Average CPU Usage:</p>
 </div>
+    <p>Log of CPU Usage</p>
+    <table style="width:100%">
+        <tr>
+            <th>CPU</th>
+            <th>Timestamp</th>
+        </tr>
+        @if (Model.cpu != null)
+        {
+            @foreach (CPU_Usage c in Model.cpu)
+            {
+                <tr>
+                    <td>@c.usage</td>
+                    <td>@c.timestamp</td>
+                </tr>
 
-<div class="body">
-    <p>Log of Time and CPU Usage</p>
-    @if (Model.cpu != null)
-    {
-        <p>@Model.cpu.usage @Model.cpu.timestamp</p>
-    }
-    else
-    {
-        <p>Unable to retrieve data</p>
+            }
+        }
+        else
+        {
+            <tr>Unable to retrieve data</tr>
 
-    }
+        }
+    </table>
 
+    <p>Log of Memory Usage</p>
+    <table style="width:100%">
+        <tr>
+            <th>Memory</th>
+            <th>Timestamp</th>
+        </tr>
+        @if (Model.mem != null)
+        {
+            @foreach (Mem_Usage m in Model.mem)
+            {
+                <tr>
+                    <td>@m.usage</td>
+                    <td>@m.timestamp</td>
+                </tr>
+
+            }
+        }
+        else
+        {
+            <tr>Unable to retrieve data</tr>
+
+        }
+    </table>
 
 </div>
-<!--
-    if (Model.CPUModel.___)
-    {
-    <p>Log of Time and CPU Usage</p>
-        foreach (var CPUPoint in Model.CPUModel.Items)
-        {
-            <ul>
-                 <li>Model.CPUModel.___.TimeStamp  Model.CPUModel.___.CPUUsage</li>
-            </ul>
-        }
-    }
-    else
-    {
-        <p>Unable to retrieve data</p>
-    }-->

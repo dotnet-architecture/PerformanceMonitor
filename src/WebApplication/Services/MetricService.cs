@@ -6,52 +6,30 @@ using System.Net.Http;
 using PerfMonitor;
 using WebApplication.Interfaces;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace WebApplication.Services
 {
-    public class MetricService : IMetricService
+    public class MetricService<T> : IMetricService<T>
     {
-        private CPU_Usage cpu = new CPU_Usage();
-
-        private Mem_Usage mem = new Mem_Usage();
-
+    
+        private List<T> data = new List<T>();
         public void updateUsingHttpResponse(HttpResponseMessage response)
         {
-            String string_response = response.Content.ReadAsAsync<String>().Result;
+            var result = response.Content.ReadAsStringAsync().Result;
 
             // Desearilizes response JSON file 
-            User objects = JsonConvert.DeserializeObject<User>(string_response);
+            var deserial_obj = JsonConvert.DeserializeObject<List<T>>(result, new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            });
 
-            // Updates cpu and mem
-            cpu = objects.CPU;
-            mem = objects.Memory;
-
+            // Updates data
+            data = deserial_obj;
         }
-        public async Task<CPU_Usage> getCPUUsage()
+        public async Task<List<T>> getServiceUsage()
         {
-            return cpu;
+            return data;
         }
-        public async Task<Mem_Usage> getMemUsage()
-        {
-            return mem;
-        }
-    }
-
-    public class User
-    {
-        [JsonProperty("CPU")]
-        public CPU_Usage CPU { get; set; }
-
-        [JsonProperty("Memory")]
-        public Mem_Usage Memory { get; set; }
-
-        /*
-        [JsonProperty("Http")]
-        public string Http { get; set; }
-
-        [JsonProperty("Exceptions")]
-        public string Exceptions { get; set; }
-        */
-
     }
 }
