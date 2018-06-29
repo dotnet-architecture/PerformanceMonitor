@@ -56,6 +56,13 @@ namespace WebApplication.Pages.Metrics
                 if (newStamp.Subtract(oldStamp).TotalMilliseconds >= 5000)
                 {
                     // Make new HTTP get request and update cpu and mem
+<<<<<<< HEAD
+=======
+
+                    // await getCPUUpdatedData(oldStamp, newStamp);
+                    // await getMemoryUpdatedData(oldStamp, newStamp);
+
+>>>>>>> upstream/master
                     List<CPU_Usage> cpu_addOn = await FetchDataService.getUpdatedData<CPU_Usage>(oldStamp, newStamp);
                     List<Mem_Usage> mem_addOn = await FetchDataService.getUpdatedData<Mem_Usage>(oldStamp, newStamp);
 
@@ -117,6 +124,19 @@ namespace WebApplication.Pages.Metrics
                 }
             }
         }
+<<<<<<< HEAD
+=======
+
+        public String convertDateTime(DateTime d)
+        {
+            String s = "";
+            s += d.Year.ToString("D4") + "-" + d.Month.ToString("D2") + "-"
+                + d.Day.ToString("D2") + "T" + d.Hour.ToString("D2") + "%3A" +
+                d.Minute.ToString("D2") + "%3A" + d.Second.ToString("D2") + "." +
+                d.Millisecond.ToString("D3");
+            return s;
+        }
+>>>>>>> upstream/master
         */
 
     }
