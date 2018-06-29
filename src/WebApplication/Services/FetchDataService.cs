@@ -9,7 +9,7 @@ using PerfMonitor;
 
 namespace WebApplication
 {
-    public class FetchData
+    public class FetchDataService
     {
         public static async Task<List<T>> getUpdatedData<T>(DateTime oldStamp, DateTime newStamp)
         {

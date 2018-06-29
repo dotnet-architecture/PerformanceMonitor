@@ -24,12 +24,14 @@ namespace WebApplication.Pages.Metrics
         private static DateTime newStamp = DateTime.Now.ToUniversalTime();
         public async Task OnGet()
         {
+            // Gets all data until now
             newStamp = DateTime.Now.ToUniversalTime();
 
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri("http://localhost:58026/");
 
-            String httpGetRequestEnd = convertDateTime(oldStamp) + "&end=" + convertDateTime(newStamp);
+            String httpGetRequestEnd = FetchDataService.convertDateTime(oldStamp) + "&end=" 
+                + FetchDataService.convertDateTime(newStamp);
 
             HttpResponseMessage cpu_response = await client.GetAsync("api/v1/CPU/Daterange?start=" + httpGetRequestEnd);
             _cpuMetricService.updateUsingHttpResponse(cpu_response);
@@ -44,6 +46,8 @@ namespace WebApplication.Pages.Metrics
                 }
             }
         }
+
+        // Repeatedly sends data fetch request every 5 seconds
         public async Task getInfo()
         {
             while (true)
@@ -52,11 +56,12 @@ namespace WebApplication.Pages.Metrics
                 if (newStamp.Subtract(oldStamp).TotalMilliseconds >= 5000)
                 {
                     // Make new HTTP get request and update cpu and mem
-                    await getCPUUpdatedData(oldStamp, newStamp);
-                    await getMemoryUpdatedData(oldStamp, newStamp);
 
-                    List<CPU_Usage> cpu_addOn = await FetchData.getUpdatedData<CPU_Usage>(oldStamp, newStamp);
-                    List<Mem_Usage> mem_addOn = await FetchData.getUpdatedData<Mem_Usage>(oldStamp, newStamp);
+                    // await getCPUUpdatedData(oldStamp, newStamp);
+                    // await getMemoryUpdatedData(oldStamp, newStamp);
+
+                    List<CPU_Usage> cpu_addOn = await FetchDataService.getUpdatedData<CPU_Usage>(oldStamp, newStamp);
+                    List<Mem_Usage> mem_addOn = await FetchDataService.getUpdatedData<Mem_Usage>(oldStamp, newStamp);
 
                     foreach (CPU_Usage c in cpu_addOn)
                     {
@@ -74,6 +79,7 @@ namespace WebApplication.Pages.Metrics
             }
         }
 
+        /*
         public async Task getCPUUpdatedData(DateTime oldStamp, DateTime newStamp)
         {
             HttpClient client = new HttpClient();
@@ -115,6 +121,7 @@ namespace WebApplication.Pages.Metrics
                 }
             }
         }
+
         public String convertDateTime(DateTime d)
         {
             String s = "";
@@ -124,6 +131,7 @@ namespace WebApplication.Pages.Metrics
                 d.Millisecond.ToString("D3");
             return s;
         }
+        */
 
     }
 }
