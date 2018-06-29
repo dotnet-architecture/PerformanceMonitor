@@ -49,6 +49,7 @@ namespace WebApplication
 
         }
 
+        // Converting DateTIme to a string that Http request will accept
         public static String convertDateTime(DateTime d)
         {
             String s = "";

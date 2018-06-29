@@ -5,53 +5,73 @@
     ViewData["Title"] = "CPU_Memory";
 }
 
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
 <div class="main">
     <font size="50">CPU and Memory Usage</font>
-    <p>Average CPU Usage: @Model.avgCPU</p>
-    <p>Log of CPU Usage</p>
-    <table style="width:100%">
-        <tr>
-            <th>CPU</th>
-            <th>Timestamp</th>
-        </tr>
-        @if (Model.cpu != null)
-        {
-            @foreach (CPU_Usage c in Model.cpu)
-            {
-                <tr>
-                    <td>@c.usage</td>
-                    <td>@c.timestamp</td>
-                </tr>
-            }
-        }
-        else
-        {
-            <tr>Unable to retrieve data</tr>
 
-        }
+    <p>Average CPU Usage: @Model.avgCPU</p>
+
+    <p>Log of CPU Usage</p>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>CPU Usage (%)</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.cpu != null)
+            {
+                @foreach (CPU_Usage c in Model.cpu)
+                {
+                    <tr>
+                        <td>@c.usage</td>
+                        <td>@c.timestamp</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>Unable to retrieve data</tr>
+
+            }
+        </tbody>
     </table>
 
     <p>Log of Memory Usage</p>
-    <table style="width:100%">
-        <tr>
-            <th>Memory</th>
-            <th>Timestamp</th>
-        </tr>
-        @if (Model.mem != null)
-        {
-            @foreach (Mem_Usage m in Model.mem)
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Memory</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.mem != null)
             {
-                <tr>
-                    <td>@m.usage</td>
-                    <td>@m.timestamp</td>
-                </tr>
+                @foreach (Mem_Usage m in Model.mem)
+                {
+                    <tr>
+                        <td>@m.usage</td>
+                        <td>@m.timestamp</td>
+                    </tr>
+
+                }
+            }
+            else
+            {
+                <tr>Unable to retrieve data</tr>
 
             }
-        }
-        else
-        {
-            <tr>Unable to retrieve data</tr>
-
-        }
+        </tbody>
     </table>
 </div>

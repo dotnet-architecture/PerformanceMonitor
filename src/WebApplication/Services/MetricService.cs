@@ -13,21 +13,14 @@ namespace WebApplication.Services
     public class MetricService<T> : IMetricService<T>
     {
         private List<T> data = new List<T>();
+
+        // Updates data
         public void updateUsingHttpResponse(HttpResponseMessage response)
         {
             var result = response.Content.ReadAsStringAsync().Result;
 
             var deserial_obj = JsonConvert.DeserializeObject<List<T>>(result);
 
-            /*
-            // Desearilizes response JSON file 
-            var deserial_obj = JsonConvert.DeserializeObject<List<T>>(result, new JsonSerializerSettings
-            {
-                MissingMemberHandling = MissingMemberHandling.Ignore
-            });
-            */
-
-            // Updates data
             data = deserial_obj;
         }
         public async Task<List<T>> getServiceUsage()
