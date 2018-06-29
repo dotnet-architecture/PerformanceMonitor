@@ -18,33 +18,45 @@ namespace WebApplication.Pages.Metrics
         public List<CPU_Usage> cpu { get; set; } = new List<CPU_Usage>();
         public List<Mem_Usage> mem { get; set; } = new List<Mem_Usage>();
 
-        // Setting up a counter that will detect when 5 seconds pass so that HTTP get requests
-        // are sent every 5 seconds and update cpu and mem
-        private static DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime();
-        private static DateTime newStamp = DateTime.Now.ToUniversalTime();
+        public double avgCPU;
+        public int timeAccounted; // Total time that is accounted for in the avgerage CPU. Used to update to new avgCPU
+
+        // Counter that detects when 5 seconds pass so HTTP get requests are sent every 5 seconds
+
+        // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
+        private DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime(); 
+        private DateTime newStamp = DateTime.Now.ToUniversalTime();
         public async Task OnGet()
         {
-            // Gets all data until now
             newStamp = DateTime.Now.ToUniversalTime();
 
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri("http://localhost:58026/");
 
+            // Converting DateTime to string that is accepted by HTTP requests
             String httpGetRequestEnd = FetchDataService.convertDateTime(oldStamp) + "&end=" 
                 + FetchDataService.convertDateTime(newStamp);
 
-            HttpResponseMessage cpu_response = await client.GetAsync("api/v1/CPU/Daterange?start=" + httpGetRequestEnd);
-            _cpuMetricService.updateUsingHttpResponse(cpu_response);
+            HttpResponseMessage cpuResponse = await client.GetAsync("api/v1/CPU/Daterange?start=" + httpGetRequestEnd);
+            _cpuMetricService.updateUsingHttpResponse(cpuResponse);
 
-            // Deserialize JSON object from response and update cpu and mem if response is successfull
-            if (cpu_response.IsSuccessStatusCode)
+            if (cpuResponse.IsSuccessStatusCode)
             {
+                double totalCPU = avgCPU * timeAccounted; // Weighting previous avgCPU
+
+                // Updates CPU_Usage list and totalCPU to calculate new average
                 List<CPU_Usage> addOn = await _cpuMetricService.getServiceUsage(); 
                 foreach (CPU_Usage c in addOn)
                 {
+                    totalCPU += c.usage; 
                     cpu.Add(c);                   
                 }
+
+                // Calculating new avgCPUs
+                timeAccounted += addOn.Count;
+                avgCPU = totalCPU / (double)timeAccounted; 
             }
+
         }
 
         // Repeatedly sends data fetch request every 5 seconds
@@ -56,25 +68,28 @@ namespace WebApplication.Pages.Metrics
                 if (newStamp.Subtract(oldStamp).TotalMilliseconds >= 5000)
                 {
                     // Make new HTTP get request and update cpu and mem
-<<<<<<< HEAD
-=======
-
-                    // await getCPUUpdatedData(oldStamp, newStamp);
-                    // await getMemoryUpdatedData(oldStamp, newStamp);
-
->>>>>>> upstream/master
                     List<CPU_Usage> cpu_addOn = await FetchDataService.getUpdatedData<CPU_Usage>(oldStamp, newStamp);
                     List<Mem_Usage> mem_addOn = await FetchDataService.getUpdatedData<Mem_Usage>(oldStamp, newStamp);
 
-                    foreach (CPU_Usage c in cpu_addOn)
+                    double totalCPU = avgCPU * timeAccounted; // Weighting previous avgCPU
+
+                    // Updates CPU_Usage list and totalCPU to calculate new average
+                    List<CPU_Usage> addOn = await _cpuMetricService.getServiceUsage();
+                    foreach (CPU_Usage c in addOn)
                     {
+                        totalCPU += c.usage;
                         cpu.Add(c);
                     }
+
+                    // Calculating new avgCPUs
+                    timeAccounted += addOn.Count;
+                    avgCPU = totalCPU / (double)timeAccounted;
 
                     foreach (Mem_Usage m in mem_addOn)
                     {
                         mem.Add(m);
                     }
+
                     // Reset timers
                     oldStamp = newStamp;
                     newStamp = DateTime.Now.ToUniversalTime();
@@ -124,19 +139,6 @@ namespace WebApplication.Pages.Metrics
                 }
             }
         }
-<<<<<<< HEAD
-=======
-
-        public String convertDateTime(DateTime d)
-        {
-            String s = "";
-            s += d.Year.ToString("D4") + "-" + d.Month.ToString("D2") + "-"
-                + d.Day.ToString("D2") + "T" + d.Hour.ToString("D2") + "%3A" +
-                d.Minute.ToString("D2") + "%3A" + d.Second.ToString("D2") + "." +
-                d.Millisecond.ToString("D3");
-            return s;
-        }
->>>>>>> upstream/master
         */
 
     }
