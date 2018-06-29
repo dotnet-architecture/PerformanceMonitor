@@ -67,16 +67,16 @@ namespace PerfMonitor
                             Task.Factory.StartNew(() =>
                             {
                                 // starts event collection via TraceEvent
-                                TraceEvents();
+                                //TraceEvents();
 
                                 httpTime = DateTime.Now;
                                 // creates object that will store all event instances
                                 Metric_List list = new Metric_List();
                                 list.cpu = CPUVals;
                                 list.mem = MemVals;
+                                SendHTTP(list);
                                 CPUVals.Clear();
                                 MemVals.Clear();
-                                SendHTTP(list);
                             });
                         }
                     }
