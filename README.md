@@ -16,3 +16,8 @@ This will trigger performance metric tracking that is done on the user's machine
 [//]: # (Description of other data collection would go here)
 
 Data collection is performed roughly every second, by looping through a function that performs a check of the current time via System.DateTime.Now. Each time a piece of data is recorded, a class instance is created for the datapoint (each form of data has its own class, with fields containing relevant information for the data). This class instance is added to a Collection of the data type. Every five seconds, the collected data is aggregated into a Metric_List class instance - which is simply a class whose fields consist of the Collections of each monitored data type. This Metric_List instance is then serialized into a JSON string, and is sent in the body of a POST request to the monitor application's web API via the System.Net.Http.HttpClient class. After the data is sent, the Collections containing the datapoints are cleared and the process begins again.
+
+## Data Storage Overview
+The data collected is currently being hosted on a SQL database running through Docker. This allows for local testing of the application. In the future, the database will be moved to AzureSQL. This will allow the final product to run with minimal setup from the user. Startup.cs holds the location of the connection string for the server, and can be changed as necessary.
+
+Entity framework was used to manage the sending and fetching of data from the server. There are object-specific controllers for the fetching of data, and there is an all-purpose controller for sending the data in a single packet. Entity framework largely simplifies querying a SQL server, as no commands need to be written. 
