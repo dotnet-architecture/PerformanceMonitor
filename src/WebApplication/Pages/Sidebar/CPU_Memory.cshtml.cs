@@ -54,9 +54,19 @@ namespace WebApplication.Pages.Metrics
                     // Make new HTTP get request and update cpu and mem
                     await getCPUUpdatedData(oldStamp, newStamp);
                     await getMemoryUpdatedData(oldStamp, newStamp);
-                    await getUpdatedData<CPU_Usage>(oldStamp, newStamp);
-                    await getUpdatedData<Mem_Usage>(oldStamp, newStamp);
 
+                    List<CPU_Usage> cpu_addOn = await FetchData.getUpdatedData<CPU_Usage>(oldStamp, newStamp);
+                    List<Mem_Usage> mem_addOn = await FetchData.getUpdatedData<Mem_Usage>(oldStamp, newStamp);
+
+                    foreach (CPU_Usage c in cpu_addOn)
+                    {
+                        cpu.Add(c);
+                    }
+
+                    foreach (Mem_Usage m in mem_addOn)
+                    {
+                        mem.Add(m);
+                    }
                     // Reset timers
                     oldStamp = newStamp;
                     newStamp = DateTime.Now.ToUniversalTime();
@@ -64,51 +74,6 @@ namespace WebApplication.Pages.Metrics
             }
         }
 
-        public async Task getUpdatedData<T>(DateTime oldStamp, DateTime newStamp)
-        {
-            IMetricService<T> _metricService = new MetricService<T>(); 
-
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("http://localhost:58026/");
-
-            String dateRange = convertDateTime(oldStamp) + "&end=" + convertDateTime(newStamp);
-
-            String type = ""; 
-
-            if (typeof(T) is CPU_Usage)
-            {
-                type = "CPU";
-            } else if (typeof(T) is Mem_Usage)
-            {
-                type = "Memory"; 
-            } else
-            {
-                type = null;
-            }
-
-            HttpResponseMessage response = await client.GetAsync("api/v1/" + type + "/Daterange?start=" + dateRange);
-            _metricService.updateUsingHttpResponse(response);
-
-            if (response.IsSuccessStatusCode)
-            {
-                if (typeof(T) is CPU_Usage)
-                {
-                    List<CPU_Usage> addOn = await _cpuMetricService.getServiceUsage();
-                    foreach (CPU_Usage c in addOn)
-                    {
-                        cpu.Add(c);
-                    }
-                } else if (typeof(T) is Mem_Usage)
-                {
-                    List<Mem_Usage> addOn = await _memMetricService.getServiceUsage();
-                    foreach (Mem_Usage m in addOn)
-                    {
-                        mem.Add(m);
-                    }
-                }
-            }
-
-        }
         public async Task getCPUUpdatedData(DateTime oldStamp, DateTime newStamp)
         {
             HttpClient client = new HttpClient();
