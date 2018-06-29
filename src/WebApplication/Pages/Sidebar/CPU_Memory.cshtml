@@ -1,5 +1,6 @@
 ﻿@page
 @model WebApplication.Pages.Metrics.CPU_MemoryModel
+@using PerfMonitor;
 @{
     ViewData["Title"] = "CPU_Memory";
 }
@@ -8,7 +9,7 @@
     <font size="50">CPU and Memory Usage</font>
     <p>Average CPU Usage:</p>
 
-    <p>Log of Time and CPU Usage</p>
+    <p>Log of CPU Usage</p>
     <table style="width:100%">
         <tr>
             <th>CPU</th>
@@ -16,10 +17,14 @@
         </tr>
         @if (Model.cpu != null)
         {
-            <tr>
-                <td>@Model.cpu.usage</td>
-                <td>@Model.cpu.timestamp</td>
-            </tr>
+            @foreach (CPU_Usage c in Model.cpu)
+            {
+                <tr>
+                    <td>@c.usage</td>
+                    <td>@c.timestamp</td>
+                </tr>
+
+            }
         }
         else
         {
@@ -27,4 +32,29 @@
 
         }
     </table>
+
+    <p>Log of Memory Usage</p>
+    <table style="width:100%">
+        <tr>
+            <th>Memory</th>
+            <th>Timestamp</th>
+        </tr>
+        @if (Model.mem != null)
+        {
+            @foreach (Mem_Usage m in Model.mem)
+            {
+                <tr>
+                    <td>@m.usage</td>
+                    <td>@m.timestamp</td>
+                </tr>
+
+            }
+        }
+        else
+        {
+            <tr>Unable to retrieve data</tr>
+
+        }
+    </table>
+
 </div>
