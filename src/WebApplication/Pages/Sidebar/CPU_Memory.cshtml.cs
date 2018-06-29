@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNet.SignalR.Client;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using PerfMonitor;
@@ -28,6 +29,7 @@ namespace WebApplication.Pages.Metrics
         private DateTime newStamp = DateTime.Now.ToUniversalTime();
         public async Task OnGet()
         {
+
             newStamp = DateTime.Now.ToUniversalTime();
 
             HttpClient client = new HttpClient();
@@ -56,6 +58,13 @@ namespace WebApplication.Pages.Metrics
                 timeAccounted += addOn.Count;
                 avgCPU = totalCPU / (double)timeAccounted; 
             }
+
+            // Attempting to use SignalR
+            String url = "http://localhost:58026/api/v1/CPU/Daterange?start=" + httpGetRequestEnd + "/"; 
+            var hubConnection = new HubConnection(url);
+            IHubProxy cpuHubProxy = hubConnection.CreateHubProxy("CPU");
+            cpuHubProxy.On<CPU_Usage>("UpdateCPU", cpu => Console.WriteLine("cpu update for {0} new price {1}", cpu.usage, cpu.timestamp));
+            await hubConnection.Start();
 
         }
 

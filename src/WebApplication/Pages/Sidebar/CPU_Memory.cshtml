@@ -21,34 +21,36 @@
     <p>Average CPU Usage: @Model.avgCPU</p>
 
     <p>Log of CPU Usage</p>
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th>CPU Usage (%)</th>
-                <th>Timestamp</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.cpu != null)
-            {
-                @foreach (CPU_Usage c in Model.cpu)
+    <div class="CPU-table" max-width="600px">
+        <table class="table table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>CPU</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.cpu != null) 
                 {
-                    <tr>
-                        <td>@c.usage</td>
-                        <td>@c.timestamp</td>
-                    </tr>
+                    @foreach (CPU_Usage c in Model.cpu)
+                    {
+                        <tr>
+                            <td>@c.usage</td>
+                            <td>@c.timestamp</td>
+                        </tr>
+                    }
                 }
-            }
-            else
-            {
+                else
+                {
                 <tr>Unable to retrieve data</tr>
 
-            }
-        </tbody>
-    </table>
+                }
+            </tbody>
+        </table>
+    </div>
 
     <p>Log of Memory Usage</p>
-    <table class="table table-hover">
+    <table class="table table-hover table-bordered">
         <thead>
             <tr>
                 <th>Memory</th>
@@ -74,4 +76,5 @@
             }
         </tbody>
     </table>
+
 </div>
