@@ -12,11 +12,11 @@ namespace PerfMonitor.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class GeneralController : ControllerBase
+    public class General : ControllerBase
     {
         public MetricContext _MetricContext;
 
-        public GeneralController(MetricContext context)
+        public General(MetricContext context)
         {
             _MetricContext = context ?? throw new ArgumentNullException(nameof(context));
         }
@@ -35,13 +35,12 @@ namespace PerfMonitor.Controllers
             {
                 _MetricContext.MEM_Data.Add(point); 
             }
+            foreach(Exceptions point in met.exceptions)
+            {
+                _MetricContext.Exception_Data.Add(point);
+            }
             await _MetricContext.SaveChangesAsync();
             return CreatedAtAction("CPU Data Created", new { obj = j }, null);
         }
-
-
-
-
-
     }
 }
