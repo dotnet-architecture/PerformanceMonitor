@@ -33,13 +33,10 @@ namespace PerfMonitor.Controllers
             }
             foreach(Mem_Usage point in met.mem)
             {
-                _MetricContext.MEM_Data.Add(point);
+                _MetricContext.MEM_Data.Add(point); 
             }
             await _MetricContext.SaveChangesAsync();
-            return CreatedAtAction("Data Created", new { obj = j }, null);
+            return CreatedAtAction("CPU Data Created", new { obj = j }, null);
         }
-
-        
-
     }
 }
