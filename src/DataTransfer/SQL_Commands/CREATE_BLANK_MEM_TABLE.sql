@@ -1,5 +1,5 @@
 DROP TABLE MEM_Data
 CREATE TABLE MEM_Data (
-"usage" FLOAT,
+"usage" BIGINT,
 "timestamp" DATETIME PRIMARY KEY
 )
