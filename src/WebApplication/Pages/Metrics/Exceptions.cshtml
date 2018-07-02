@@ -1,5 +1,6 @@
 ﻿@page
 @model WebApplication.Pages.Metrics.ExceptionsModel
+@using PerfMonitor
 @{
     ViewData["Title"] = "Exceptions";
 }
@@ -16,6 +17,8 @@
     <font size="50">Exceptions</font>
 
     <p>Log of Exceptions</p>
+    <p>@Model.except.Count</p>
+
     <table class="table table-hover table-bordered">
         <thead>
             <tr>
@@ -32,12 +35,12 @@
                         <td>@e.type</td>
                         <td>@e.timestamp</td>
                     </tr>
+
                 }
             }
             else
             {
                 <tr>Unable to retrieve data</tr>
-
             }
         </tbody>
     </table>

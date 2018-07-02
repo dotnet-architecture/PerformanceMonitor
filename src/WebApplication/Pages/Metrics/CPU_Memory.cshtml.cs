@@ -24,10 +24,14 @@ namespace WebApplication.Pages.Metrics
         // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
         private DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime(); 
         private DateTime newStamp = DateTime.Now.ToUniversalTime();
+
         public async Task OnGet()
         {
 
             newStamp = DateTime.Now.ToUniversalTime();
+
+            Console.WriteLine("times: " + oldStamp + " " + newStamp);
+
 
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri("http://localhost:58026/");
@@ -39,22 +43,43 @@ namespace WebApplication.Pages.Metrics
             HttpResponseMessage cpuResponse = await client.GetAsync("api/v1/CPU/Daterange?start=" + httpGetRequestEnd);
             _cpuMetricService.updateUsingHttpResponse(cpuResponse);
 
+            HttpResponseMessage memResponse = await client.GetAsync("api/v1/Memory/Daterange?start=" + httpGetRequestEnd);
+            _memMetricService.updateUsingHttpResponse(memResponse);
+
             if (cpuResponse.IsSuccessStatusCode)
             {
                 double totalCPU = avgCPU * timeAccounted; // Weighting previous avgCPU
 
                 // Updates CPU_Usage list and totalCPU to calculate new average
-                List<CPU_Usage> addOn = await _cpuMetricService.getServiceUsage(); 
-                foreach (CPU_Usage c in addOn)
+                List<CPU_Usage> addOnCPU = await _cpuMetricService.getServiceUsage();
+                foreach (CPU_Usage c in addOnCPU)
                 {
                     totalCPU += c.usage; 
                     cpu.Add(c);                   
                 }
 
                 // Calculating new avgCPUs
-                timeAccounted += addOn.Count;
-                avgCPU = totalCPU / (double)timeAccounted; 
+                timeAccounted += addOnCPU.Count;
+                avgCPU = totalCPU / (double)timeAccounted;
             }
+
+            if (memResponse.IsSuccessStatusCode)
+            {
+                List<Mem_Usage> addOnMem = await _memMetricService.getServiceUsage();
+                Console.WriteLine("addOnMem: " + mem.Count);
+
+                foreach (Mem_Usage m in addOnMem)
+                {
+                    Console.WriteLine("addOnMem item: " + m.usage + " " + m.timestamp);
+                    mem.Add(m);
+                }
+            }
+            else
+            {
+                Console.WriteLine("mem not successful");
+            }
+
+            Console.WriteLine("mem at end: " + mem.Count);
 
             //useSignalR(httpGetRequestEnd);
 

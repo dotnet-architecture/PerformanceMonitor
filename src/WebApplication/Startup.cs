@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNet.SignalR;
-using Microsoft.Owin;
-using Owin;
+//using Microsoft.Owin;
+//using Owin;
 using WebApplication.Services;
 using WebApplication.Interfaces;
 using Microsoft.AspNetCore.Owin;
@@ -23,10 +23,12 @@ namespace WebApplication
 
         public IConfiguration Configuration { get; }
 
+        /*
         public static void COnfigureSignalR(IAppBuilder app)
         {
             //app.MapSignalR();
         }
+        */
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
