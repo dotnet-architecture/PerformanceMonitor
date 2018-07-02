@@ -13,6 +13,7 @@ public class MetricContext : DbContext
     }
     public DbSet<CPU_Usage> CPU_Data { get; set; }
     public DbSet<Mem_Usage> MEM_Data { get; set; }
+    public DbSet<Exceptions> Exception_Data { get; set; }
 }
 
 class CPUContextEntityTypeConfiguration
@@ -39,4 +40,17 @@ class MEMContextEntityTypeConfiguration
         builder.HasKey(ci => ci.timestamp);
         builder.HasIndex(ci => ci.timestamp);
     }
+}
+
+class ExceptionContextEntityTypeConfiguration 
+    : IEntityTypeConfiguration<Exceptions>
+{
+    public void Configure(EntityTypeBuilder<Exceptions> builder)
+    {
+        builder.ToTable("Exception_Data");
+
+        builder.HasKey(ci => ci.timestamp);
+        builder.HasIndex(ci => ci.timestamp);
+    }
+
 }
