@@ -54,9 +54,10 @@ namespace PerfMonitor
         {
             // sets base address for HTTP requests - in local testing, this will need to be changed periodically
             client.BaseAddress = new Uri("http://localhost:51249/");
+
+            // starts event collection via TraceEvent
             Task.Factory.StartNew(() =>
             {
-                // starts event collection via TraceEvent
                 TraceEvents();
             });
 
@@ -81,7 +82,7 @@ namespace PerfMonitor
                             list.cpu = CPUVals;
                             list.mem = MemVals;
                             list.exceptions = ExceptionVals;
-                            //SendHTTP(list);
+                            SendHTTP(list);
                             CPUVals.Clear();
                             MemVals.Clear();
                             ExceptionVals.Clear();
@@ -101,7 +102,7 @@ namespace PerfMonitor
                 // set up parser to read CLR events
                 var clrParser = new ClrTraceEventParser(session.Source);
 
-                // subscribe to all GC allocation events
+                // subscribe to all exception start events
                 clrParser.ExceptionStart += delegate (ExceptionTraceData data)
                 {
                     // if exception was in user process, add it to list of exceptions
@@ -112,22 +113,26 @@ namespace PerfMonitor
                         e.timestamp = DateTime.Now;
                         // adds exception to list of exceptions found
                         ExceptionVals.Add(e);
-                        Console.WriteLine("Exception found: {0} at {1}", e.type, e.timestamp);
+                        //Console.WriteLine("Exception found: {0} at {1}", e.type, e.timestamp);
                     }
                 };
-                /*
+                
                 // subscribe to all dynamic events (used for HTTP request event tracking)
                 session.Source.Dynamic.All += delegate (TraceEvent data) {
-                    if (data.ProcessID == myProcess.Id)
+                    if (data.ProcessID == myProcess.Id && data.EventName == "Request/Start")
                     {
-                        Console.WriteLine("EVENT FOUND: {0}", data.EventName);
+                        Console.WriteLine("EVENT FOUND: {0} at {1}", data.EventName, data.TimeStamp);
+                    }
+                    else if (data.ProcessID == myProcess.Id && data.EventName == "Request/Stop")
+                    {
+                        // make HTTP request class - one property will be type (start/stop) and other will be timestamp
                     }
                 };
-                */
+                
                 // set up providers for events using GUIDs
                 var AspSourceGuid = TraceEventProviders.GetEventSourceGuidFromName("Microsoft-AspNetCore-Hosting");
                 session.EnableProvider(AspSourceGuid);
-                session.EnableProvider(ClrTraceEventParser.ProviderGuid);
+                session.EnableProvider(ClrTraceEventParser.ProviderGuid, TraceEventLevel.Verbose, 0x8000);
                 session.Source.Process();    // call the callbacks for each event
             }
         }
@@ -138,12 +143,17 @@ namespace PerfMonitor
             {
                 // converts list of metric measurements into a JSON object string
                 string output = JsonConvert.SerializeObject(metricList);
+                Console.WriteLine(output);
                 // escapes string so that JSON object is interpreted as a single string
                 output = JsonConvert.ToString(output);
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "api/v1/CPU/CPUJSON/");
                 request.Content = new StringContent(output, System.Text.Encoding.UTF8, "application/json");
                 // sends POST request to server, containing JSON representation of events
-                HttpResponseMessage response = client.SendAsync(request).Result;
+                try
+                {
+                    HttpResponseMessage response = client.SendAsync(request).Result;
+                }
+                catch {}
             }
         }
 
@@ -166,7 +176,7 @@ namespace PerfMonitor
             cpu.timestamp = newStamp;
             // adds CPU value to list of instances
             CPUVals.Add(cpu);
-            Console.WriteLine("CPU: {0}; time: {1}", cpu.usage, cpu.timestamp);
+            //Console.WriteLine("CPU: {0}; time: {1}", cpu.usage, cpu.timestamp);
         }
 
         private static void FetchMem()  // fetches Memory usage
@@ -176,7 +186,7 @@ namespace PerfMonitor
             mem.timestamp = DateTime.Now;
             // adds Memory reading to list of instances
             MemVals.Add(mem);
-            Console.WriteLine("Mem: {0}; time: {1}", mem.usage, mem.timestamp);
+            //Console.WriteLine("Mem: {0}; time: {1}", mem.usage, mem.timestamp);
         }
 
         // setup to stop TraceEvent session upon application termination
