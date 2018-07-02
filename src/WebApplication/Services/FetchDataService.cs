@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using WebApplication.Services;
 using WebApplication.Interfaces;
@@ -49,6 +48,7 @@ namespace WebApplication
 
         }
 
+        // Converting DateTIme to a string that Http request will accept
         public static String convertDateTime(DateTime d)
         {
             String s = "";
