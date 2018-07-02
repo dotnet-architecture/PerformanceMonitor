@@ -21,7 +21,6 @@ namespace WebApplication.Pages.Metrics
         public int timeAccounted; // Total time that is accounted for in the avgerage CPU. Used to update to new avgCPU
 
         // Counter that detects when 5 seconds pass so HTTP get requests are sent every 5 seconds
-
         // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
         private DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime(); 
         private DateTime newStamp = DateTime.Now.ToUniversalTime();
@@ -57,10 +56,11 @@ namespace WebApplication.Pages.Metrics
                 avgCPU = totalCPU / (double)timeAccounted; 
             }
 
-            useSignalR(httpGetRequestEnd);
+            //useSignalR(httpGetRequestEnd);
 
         }
 
+        /*
         // Attempting to use SignalR
         public void useSignalR(string httpGetRequestEnd)
         {
@@ -70,6 +70,8 @@ namespace WebApplication.Pages.Metrics
             cpuHubProxy.On<CPU_Usage>("UpdateCPU", cpu => Console.WriteLine("cpu update for {0} new price {1}", cpu.usage, cpu.timestamp));
             await hubConnection.Start();
         }
+        */
+
         // Repeatedly sends data fetch request every 5 seconds
         public async Task getInfo()
         {
