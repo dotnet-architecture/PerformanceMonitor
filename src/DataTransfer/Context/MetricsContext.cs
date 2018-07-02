@@ -13,7 +13,7 @@ public class MetricContext : DbContext
     }
     public DbSet<CPU_Usage> CPU_Data { get; set; }
     public DbSet<Mem_Usage> MEM_Data { get; set; }
-    public DbSet<Exceptions> Excpetion_Data { get; set; }
+    public DbSet<Exceptions> Exception_Data { get; set; }
 }
 
 class CPUContextEntityTypeConfiguration
