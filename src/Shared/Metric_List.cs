@@ -7,5 +7,6 @@ namespace PerfMonitor
     {
         public List<CPU_Usage> cpu { get; set; }
         public List<Mem_Usage> mem { get; set; }
+        public List<Exceptions> exceptions { get; set; }
     }
 }
