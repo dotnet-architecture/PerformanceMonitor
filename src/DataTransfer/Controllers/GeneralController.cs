@@ -35,6 +35,10 @@ namespace PerfMonitor.Controllers
             {
                 _MetricContext.MEM_Data.Add(point); 
             }
+            foreach(Exceptions point in met.exceptions)
+            {
+                _MetricContext.Exception_Data.Add(point);
+            }
             await _MetricContext.SaveChangesAsync();
             return CreatedAtAction("CPU Data Created", new { obj = j }, null);
         }
