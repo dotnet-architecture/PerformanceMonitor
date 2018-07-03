@@ -12,7 +12,7 @@ namespace WebApplication.Pages.Metrics
 {
     public class Http_RequestsModel : PageModel
     {
-        private readonly IMetricService<Exceptions> _httpMetricService = new MetricService<Exceptions>();
+        private readonly IMetricService<Http_Request> _httpMetricService = new MetricService<Http_Request>();
         public List<Http_Request> http { get; set; } = new List<Http_Request>();
 
         // Counter that detects when 5 seconds pass so HTTP get requests are sent every 5 seconds
@@ -36,11 +36,10 @@ namespace WebApplication.Pages.Metrics
             if (httpResponse.IsSuccessStatusCode)
             {
                 // Updates CPU_Usage list and totalCPU to calculate new average
-                List<Exceptions> addOn = await _httpMetricService.getServiceUsage();
-                Console.WriteLine("addOn count:" + addOn.Count);
-                foreach (Exceptions e in addOn)
+                List<Http_Request> addOn = await _httpMetricService.getServiceUsage();
+                foreach (Http_Request h in addOn)
                 {
-                    http.Add(e);
+                    http.Add(h);
                 }
             }
         }
