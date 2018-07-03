@@ -27,12 +27,7 @@ namespace WebApplication.Pages.Metrics
 
         public async Task OnGet()
         {
-
-            newStamp = DateTime.Now.ToUniversalTime();
-
-            Console.WriteLine("times: " + oldStamp + " " + newStamp);
-
-
+            
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri("http://localhost:58026/");
 
@@ -66,23 +61,13 @@ namespace WebApplication.Pages.Metrics
             if (memResponse.IsSuccessStatusCode)
             {
                 List<Mem_Usage> addOnMem = await _memMetricService.getServiceUsage();
-                Console.WriteLine("addOnMem: " + mem.Count);
 
                 foreach (Mem_Usage m in addOnMem)
                 {
-                    Console.WriteLine("addOnMem item: " + m.usage + " " + m.timestamp);
                     mem.Add(m);
                 }
             }
-            else
-            {
-                Console.WriteLine("mem not successful");
-            }
-
-            Console.WriteLine("mem at end: " + mem.Count);
-
-            //useSignalR(httpGetRequestEnd);
-
+            
         }
 
         /*
@@ -98,41 +83,49 @@ namespace WebApplication.Pages.Metrics
         */
 
         // Repeatedly sends data fetch request every 5 seconds
-        public async Task getInfo()
+        public async Task fiveSecondFetcher()
         {
             while (true)
             {
-                newStamp = DateTime.Now;
+                this.newStamp = DateTime.Now.ToUniversalTime();
                 if (newStamp.Subtract(oldStamp).TotalMilliseconds >= 5000)
                 {
-                    // Make new HTTP get request and update cpu and mem
-                    List<CPU_Usage> cpu_addOn = await FetchDataService.getUpdatedData<CPU_Usage>(oldStamp, newStamp);
-                    List<Mem_Usage> mem_addOn = await FetchDataService.getUpdatedData<Mem_Usage>(oldStamp, newStamp);
-
-                    double totalCPU = avgCPU * timeAccounted; // Weighting previous avgCPU
-
-                    // Updates CPU_Usage list and totalCPU to calculate new average
-                    List<CPU_Usage> addOn = await _cpuMetricService.getServiceUsage();
-                    foreach (CPU_Usage c in addOn)
-                    {
-                        totalCPU += c.usage;
-                        cpu.Add(c);
-                    }
-
-                    // Calculating new avgCPUs
-                    timeAccounted += addOn.Count;
-                    avgCPU = totalCPU / (double)timeAccounted;
-
-                    foreach (Mem_Usage m in mem_addOn)
-                    {
-                        mem.Add(m);
-                    }
-
-                    // Reset timers
-                    oldStamp = newStamp;
-                    newStamp = DateTime.Now.ToUniversalTime();
+                    await getInfo(newStamp);
                 }
             }
+        }
+
+        public async Task getInfo(DateTime updatedStamp)
+        {
+            // Make new HTTP get request and update cpu and mem
+            List<CPU_Usage> cpu_addOn = await FetchDataService.getUpdatedData<CPU_Usage>(oldStamp, updatedStamp);
+            List<Mem_Usage> mem_addOn = await FetchDataService.getUpdatedData<Mem_Usage>(oldStamp, updatedStamp);
+
+            double totalCPU = avgCPU * timeAccounted; // Weighting previous avgCPU
+
+            // Updates CPU_Usage list and totalCPU to calculate new average
+            foreach (CPU_Usage c in cpu_addOn)
+            {
+                totalCPU += c.usage;
+                cpu.Add(c);
+            }
+
+            // Calculating new avgCPUs
+            this.timeAccounted += cpu_addOn.Count;
+            this.avgCPU = totalCPU / (double)timeAccounted;
+
+            foreach (Mem_Usage m in mem_addOn)
+            {
+                mem.Add(m);
+            }
+
+            // Reset timers
+            this.oldStamp = updatedStamp;
+            this.newStamp = DateTime.Now.ToUniversalTime();
+
+            Console.WriteLine("cpu details: " + cpu_addOn.Count + " " + cpu.Count);
+            Console.WriteLine("mem details: " + mem_addOn.Count + " " + mem.Count);
+
         }
 
         /*

@@ -37,18 +37,10 @@ namespace WebApplication.Pages.Metrics
             {
                 // Updates CPU_Usage list and totalCPU to calculate new average
                 List<Exceptions> addOn = await _exceptionsMetricService.getServiceUsage();
-                Console.WriteLine("addOn count:" + addOn.Count);
                 foreach (Exceptions e in addOn)
                 {
-                    Console.WriteLine("addOn details: " + e.type + " " + e.timestamp);
                     exceptions.Add(e);
                 }
-            }
-
-            Console.WriteLine("at end of adding: " + exceptions.Count);
-            foreach (Exceptions e in exceptions)
-            {
-                Console.WriteLine("except details: " + e.type + " " + e.timestamp);
             }
         }
     }
