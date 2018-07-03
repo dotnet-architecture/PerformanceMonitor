@@ -10,17 +10,17 @@
     <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
             <li class="sidebar-brand"><a asp-page="/Index">.NET Performance and Reliability</a></li>
-            <li><a asp-page="/Sidebar/CPU_Memory">CPU and Memory Usage</a></li>
-            <li><a asp-page="/Sidebar/HTTP_Requests">HTTP Requests</a></li>
-            <li><a asp-page="/Sidebar/Exceptions">Exceptions</a></li>
-            <li><a asp-page="/Sidebar/Contentions">Contentions</a></li>
-            <li><a asp-page="/Sidebar/Garbage_Collection">Garbage Collection</a></li>
-            <li><a asp-page="/Sidebar/JIT">JIT</a></li>
+            <li><a asp-page="/Metrics/CPU_Memory">CPU and Memory Usage</a></li>
+            <li><a asp-page="/Metrics/HTTP_Requests">HTTP Requests</a></li>
+            <li><a asp-page="/Metrics/Exceptions">Exceptions</a></li>
+            <li><a asp-page="/Metrics/Contentions">Contentions</a></li>
+            <li><a asp-page="/Metrics/Garbage_Collection">Garbage Collection</a></li>
+            <li><a asp-page="/Metrics/JIT">JIT</a></li>
         </ul>
     </div>
 
     @RenderBody()
-
+    
     @RenderSection("Scripts", required: false) 
 </body>
 </html>
