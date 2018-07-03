@@ -3,19 +3,22 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monitor", "DataTransfer\Monitor.csproj", "{D43471D2-0DA0-46BE-B979-4C677A0F4A61}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monitor", "src\DataTransfer\Monitor.csproj", "{D43471D2-0DA0-46BE-B979-4C677A0F4A61}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerfMonitor", "Measurement\PerfMonitor.csproj", "{09865024-7982-49D8-A495-71705721587D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerfMonitor", "src\Measurement\PerfMonitor.csproj", "{09865024-7982-49D8-A495-71705721587D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication", "WebApplication\WebApplication.csproj", "{FF9F473F-FB88-482D-91C1-A1AC5785BFC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication", "src\WebApplication\WebApplication.csproj", "{FF9F473F-FB88-482D-91C1-A1AC5785BFC7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csproj", "{66296F2A-D127-4724-AFAF-7D9AC80C5300}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "src\Shared\Shared.csproj", "{66296F2A-D127-4724-AFAF-7D9AC80C5300}"
 EndProject
-<<<<<<< HEAD
+<<<<<<< HEAD:PerformanceMonitor.sln
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonitorTest", "test\Measurement\MonitorTest\MonitorTest.csproj", "{092C591D-792A-45B1-B0CB-2391CDF07AD2}"
+EndProject
+
 =======
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonitorTest", "..\..\..\PerformanceMonitor\src\Measurement\MonitorTest\MonitorTest.csproj", "{092C591D-792A-45B1-B0CB-2391CDF07AD2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonitorTest", "..\test\Measurement\MonitorTest.csproj", "{5284B3FC-579A-4DDB-8E09-AC05A1FA11A0}"
 EndProject
->>>>>>> upstream/master
+>>>>>>> bb69733ebca8fee66d098f2e4339df1f7d1cae0b:src/PerformanceMonitor.sln
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,13 +41,17 @@ Global
 		{66296F2A-D127-4724-AFAF-7D9AC80C5300}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66296F2A-D127-4724-AFAF-7D9AC80C5300}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66296F2A-D127-4724-AFAF-7D9AC80C5300}.Release|Any CPU.Build.0 = Release|Any CPU
-<<<<<<< HEAD
-=======
+<<<<<<< HEAD:PerformanceMonitor.sln
 		{092C591D-792A-45B1-B0CB-2391CDF07AD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{092C591D-792A-45B1-B0CB-2391CDF07AD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{092C591D-792A-45B1-B0CB-2391CDF07AD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{092C591D-792A-45B1-B0CB-2391CDF07AD2}.Release|Any CPU.Build.0 = Release|Any CPU
->>>>>>> upstream/master
+=======
+		{5284B3FC-579A-4DDB-8E09-AC05A1FA11A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5284B3FC-579A-4DDB-8E09-AC05A1FA11A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5284B3FC-579A-4DDB-8E09-AC05A1FA11A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5284B3FC-579A-4DDB-8E09-AC05A1FA11A0}.Release|Any CPU.Build.0 = Release|Any CPU
+>>>>>>> bb69733ebca8fee66d098f2e4339df1f7d1cae0b:src/PerformanceMonitor.sln
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

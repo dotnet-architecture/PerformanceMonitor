@@ -1,5 +1,6 @@
 ﻿@page
-@model WebApplication.Pages.Sidebar.ExceptionsModel
+@model WebApplication.Pages.Metrics.ExceptionsModel
+@using PerfMonitor
 @{
     ViewData["Title"] = "Exceptions";
 }
@@ -24,20 +25,20 @@
             </tr>
         </thead>
         <tbody>
-            @if (Model.except != null)
+            @if (Model.exceptions != null)
             {
-                @foreach (Exceptions e in Model.except)
+                @foreach (Exceptions e in Model.exceptions)
                 {
                     <tr>
                         <td>@e.type</td>
                         <td>@e.timestamp</td>
                     </tr>
+
                 }
             }
             else
             {
                 <tr>Unable to retrieve data</tr>
-
             }
         </tbody>
     </table>

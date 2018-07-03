@@ -18,16 +18,27 @@ namespace WebApplication.Pages.Metrics
         public List<Mem_Usage> mem { get; set; } = new List<Mem_Usage>();
 
         public double avgCPU;
+<<<<<<< HEAD:src/WebApplication/Pages/Sidebar/CPU_Memory.cshtml.cs
         public int timeAccounted; // Total time that is accounted for in the avgerage CPU. Used to update to new avgCPU
+=======
+        public int timeAccounted; // Total time that is accounted for in the average CPU. Used to update to new avgCPU
+>>>>>>> bb69733ebca8fee66d098f2e4339df1f7d1cae0b:src/WebApplication/Pages/Metrics/CPU_Memory.cshtml.cs
 
         // Counter that detects when 5 seconds pass so HTTP get requests are sent every 5 seconds
         // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
         private DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime(); 
         private DateTime newStamp = DateTime.Now.ToUniversalTime();
+<<<<<<< HEAD:src/WebApplication/Pages/Sidebar/CPU_Memory.cshtml.cs
+=======
+
+>>>>>>> bb69733ebca8fee66d098f2e4339df1f7d1cae0b:src/WebApplication/Pages/Metrics/CPU_Memory.cshtml.cs
         public async Task OnGet()
         {
 
             newStamp = DateTime.Now.ToUniversalTime();
+
+            Console.WriteLine("times: " + oldStamp + " " + newStamp);
+
 
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri("http://localhost:58026/");
@@ -39,23 +50,59 @@ namespace WebApplication.Pages.Metrics
             HttpResponseMessage cpuResponse = await client.GetAsync("api/v1/CPU/Daterange?start=" + httpGetRequestEnd);
             _cpuMetricService.updateUsingHttpResponse(cpuResponse);
 
+<<<<<<< HEAD:src/WebApplication/Pages/Sidebar/CPU_Memory.cshtml.cs
+=======
+            HttpResponseMessage memResponse = await client.GetAsync("api/v1/Memory/Daterange?start=" + httpGetRequestEnd);
+            _memMetricService.updateUsingHttpResponse(memResponse);
+
+>>>>>>> bb69733ebca8fee66d098f2e4339df1f7d1cae0b:src/WebApplication/Pages/Metrics/CPU_Memory.cshtml.cs
             if (cpuResponse.IsSuccessStatusCode)
             {
                 double totalCPU = avgCPU * timeAccounted; // Weighting previous avgCPU
 
                 // Updates CPU_Usage list and totalCPU to calculate new average
+<<<<<<< HEAD:src/WebApplication/Pages/Sidebar/CPU_Memory.cshtml.cs
                 List<CPU_Usage> addOn = await _cpuMetricService.getServiceUsage(); 
                 foreach (CPU_Usage c in addOn)
+=======
+                List<CPU_Usage> addOnCPU = await _cpuMetricService.getServiceUsage();
+                foreach (CPU_Usage c in addOnCPU)
+>>>>>>> bb69733ebca8fee66d098f2e4339df1f7d1cae0b:src/WebApplication/Pages/Metrics/CPU_Memory.cshtml.cs
                 {
                     totalCPU += c.usage; 
                     cpu.Add(c);                   
                 }
 
                 // Calculating new avgCPUs
+<<<<<<< HEAD:src/WebApplication/Pages/Sidebar/CPU_Memory.cshtml.cs
                 timeAccounted += addOn.Count;
                 avgCPU = totalCPU / (double)timeAccounted; 
             }
 
+=======
+                timeAccounted += addOnCPU.Count;
+                avgCPU = totalCPU / (double)timeAccounted;
+            }
+
+            if (memResponse.IsSuccessStatusCode)
+            {
+                List<Mem_Usage> addOnMem = await _memMetricService.getServiceUsage();
+                Console.WriteLine("addOnMem: " + mem.Count);
+
+                foreach (Mem_Usage m in addOnMem)
+                {
+                    Console.WriteLine("addOnMem item: " + m.usage + " " + m.timestamp);
+                    mem.Add(m);
+                }
+            }
+            else
+            {
+                Console.WriteLine("mem not successful");
+            }
+
+            Console.WriteLine("mem at end: " + mem.Count);
+
+>>>>>>> bb69733ebca8fee66d098f2e4339df1f7d1cae0b:src/WebApplication/Pages/Metrics/CPU_Memory.cshtml.cs
             //useSignalR(httpGetRequestEnd);
 
         }
