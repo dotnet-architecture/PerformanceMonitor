@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS HTTP_Data
+CREATE TABLE HTTP_Data (
+"type" VARCHAR(MAX), 
+"method" VARCHAR(MAX), 
+"path" VARCHAR(MAX),
+"timestamp" DATETIME PRIMARY KEY 
+)

@@ -3,11 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PerfMonitor
 {
-    public class Http_Request  // contains type of exception and timestamp
+    public class Jit  // contains the percentage of total CPU usage and DateTime of instant
     {
-        public String type { get; set; }
         public String method { get; set; }
-        public String path { get; set; }
         [Key]
         public DateTime timestamp { get; set; }
     }
