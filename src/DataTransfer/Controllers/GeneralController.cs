@@ -39,6 +39,10 @@ namespace PerfMonitor.Controllers
             {
                 _MetricContext.Exception_Data.Add(point);
             }
+            foreach(Http_Request point in met.requests)
+            {
+                _MetricContext.HTTP_Data.Add(point);
+            }
             await _MetricContext.SaveChangesAsync();
             return CreatedAtAction("CPU Data Created", new { obj = j }, null);
         }
