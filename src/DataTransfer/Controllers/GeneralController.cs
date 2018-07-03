@@ -43,6 +43,18 @@ namespace PerfMonitor.Controllers
             {
                 _MetricContext.HTTP_Data.Add(point);
             }
+            foreach(Jit point in met.jit)
+            {
+                _MetricContext.Jit_Data.Add(point);
+            }
+            foreach (Contention point in met.contentions)
+            {
+                _MetricContext.Contention_Data.Add(point);
+            }
+            foreach (GC point in met.gc)
+            {
+                _MetricContext.GC_Data.Add(point);
+            }
             await _MetricContext.SaveChangesAsync();
             return CreatedAtAction("CPU Data Created", new { obj = j }, null);
         }
