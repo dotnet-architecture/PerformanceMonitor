@@ -8,7 +8,7 @@ using PerfMonitor;
 using WebApplication.Interfaces;
 using WebApplication.Services;
 
-namespace WebApplication.Pages.Metrics
+namespace WebApplication.Pages.Sidebar
 {
     public class ExceptionsModel : PageModel
     {
