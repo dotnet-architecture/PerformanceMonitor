@@ -10,7 +10,7 @@ using WebApplication.Services;
 
 namespace WebApplication.Pages.Metrics
 {
-    public class Http_RequestsModel : PageModel
+    public class HTTP_RequestsModel : PageModel
     {
         private readonly IMetricService<Http_Request> _httpMetricService = new MetricService<Http_Request>();
         public List<Http_Request> http { get; set; } = new List<Http_Request>();
