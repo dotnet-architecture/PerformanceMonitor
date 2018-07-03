@@ -1,10 +1,45 @@
 ﻿@page
+@using PerfMonitor
 @model WebApplication.Pages.Metrics.Garbage_CollectionModel
 @{
     ViewData["Title"] = "Garbage_Collection";
 }
 
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
 <div class="main">
     <font size="50">Garbage Collection</font>
-    <p>Insert...</p>
+
+    <p>Log of Garbage Collection</p>
+    <table class="table table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>GC Type</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.gc != null)
+            {
+                @foreach (PerfMonitor.GC g in Model.gc)
+                {
+                    <tr>
+                        <td>@g.type</td>
+                        <td>@g.timestamp</td>
+                    </tr>
+
+                }
+            }
+            else
+            {
+                <tr>Unable to retrieve data</tr>
+            }
+        </tbody>
+    </table>
 </div>
