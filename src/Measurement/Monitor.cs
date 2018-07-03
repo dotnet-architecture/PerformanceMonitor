@@ -45,6 +45,10 @@ namespace PerfMonitor
         // list containing instances of exceptions
         public static List<Exceptions> ExceptionVals = new List<Exceptions>();
 
+        // HTTP Request block:
+        // list containing request start/stop events
+        public static List<Http_Request> RequestVals = new List<Http_Request>();
+
 
 
         /*
@@ -82,10 +86,12 @@ namespace PerfMonitor
                             list.cpu = CPUVals;
                             list.mem = MemVals;
                             list.exceptions = ExceptionVals;
+                            list.requests = RequestVals;
                             SendHTTP(list);
                             CPUVals.Clear();
                             MemVals.Clear();
                             ExceptionVals.Clear();
+                            RequestVals.Clear();
                         }
                     }
                 }
@@ -121,11 +127,17 @@ namespace PerfMonitor
                 session.Source.Dynamic.All += delegate (TraceEvent data) {
                     if (data.ProcessID == myProcess.Id && data.EventName == "Request/Start")
                     {
-                        Console.WriteLine("EVENT FOUND: {0} at {1}", data.EventName, data.TimeStamp);
+                        Http_Request request = new Http_Request();
+                        request.type = "Start";
+                        request.timestamp = DateTime.Now;
+                        RequestVals.Add(request);
                     }
                     else if (data.ProcessID == myProcess.Id && data.EventName == "Request/Stop")
                     {
-                        // make HTTP request class - one property will be type (start/stop) and other will be timestamp
+                        Http_Request request = new Http_Request();
+                        request.type = "Stop";
+                        request.timestamp = DateTime.Now;
+                        RequestVals.Add(request);
                     }
                 };
                 
