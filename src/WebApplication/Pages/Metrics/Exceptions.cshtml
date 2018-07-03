@@ -17,8 +17,6 @@
     <font size="50">Exceptions</font>
 
     <p>Log of Exceptions</p>
-    <p>@Model.except.Count</p>
-
     <table class="table table-hover table-bordered">
         <thead>
             <tr>
@@ -27,9 +25,9 @@
             </tr>
         </thead>
         <tbody>
-            @if (Model.except != null)
+            @if (Model.exceptions != null)
             {
-                @foreach (Exceptions e in Model.except)
+                @foreach (Exceptions e in Model.exceptions)
                 {
                     <tr>
                         <td>@e.type</td>

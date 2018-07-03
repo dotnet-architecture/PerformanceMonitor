@@ -13,13 +13,13 @@ namespace WebApplication.Pages.Metrics
     public class ExceptionsModel : PageModel
     {
         private readonly IMetricService<Exceptions> _exceptionsMetricService = new MetricService<Exceptions>();
-        public List<Exceptions> except { get; set; } = new List<Exceptions>();
+        public List<Exceptions> exceptions { get; set; } = new List<Exceptions>();
 
         // Counter that detects when 5 seconds pass so HTTP get requests are sent every 5 seconds
         // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
         private DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime();
         private DateTime newStamp = DateTime.Now.ToUniversalTime();
-        public async void OnGet()
+        public async Task OnGet()
         {
             newStamp = DateTime.Now.ToUniversalTime();
 
@@ -41,11 +41,15 @@ namespace WebApplication.Pages.Metrics
                 foreach (Exceptions e in addOn)
                 {
                     Console.WriteLine("addOn details: " + e.type + " " + e.timestamp);
-                    except.Add(e);
+                    exceptions.Add(e);
                 }
             }
 
-            Console.WriteLine("at end of adding: " + except.Count);
+            Console.WriteLine("at end of adding: " + exceptions.Count);
+            foreach (Exceptions e in exceptions)
+            {
+                Console.WriteLine("except details: " + e.type + " " + e.timestamp);
+            }
         }
     }
 }

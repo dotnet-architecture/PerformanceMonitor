@@ -18,7 +18,7 @@ namespace WebApplication.Pages.Metrics
         public List<Mem_Usage> mem { get; set; } = new List<Mem_Usage>();
 
         public double avgCPU;
-        public int timeAccounted; // Total time that is accounted for in the avgerage CPU. Used to update to new avgCPU
+        public int timeAccounted; // Total time that is accounted for in the average CPU. Used to update to new avgCPU
 
         // Counter that detects when 5 seconds pass so HTTP get requests are sent every 5 seconds
         // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
