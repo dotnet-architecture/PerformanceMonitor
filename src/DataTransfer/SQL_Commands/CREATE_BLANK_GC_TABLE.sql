@@ -1,0 +1,5 @@
+DROP TABLE IF EXISTS GC_Data
+CREATE TABLE GC_Datas (
+"type" VARCHAR(MAX), 
+"timestamp" DATETIME PRIMARY KEY 
+)
