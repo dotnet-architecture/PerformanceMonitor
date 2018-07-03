@@ -130,6 +130,13 @@ namespace PerfMonitor
                         Http_Request request = new Http_Request();
                         request.type = "Start";
                         request.timestamp = DateTime.Now;
+                        String datas = data.ToString();
+                        int index = datas.IndexOf("method");
+                        int index2 = datas.IndexOf("\"", index);
+                        request.method = datas.Substring(index2 + 1, datas.IndexOf("\"", index2 + 1) - index2);
+                        index = datas.IndexOf("path");
+                        index2 = datas.IndexOf("\"", index);
+                        request.path = datas.Substring(index2 + 1, datas.IndexOf("\"", index2 + 1) - index2);
                         RequestVals.Add(request);
                     }
                     else if (data.ProcessID == myProcess.Id && data.EventName == "Request/Stop")
