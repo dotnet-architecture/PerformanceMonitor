@@ -19,6 +19,18 @@ namespace WebApplication.Pages.Metrics
         // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
         private DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime();
         private DateTime newStamp = DateTime.Now.ToUniversalTime();
+
+        public async Task OnGet()
+        {
+            newStamp = DateTime.Now.ToUniversalTime();
+            List<Http_Request> addOn = await FetchDataService.getUpdatedData<Http_Request>(oldStamp, newStamp);
+
+            foreach (Http_Request h in addOn)
+            {
+                http.Add(h);
+            }
+        }
+        /*
         public async Task OnGet()
         {
             newStamp = DateTime.Now.ToUniversalTime();
@@ -43,5 +55,6 @@ namespace WebApplication.Pages.Metrics
                 }
             }
         }
+        */
     }
 }
