@@ -9,5 +9,8 @@ namespace PerfMonitor
         public List<Mem_Usage> mem { get; set; }
         public List<Exceptions> exceptions { get; set; }
         public List<Http_Request> requests { get; set; }
+        public List<Contention> contentions { get; set; }
+        public List<GC> gc { get; set; }
+        public List<Jit> jit { get; set; }
     }
 }

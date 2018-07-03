@@ -49,6 +49,15 @@ namespace PerfMonitor
         // list containing request start/stop events
         public static List<Http_Request> RequestVals = new List<Http_Request>();
 
+        // Contention block:
+        public static List<Contention> ContentionVals = new List<Contention>();
+
+        // Garbage Collection block:
+        public static List<GC> GCVals = new List<GC>();
+
+        // Jit block:
+        public static List<Jit> JitVals = new List<Jit>();
+
 
 
         /*
@@ -88,11 +97,17 @@ namespace PerfMonitor
                             list.mem = MemVals;
                             list.exceptions = ExceptionVals;
                             list.requests = RequestVals;
+                            list.contentions = ContentionVals;
+                            list.gc = GCVals;
+                            list.jit = JitVals;
                             SendHTTP(list);
                             CPUVals.Clear();
                             MemVals.Clear();
                             ExceptionVals.Clear();
                             RequestVals.Clear();
+                            ContentionVals.Clear();
+                            GCVals.Clear();
+                            JitVals.Clear();
                         }
                     }
                 }
@@ -123,7 +138,65 @@ namespace PerfMonitor
                         //Console.WriteLine("Exception found: {0} at {1}", e.type, e.timestamp);
                     }
                 };
-                
+
+                // subscribe to all contention start events
+                clrParser.ContentionStart += delegate (ContentionTraceData data)
+                {
+                    if (data.ProcessID == myProcess.Id)
+                    {
+                        Contention c = new Contention();
+                        c.type = "Start";
+                        c.timestamp = DateTime.Now;
+                        ContentionVals.Add(c);
+                    }
+                };
+                // subscribe to all contention stop events
+                clrParser.ContentionStop += delegate (ContentionTraceData data)
+                {
+                    if (data.ProcessID == myProcess.Id)
+                    {
+                        Contention c = new Contention();
+                        c.type = "Stop";
+                        c.timestamp = DateTime.Now;
+                        ContentionVals.Add(c);
+                    }
+                };
+
+                // subscribe to all GC start events
+                clrParser.GCStart += delegate (GCStartTraceData data)
+                {
+                    if (data.ProcessID == myProcess.Id)
+                    {
+                        GC gc = new GC();
+                        gc.type = "Start";
+                        gc.timestamp = DateTime.Now;
+                        GCVals.Add(gc);
+                    }
+                };
+                // subscribe to all GC stop events
+                clrParser.GCStop += delegate (GCEndTraceData data)
+                {
+                    if (data.ProcessID == myProcess.Id)
+                    {
+                        GC gc = new GC();
+                        gc.type = "Stop";
+                        gc.timestamp = DateTime.Now;
+                        GCVals.Add(gc);
+                    }
+                };
+
+                // subscribe to all Jit start events
+                clrParser.MethodJittingStarted += delegate (MethodJittingStartedTraceData data)
+                {
+                    if (data.ProcessID == myProcess.Id)
+                    {
+                        Jit j = new Jit();
+                        j.method = data.MethodName;
+                        j.timestamp = DateTime.Now;
+                        JitVals.Add(j);
+                    }
+                };
+
                 // subscribe to all dynamic events (used for HTTP request event tracking)
                 session.Source.Dynamic.All += delegate (TraceEvent data) {
                     if (data.ProcessID == myProcess.Id && data.EventName == "Request/Start")
@@ -152,7 +225,10 @@ namespace PerfMonitor
                 // set up providers for events using GUIDs
                 var AspSourceGuid = TraceEventProviders.GetEventSourceGuidFromName("Microsoft-AspNetCore-Hosting");
                 session.EnableProvider(AspSourceGuid);
-                session.EnableProvider(ClrTraceEventParser.ProviderGuid, TraceEventLevel.Verbose, 0x8000);
+                session.EnableProvider(ClrTraceEventParser.ProviderGuid, TraceEventLevel.Verbose, 0x8000);  // Exceptions
+                session.EnableProvider(ClrTraceEventParser.ProviderGuid, TraceEventLevel.Verbose, 0x4000);  // Contentions
+                session.EnableProvider(ClrTraceEventParser.ProviderGuid, TraceEventLevel.Verbose, 0x1);  // GC
+                session.EnableProvider(ClrTraceEventParser.ProviderGuid, TraceEventLevel.Verbose, 0x10);  // Jit
                 session.Source.Process();    // call the callbacks for each event
             }
         }
