@@ -23,6 +23,7 @@ namespace WebApplication
 
             Console.WriteLine(typeof(T));
 
+            //TO DO: make into switch and case
             if (typeof(T).ToString().Equals("PerfMonitor.CPU_Usage"))
             {
                 type = "CPU";
@@ -39,9 +40,21 @@ namespace WebApplication
             {
                 type = "HttpRequest";
             }
+            else if (typeof(T).ToString().Equals("PerfMonitor.Contentions"))
+            {
+                type = "Contention";
+            }
+            else if (typeof(T).ToString().Equals("PerfMonitor.GC"))
+            {
+                type = "GC"; 
+            }
+            else if (typeof(T).ToString().Equals("PerfMonitor.Jit"))
+            {
+                type = "Jit";
+            }
             else
             {
-                type = "test";
+                type = "test"; //should never hit this 
             }
 
             HttpResponseMessage response = await client.GetAsync("api/v1/" + type + "/Daterange?start=" + dateRange);
