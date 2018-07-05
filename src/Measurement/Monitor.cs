@@ -170,7 +170,7 @@ namespace DataTransfer
                         GC gc = new GC();
                         gc.type = "Start";
                         gc.timestamp = DateTime.Now;
-                        Console.WriteLine("GC START: {0}", data.ThreadID);
+                        gc.id = data.ThreadID;
                         GCVals.Add(gc);
                     }
                 };
@@ -182,7 +182,7 @@ namespace DataTransfer
                         GC gc = new GC();
                         gc.type = "Stop";
                         gc.timestamp = DateTime.Now;
-                        Console.WriteLine("GC STOP: {0}", data.ThreadID);
+                        gc.id = data.ThreadID;
                         GCVals.Add(gc);
                     }
                 };
@@ -194,7 +194,7 @@ namespace DataTransfer
                         GC gc = new GC();
                         gc.type = "Allocation Tick";
                         gc.timestamp = DateTime.Now;
-                        Console.WriteLine("GC ALLOCATION TICK: {0}", data.ThreadID);
+                        gc.id = data.ThreadID;
                         GCVals.Add(gc);
                     }
                 };
@@ -206,7 +206,7 @@ namespace DataTransfer
                         GC gc = new GC();
                         gc.type = "Create Concurrent Thread";
                         gc.timestamp = DateTime.Now;
-                        Console.WriteLine("GC CREATE CONCURRENT THREAD: {0}", data.ThreadID);
+                        gc.id = data.ThreadID;
                         GCVals.Add(gc);
                     }
                 };
@@ -218,7 +218,7 @@ namespace DataTransfer
                         GC gc = new GC();
                         gc.type = "Restart EE Start";
                         gc.timestamp = DateTime.Now;
-                        Console.WriteLine("GC RESTART EE START: {0}", data.ThreadID);
+                        gc.id = data.ThreadID;
                         GCVals.Add(gc);
                     }
                 };
@@ -230,7 +230,7 @@ namespace DataTransfer
                         GC gc = new GC();
                         gc.type = "Restart EE Stop";
                         gc.timestamp = DateTime.Now;
-                        Console.WriteLine("GC RESTART EE STOP: {0}", data.ThreadID);
+                        gc.id = data.ThreadID;
                         GCVals.Add(gc);
                     }
                 };
@@ -242,7 +242,7 @@ namespace DataTransfer
                         GC gc = new GC();
                         gc.type = "Suspend EE Start";
                         gc.timestamp = DateTime.Now;
-                        Console.WriteLine("GC SUSPEND EE START: {0}", data.ThreadID);
+                        gc.id = data.ThreadID;
                         GCVals.Add(gc);
                     }
                 };
@@ -254,7 +254,7 @@ namespace DataTransfer
                         GC gc = new GC();
                         gc.type = "Suspend EE Stop";
                         gc.timestamp = DateTime.Now;
-                        Console.WriteLine("GC SUSPEND EE STOP: {0}", data.ThreadID);
+                        gc.id = data.ThreadID;
                         GCVals.Add(gc);
                     }
                 };
@@ -266,7 +266,7 @@ namespace DataTransfer
                         GC gc = new GC();
                         gc.type = "Concurrent Thread Termination";
                         gc.timestamp = DateTime.Now;
-                        Console.WriteLine("GC CONCURRENT THREAD TERMINATION: {0}", data.ThreadID);
+                        gc.id = data.ThreadID;
                         GCVals.Add(gc);
                     }
                 };
@@ -278,7 +278,7 @@ namespace DataTransfer
                         GC gc = new GC();
                         gc.type = "Triggered";
                         gc.timestamp = DateTime.Now;
-                        Console.WriteLine("GC TRIGGERED: {0}", data.ThreadID);
+                        gc.id = data.ThreadID;
                         GCVals.Add(gc);
                     }
                 };
