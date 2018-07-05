@@ -12,7 +12,6 @@ namespace WebApplication.Pages.Metrics
 {
     public class JITModel : PageModel
     {
-        private readonly IMetricService<Jit> _gcMetricService = new MetricService<Jit>();
         public List<Jit> jit { get; set; } = new List<Jit>();
 
         // Counter that detects when 5 seconds pass so HTTP get requests are sent every 5 seconds
@@ -30,6 +29,5 @@ namespace WebApplication.Pages.Metrics
                 jit.Add(j);
             }
         }
-
     }
 }

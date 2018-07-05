@@ -12,35 +12,21 @@ namespace WebApplication.Pages.Metrics
 {
     public class ExceptionsModel : PageModel
     {
-        private readonly IMetricService<Exceptions> _exceptionsMetricService = new MetricService<Exceptions>();
         public List<Exceptions> exceptions { get; set; } = new List<Exceptions>();
 
         // Counter that detects when 5 seconds pass so HTTP get requests are sent every 5 seconds
         // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
         private DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime();
         private DateTime newStamp = DateTime.Now.ToUniversalTime();
+
         public async Task OnGet()
         {
             newStamp = DateTime.Now.ToUniversalTime();
+            List<Exceptions> addOn = await FetchDataService.getUpdatedData<Exceptions>(oldStamp, newStamp);
 
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("http://localhost:54022/");
-
-            // Converting DateTime to string that is accepted by HTTP requests
-            String httpGetRequestEnd = FetchDataService.convertDateTime(oldStamp) + "&end="
-                + FetchDataService.convertDateTime(newStamp);
-
-            HttpResponseMessage exceptionsResponse = await client.GetAsync("api/v1/Exception/Daterange?start=" + httpGetRequestEnd);
-            _exceptionsMetricService.updateUsingHttpResponse(exceptionsResponse);
-
-            if (exceptionsResponse.IsSuccessStatusCode)
+            foreach (Exceptions e in addOn)
             {
-                // Updates CPU_Usage list and totalCPU to calculate new average
-                List<Exceptions> addOn = await _exceptionsMetricService.getServiceUsage();
-                foreach (Exceptions e in addOn)
-                {
-                    exceptions.Add(e);
-                }
+                exceptions.Add(e);
             }
         }
     }

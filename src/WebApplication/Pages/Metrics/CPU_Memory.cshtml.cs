@@ -123,9 +123,6 @@ namespace WebApplication.Pages.Metrics
             this.oldStamp = updatedStamp;
             this.newStamp = DateTime.Now.ToUniversalTime();
 
-            Console.WriteLine("cpu details: " + cpu_addOn.Count + " " + cpu.Count);
-            Console.WriteLine("mem details: " + mem_addOn.Count + " " + mem.Count);
-
         }
 
         /*
