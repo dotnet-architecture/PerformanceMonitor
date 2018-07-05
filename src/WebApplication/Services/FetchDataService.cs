@@ -23,25 +23,38 @@ namespace WebApplication
 
             Console.WriteLine(typeof(T));
 
-            if (typeof(T).ToString().Equals("DataTransfer.CPU_Usage"))
+            //TO DO: make into switch and case
+            if (typeof(T).ToString().Equals("PerfMonitor.CPU_Usage"))
             {
                 type = "CPU";
             }
-            else if (typeof(T).ToString().Equals("DataTransfer.Mem_usage"))
+            else if (typeof(T).ToString().Equals("PerfMonitor.Mem_usage"))
             {
                 type = "Memory";
             }
-            else if (typeof(T).ToString().Equals("DataTransfer.Exceptions"))
+            else if (typeof(T).ToString().Equals("PerfMonitor.Exceptions"))
             {
                 type = "Exceptions";
             }
-            else if (typeof(T).ToString().Equals("DataTransfer.Http_Request"))
+            else if (typeof(T).ToString().Equals("PerfMonitor.Http_Request"))
             {
                 type = "HttpRequest";
             }
+            else if (typeof(T).ToString().Equals("PerfMonitor.Contentions"))
+            {
+                type = "Contention";
+            }
+            else if (typeof(T).ToString().Equals("PerfMonitor.GC"))
+            {
+                type = "GC"; 
+            }
+            else if (typeof(T).ToString().Equals("PerfMonitor.Jit"))
+            {
+                type = "Jit";
+            }
             else
             {
-                type = "test";
+                type = "test"; //should never hit this 
             }
 
             HttpResponseMessage response = await client.GetAsync("api/v1/" + type + "/Daterange?start=" + dateRange);
