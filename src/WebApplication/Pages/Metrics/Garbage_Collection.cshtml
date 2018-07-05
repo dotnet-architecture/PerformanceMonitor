@@ -1,5 +1,5 @@
 ﻿@page
-@using PerfMonitor
+@using DataTransfer
 @model WebApplication.Pages.Metrics.Garbage_CollectionModel
 @{
     ViewData["Title"] = "Garbage_Collection";
@@ -27,7 +27,7 @@
         <tbody>
             @if (Model.gc != null)
             {
-                @foreach (PerfMonitor.GC g in Model.gc)
+                @foreach (DataTransfer.GC g in Model.gc)
                 {
                     <tr>
                         <td>@g.type</td>

@@ -15,7 +15,7 @@ namespace WebApplication
             IMetricService<T> _metricService = new MetricService<T>();
 
             HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("http://localhost:58026/");
+            client.BaseAddress = new Uri("http://localhost:54022/");
 
             String dateRange = convertDateTime(oldStamp) + "&end=" + convertDateTime(newStamp);
 
