@@ -7,9 +7,9 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using PerfMonitor;
+using DataTransfer;
 
-namespace PerfMonitor
+namespace DataTransfer
 {
     public class Program
     {

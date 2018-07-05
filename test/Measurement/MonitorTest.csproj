@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\DataTransfer\Monitor.csproj" />
+    <ProjectReference Include="..\..\src\DataTransfer\DataTransfer.csproj" />
     <ProjectReference Include="..\..\src\Measurement\PerfMonitor.csproj" />
     <ProjectReference Include="..\..\src\Shared\Shared.csproj" />
   </ItemGroup>

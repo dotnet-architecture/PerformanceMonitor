@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using WebApplication.Services;
 using WebApplication.Interfaces;
 using System.Net.Http;
-using PerfMonitor;
+using DataTransfer;
 
 namespace WebApplication
 {
@@ -21,17 +21,27 @@ namespace WebApplication
 
             String type = "";
 
-            if (typeof(T) is CPU_Usage)
+            Console.WriteLine(typeof(T));
+
+            if (typeof(T).ToString().Equals("PerfMonitor.CPU_Usage"))
             {
                 type = "CPU";
             }
-            else if (typeof(T) is Mem_Usage)
+            else if (typeof(T).ToString().Equals("PerfMonitor.Mem_usage"))
             {
                 type = "Memory";
             }
+            else if (typeof(T).ToString().Equals("PerfMonitor.Exceptions"))
+            {
+                type = "Exceptions";
+            }
+            else if (typeof(T).ToString().Equals("PerfMonitor.Http_Request"))
+            {
+                type = "HttpRequest";
+            }
             else
             {
-                type = null;
+                type = "test";
             }
 
             HttpResponseMessage response = await client.GetAsync("api/v1/" + type + "/Daterange?start=" + dateRange);
@@ -44,6 +54,7 @@ namespace WebApplication
                 addOn = await _metricService.getServiceUsage();
             }
 
+            Console.WriteLine(type + " " + addOn.Count + " " + addOn);
             return addOn;
 
         }

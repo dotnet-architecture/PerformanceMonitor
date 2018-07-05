@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace PerfMonitor
+namespace DataTransfer
 {
     public class Mem_Usage  // contains the number of bytes used by process, and timestamp
     {
