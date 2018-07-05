@@ -23,19 +23,19 @@ namespace WebApplication
 
             Console.WriteLine(typeof(T));
 
-            if (typeof(T).ToString().Equals("PerfMonitor.CPU_Usage"))
+            if (typeof(T).ToString().Equals("DataTransfer.CPU_Usage"))
             {
                 type = "CPU";
             }
-            else if (typeof(T).ToString().Equals("PerfMonitor.Mem_usage"))
+            else if (typeof(T).ToString().Equals("DataTransfer.Mem_usage"))
             {
                 type = "Memory";
             }
-            else if (typeof(T).ToString().Equals("PerfMonitor.Exceptions"))
+            else if (typeof(T).ToString().Equals("DataTransfer.Exceptions"))
             {
                 type = "Exceptions";
             }
-            else if (typeof(T).ToString().Equals("PerfMonitor.Http_Request"))
+            else if (typeof(T).ToString().Equals("DataTransfer.Http_Request"))
             {
                 type = "HttpRequest";
             }
