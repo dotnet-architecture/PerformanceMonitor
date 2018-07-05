@@ -13,6 +13,7 @@ namespace WebApplication.Pages.Metrics
     public class Garbage_CollectionModel : PageModel
     {
         private readonly IMetricService<DataTransfer.GC> _gcMetricService = new MetricService<DataTransfer.GC>();
+        
         public List<DataTransfer.GC> gc { get; set; } = new List<DataTransfer.GC>();
 
         // Counter that detects when 5 seconds pass so HTTP get requests are sent every 5 seconds
