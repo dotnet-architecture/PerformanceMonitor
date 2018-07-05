@@ -67,7 +67,7 @@ namespace DataTransfer
         {
             // sets base address for HTTP requests - in local testing, this will need to be changed periodically
 
-            client.BaseAddress = new Uri("http://localhost:54022/");
+            client.BaseAddress = new Uri("http://localhost:51249/");
 
             // starts event collection via TraceEvent
             Task.Factory.StartNew(() =>
@@ -170,6 +170,7 @@ namespace DataTransfer
                         GC gc = new GC();
                         gc.type = "Start";
                         gc.timestamp = DateTime.Now;
+                        Console.WriteLine("GC START: {0}", data.ThreadID);
                         GCVals.Add(gc);
                     }
                 };
@@ -181,6 +182,103 @@ namespace DataTransfer
                         GC gc = new GC();
                         gc.type = "Stop";
                         gc.timestamp = DateTime.Now;
+                        Console.WriteLine("GC STOP: {0}", data.ThreadID);
+                        GCVals.Add(gc);
+                    }
+                };
+                // subscribe to all GC memory allocation ticks
+                clrParser.GCAllocationTick += delegate (GCAllocationTickTraceData data)
+                {
+                    if (data.ProcessID == myProcess.Id)
+                    {
+                        GC gc = new GC();
+                        gc.type = "Allocation Tick";
+                        gc.timestamp = DateTime.Now;
+                        Console.WriteLine("GC ALLOCATION TICK: {0}", data.ThreadID);
+                        GCVals.Add(gc);
+                    }
+                };
+                // subscribe to all creations of concurrent threads for GC
+                clrParser.GCCreateConcurrentThread += delegate (GCCreateConcurrentThreadTraceData data)
+                {
+                    if (data.ProcessID == myProcess.Id)
+                    {
+                        GC gc = new GC();
+                        gc.type = "Create Concurrent Thread";
+                        gc.timestamp = DateTime.Now;
+                        Console.WriteLine("GC CREATE CONCURRENT THREAD: {0}", data.ThreadID);
+                        GCVals.Add(gc);
+                    }
+                };
+                // subscribe to all restart starts
+                clrParser.GCRestartEEStart += delegate (GCNoUserDataTraceData data)
+                {
+                    if (data.ProcessID == myProcess.Id)
+                    {
+                        GC gc = new GC();
+                        gc.type = "Restart EE Start";
+                        gc.timestamp = DateTime.Now;
+                        Console.WriteLine("GC RESTART EE START: {0}", data.ThreadID);
+                        GCVals.Add(gc);
+                    }
+                };
+                // subscribe to all restart stops
+                clrParser.GCRestartEEStop += delegate (GCNoUserDataTraceData data)
+                {
+                    if (data.ProcessID == myProcess.Id)
+                    {
+                        GC gc = new GC();
+                        gc.type = "Restart EE Stop";
+                        gc.timestamp = DateTime.Now;
+                        Console.WriteLine("GC RESTART EE STOP: {0}", data.ThreadID);
+                        GCVals.Add(gc);
+                    }
+                };
+                // subscribe to all suspension starts
+                clrParser.GCSuspendEEStart += delegate (GCSuspendEETraceData data)
+                {
+                    if (data.ProcessID == myProcess.Id)
+                    {
+                        GC gc = new GC();
+                        gc.type = "Suspend EE Start";
+                        gc.timestamp = DateTime.Now;
+                        Console.WriteLine("GC SUSPEND EE START: {0}", data.ThreadID);
+                        GCVals.Add(gc);
+                    }
+                };
+                // subscribe to all suspension stops
+                clrParser.GCSuspendEEStop += delegate (GCNoUserDataTraceData data)
+                {
+                    if (data.ProcessID == myProcess.Id)
+                    {
+                        GC gc = new GC();
+                        gc.type = "Suspend EE Stop";
+                        gc.timestamp = DateTime.Now;
+                        Console.WriteLine("GC SUSPEND EE STOP: {0}", data.ThreadID);
+                        GCVals.Add(gc);
+                    }
+                };
+                // subscribe to all concurrent thread terminations
+                clrParser.GCTerminateConcurrentThread += delegate (GCTerminateConcurrentThreadTraceData data)
+                {
+                    if (data.ProcessID == myProcess.Id)
+                    {
+                        GC gc = new GC();
+                        gc.type = "Concurrent Thread Termination";
+                        gc.timestamp = DateTime.Now;
+                        Console.WriteLine("GC CONCURRENT THREAD TERMINATION: {0}", data.ThreadID);
+                        GCVals.Add(gc);
+                    }
+                };
+                // subscribe to all GC triggers
+                clrParser.GCTriggered += delegate (GCTriggeredTraceData data)
+                {
+                    if (data.ProcessID == myProcess.Id)
+                    {
+                        GC gc = new GC();
+                        gc.type = "Triggered";
+                        gc.timestamp = DateTime.Now;
+                        Console.WriteLine("GC TRIGGERED: {0}", data.ThreadID);
                         GCVals.Add(gc);
                     }
                 };
@@ -204,6 +302,7 @@ namespace DataTransfer
                         Http_Request request = new Http_Request();
                         request.type = "Start";
                         request.timestamp = DateTime.Now;
+                        request.id = data.ActivityID;
                         String datas = data.ToString();
                         int index = datas.IndexOf("method");
                         int index2 = datas.IndexOf("\"", index);
@@ -218,6 +317,7 @@ namespace DataTransfer
                         Http_Request request = new Http_Request();
                         request.type = "Stop";
                         request.timestamp = DateTime.Now;
+                        request.id = data.ActivityID;
                         RequestVals.Add(request);
                     }
                 };
@@ -243,7 +343,7 @@ namespace DataTransfer
                 Console.WriteLine(output);
                 // escapes string so that JSON object is interpreted as a single string
                 output = JsonConvert.ToString(output);
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "api/v1/CPU/CPUJSON/");
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "api/v1/General");
                 request.Content = new StringContent(output, System.Text.Encoding.UTF8, "application/json");
                 // sends POST request to server, containing JSON representation of events
                 try
