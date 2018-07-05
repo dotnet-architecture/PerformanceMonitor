@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Monitor", "DataTransfer\Monitor.csproj", "{D43471D2-0DA0-46BE-B979-4C677A0F4A61}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataTransfer", "DataTransfer\DataTransfer.csproj", "{D43471D2-0DA0-46BE-B979-4C677A0F4A61}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PerfMonitor", "Measurement\PerfMonitor.csproj", "{09865024-7982-49D8-A495-71705721587D}"
 EndProject

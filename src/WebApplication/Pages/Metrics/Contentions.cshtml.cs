@@ -4,7 +4,11 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR.Client;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+<<<<<<< HEAD
+using DataTransfer;
+=======
 using PerfMonitor;
+>>>>>>> 122dd06cf8b1b5192e9994b242b22cdc3bc16df7
 using WebApplication.Interfaces;
 using WebApplication.Services;
 

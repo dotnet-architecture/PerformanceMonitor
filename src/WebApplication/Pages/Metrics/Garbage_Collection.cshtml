@@ -1,5 +1,9 @@
 ﻿@page
+<<<<<<< HEAD
+@using DataTransfer
+=======
 @using PerfMonitor
+>>>>>>> 122dd06cf8b1b5192e9994b242b22cdc3bc16df7
 @model WebApplication.Pages.Metrics.Garbage_CollectionModel
 @{
     ViewData["Title"] = "Garbage_Collection";
@@ -27,7 +31,11 @@
         <tbody>
             @if (Model.gc != null)
             {
+<<<<<<< HEAD
+                @foreach (DataTransfer.GC g in Model.gc)
+=======
                 @foreach (PerfMonitor.GC g in Model.gc)
+>>>>>>> 122dd06cf8b1b5192e9994b242b22cdc3bc16df7
                 {
                     <tr>
                         <td>@g.type</td>
