@@ -29,7 +29,7 @@ namespace WebApplication.Pages.Metrics
         {
             
             HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("http://localhost:58026/");
+            client.BaseAddress = new Uri("http://localhost:54022/");
 
             // Converting DateTime to string that is accepted by HTTP requests
             String httpGetRequestEnd = FetchDataService.convertDateTime(oldStamp) + "&end=" 
