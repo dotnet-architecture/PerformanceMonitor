@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using Newtonsoft.Json;
 
-namespace PerfMonitor
+namespace DataTransfer
 {
     public class Monitor
     {
