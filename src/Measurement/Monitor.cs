@@ -67,7 +67,7 @@ namespace DataTransfer
         {
             // sets base address for HTTP requests - in local testing, this will need to be changed periodically
 
-            client.BaseAddress = new Uri("http://localhost:58026/");
+            client.BaseAddress = new Uri("http://localhost:54022/");
 
             // starts event collection via TraceEvent
             Task.Factory.StartNew(() =>
