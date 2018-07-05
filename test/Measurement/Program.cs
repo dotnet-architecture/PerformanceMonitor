@@ -17,6 +17,7 @@ namespace MonitorTest
                 if (DateTime.Now.Subtract(timer).TotalSeconds >= 1)
                 {
                     System.GC.Collect();
+                    System.GC.WaitForPendingFinalizers();
                     timer = DateTime.Now;
                 }
             }
