@@ -8,6 +8,7 @@ namespace DataTransfer
         public String type { get; set; }
         public String method { get; set; }
         public String path { get; set; }
+        public Guid id { get; set; }
         [Key]
         public DateTime timestamp { get; set; }
     }
