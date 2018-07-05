@@ -12,7 +12,6 @@ namespace WebApplication.Pages.Metrics
 {
     public class ContentionsModel : PageModel
     {
-        private readonly IMetricService<Contention> _contentionsMetricService = new MetricService<Contention>();
         public List<Contention> contentions { get; set; } = new List<Contention>();
 
         // Counter that detects when 5 seconds pass so HTTP get requests are sent every 5 seconds

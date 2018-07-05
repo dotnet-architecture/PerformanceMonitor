@@ -12,7 +12,6 @@ namespace WebApplication.Pages.Metrics
 {
     public class HTTP_RequestsModel : PageModel
     {
-        private readonly IMetricService<Http_Request> _httpMetricService = new MetricService<Http_Request>();
         public List<Http_Request> http { get; set; } = new List<Http_Request>();
 
         // Counter that detects when 5 seconds pass so HTTP get requests are sent every 5 seconds
@@ -30,6 +29,7 @@ namespace WebApplication.Pages.Metrics
                 http.Add(h);
             }
         }
+
         /*
         public async Task OnGet()
         {
