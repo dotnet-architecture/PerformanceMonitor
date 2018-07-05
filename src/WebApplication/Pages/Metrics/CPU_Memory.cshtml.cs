@@ -12,8 +12,6 @@ namespace WebApplication.Pages.Metrics
 {
     public class CPU_MemoryModel : PageModel
     {
-        private readonly IMetricService<CPU_Usage> _cpuMetricService = new MetricService<CPU_Usage>();
-        private readonly IMetricService<Mem_Usage> _memMetricService = new MetricService<Mem_Usage>();
         public List<CPU_Usage> cpu { get; set; } = new List<CPU_Usage>();
         public List<Mem_Usage> mem { get; set; } = new List<Mem_Usage>();
 
@@ -27,49 +25,32 @@ namespace WebApplication.Pages.Metrics
 
         public async Task OnGet()
         {
-            
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("http://localhost:54022/");
+            newStamp = DateTime.Now.ToUniversalTime();
+            List<CPU_Usage> cpu_addOn = await FetchDataService.getUpdatedData<CPU_Usage>(oldStamp, newStamp);
+            List<Mem_Usage> mem_addOn = await FetchDataService.getUpdatedData<Mem_Usage>(oldStamp, newStamp);
 
-            // Converting DateTime to string that is accepted by HTTP requests
-            String httpGetRequestEnd = FetchDataService.convertDateTime(oldStamp) + "&end=" 
-                + FetchDataService.convertDateTime(newStamp);
+            double totalCPU = avgCPU * timeAccounted; // Weighting previous avgCPU
 
-            HttpResponseMessage cpuResponse = await client.GetAsync("api/v1/CPU/Daterange?start=" + httpGetRequestEnd);
-            _cpuMetricService.updateUsingHttpResponse(cpuResponse);
-
-            HttpResponseMessage memResponse = await client.GetAsync("api/v1/Memory/Daterange?start=" + httpGetRequestEnd);
-            _memMetricService.updateUsingHttpResponse(memResponse);
-
-            if (cpuResponse.IsSuccessStatusCode)
+            // Updates CPU_Usage list and totalCPU to calculate new average
+            foreach (CPU_Usage c in cpu_addOn)
             {
-                double totalCPU = avgCPU * timeAccounted; // Weighting previous avgCPU
-
-                // Updates CPU_Usage list and totalCPU to calculate new average
-                List<CPU_Usage> addOnCPU = await _cpuMetricService.getServiceUsage();
-                foreach (CPU_Usage c in addOnCPU)
-                {
-                    totalCPU += c.usage; 
-                    cpu.Add(c);                   
-                }
-
-                // Calculating new avgCPUs
-                timeAccounted += addOnCPU.Count;
-                avgCPU = totalCPU / (double)timeAccounted;
+                totalCPU += c.usage;
+                cpu.Add(c);
             }
 
-            if (memResponse.IsSuccessStatusCode)
-            {
-                List<Mem_Usage> addOnMem = await _memMetricService.getServiceUsage();
+            // Calculating new avgCPUs
+            this.timeAccounted += cpu_addOn.Count;
+            this.avgCPU = totalCPU / (double)timeAccounted;
 
-                foreach (Mem_Usage m in addOnMem)
-                {
-                    mem.Add(m);
-                }
+            foreach (Mem_Usage m in mem_addOn)
+            {
+                mem.Add(m);
             }
-            
+
+            // Reset timers
+            this.oldStamp = newStamp;
+            this.newStamp = DateTime.Now.ToUniversalTime();
         }
-
         /*
         // Attempting to use SignalR
         public void useSignalR(string httpGetRequestEnd)
@@ -122,52 +103,7 @@ namespace WebApplication.Pages.Metrics
             // Reset timers
             this.oldStamp = updatedStamp;
             this.newStamp = DateTime.Now.ToUniversalTime();
-
         }
-
-        /*
-        public async Task getCPUUpdatedData(DateTime oldStamp, DateTime newStamp)
-        {
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("http://localhost:58026/");
-
-            String httpGetRequestEnd = convertDateTime(oldStamp) + "&end=" + convertDateTime(newStamp);
-
-            HttpResponseMessage cpu_response = await client.GetAsync("api/v1/CPU/Daterange?start=" + httpGetRequestEnd);
-            _cpuMetricService.updateUsingHttpResponse(cpu_response);
-
-            // Deserialize JSON object from response and update cpu and mem if response is successfull
-            if (cpu_response.IsSuccessStatusCode)
-            {
-                List<CPU_Usage> addOn = await _cpuMetricService.getServiceUsage();
-                foreach (CPU_Usage c in addOn)
-                {
-                    cpu.Add(c);
-                }
-            }
-        }
-
-        public async Task getMemoryUpdatedData(DateTime oldStamp, DateTime newStamp)
-        {
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("http://localhost:58026/");
-
-            String httpGetRequestEnd = convertDateTime(oldStamp) + "&end=" + convertDateTime(newStamp);
-
-            HttpResponseMessage mem_response = await client.GetAsync("api/v1/Memory/MEMBYUSAGE?start=" + httpGetRequestEnd);
-            _memMetricService.updateUsingHttpResponse(mem_response);
-
-            // Deserialize JSON object from response and update cpu and mem if response is successfull
-            if (mem_response.IsSuccessStatusCode)
-            {
-                List<Mem_Usage> addOn = await _memMetricService.getServiceUsage();
-                foreach(Mem_Usage m in addOn)
-                {
-                    mem.Add(m);
-                }
-            }
-        }
-        */
 
     }
 }

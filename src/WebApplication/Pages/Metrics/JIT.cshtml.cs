@@ -14,7 +14,6 @@ namespace WebApplication.Pages.Metrics
     {
         public List<Jit> jit { get; set; } = new List<Jit>();
 
-        // Counter that detects when 5 seconds pass so HTTP get requests are sent every 5 seconds
         // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
         private DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime();
         private DateTime newStamp = DateTime.Now.ToUniversalTime();
