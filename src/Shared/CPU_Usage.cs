@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace PerfMonitor
+namespace DataTransfer
 {
     public class CPU_Usage  // contains the percentage of total CPU usage and DateTime of instant
     {
