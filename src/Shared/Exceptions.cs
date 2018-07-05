@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace PerfMonitor
+namespace DataTransfer
 {
     public class Exceptions  // contains type of exception and timestamp
     {

@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Swagger;
 
-namespace PerfMonitor
+namespace DataTransfer
 {
     public class Startup
     {

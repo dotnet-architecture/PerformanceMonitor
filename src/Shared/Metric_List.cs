@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PerfMonitor
+namespace DataTransfer
 {
     public class Metric_List  // class used to aggregate events for transmission via JSON
     {

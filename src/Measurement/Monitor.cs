@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using Newtonsoft.Json;
 
-namespace PerfMonitor
+namespace DataTransfer
 {
     public class Monitor
     {
@@ -67,7 +67,7 @@ namespace PerfMonitor
         {
             // sets base address for HTTP requests - in local testing, this will need to be changed periodically
 
-            client.BaseAddress = new Uri("http://localhost:58026/");
+            client.BaseAddress = new Uri("http://localhost:54022/");
 
             // starts event collection via TraceEvent
             Task.Factory.StartNew(() =>
@@ -221,8 +221,9 @@ namespace PerfMonitor
                         RequestVals.Add(request);
                     }
                 };
-                
+
                 // set up providers for events using GUIDs
+                session.EnableProvider(new Guid("2e5dba47-a3d2-4d16-8ee0-6671ffdcd7b5"), TraceEventLevel.Informational, 0x80);
                 var AspSourceGuid = TraceEventProviders.GetEventSourceGuidFromName("Microsoft-AspNetCore-Hosting");
                 session.EnableProvider(AspSourceGuid);
                 session.EnableProvider(ClrTraceEventParser.ProviderGuid, TraceEventLevel.Verbose, 0x8000);  // Exceptions

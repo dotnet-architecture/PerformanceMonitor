@@ -7,7 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace PerfMonitor.Controllers
+namespace DataTransfer.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
