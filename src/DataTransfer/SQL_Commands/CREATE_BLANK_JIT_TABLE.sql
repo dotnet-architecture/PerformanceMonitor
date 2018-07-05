@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS JIT_Data
 CREATE TABLE JIT_Data (
-"type" VARCHAR(MAX), 
+"method" VARCHAR(MAX), 
 "timestamp" DATETIME PRIMARY KEY 
 )

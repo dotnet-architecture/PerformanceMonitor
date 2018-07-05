@@ -3,5 +3,6 @@ CREATE TABLE HTTP_Data (
 "type" VARCHAR(MAX), 
 "method" VARCHAR(MAX), 
 "path" VARCHAR(MAX),
+"id" UNIQUEIDENTIFIER,
 "timestamp" DATETIME PRIMARY KEY 
 )
