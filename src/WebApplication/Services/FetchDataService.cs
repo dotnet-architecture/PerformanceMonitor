@@ -52,7 +52,7 @@ namespace WebApplication
             }
             else
             {
-                type = "test"; //should never hit this 
+                type = "error"; //should never hit this 
             }
 
             HttpResponseMessage response = await client.GetAsync("api/v1/" + type + "/Daterange?start=" + dateRange);
@@ -66,19 +66,18 @@ namespace WebApplication
             }
 
             return addOn;
-
         }
 
         // Converting DateTIme to a string that Http request will accept
         public static String convertDateTime(DateTime d)
         {
-            String s = "";
-            s += d.Year.ToString("D4") + "-" + d.Month.ToString("D2") + "-"
-                + d.Day.ToString("D2") + "T" + d.Hour.ToString("D2") + "%3A" +
-                d.Minute.ToString("D2") + "%3A" + d.Second.ToString("D2") + "." +
+            return d.Year.ToString("D4") + "-" + 
+                d.Month.ToString("D2") + "-" + 
+                d.Day.ToString("D2") + "T" + 
+                d.Hour.ToString("D2") + "%3A" +
+                d.Minute.ToString("D2") + "%3A" + 
+                d.Second.ToString("D2") + "." +
                 d.Millisecond.ToString("D3");
-            return s;
         }
-
     }
 }
