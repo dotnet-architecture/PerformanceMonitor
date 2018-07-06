@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.AspNet.SignalR.Client;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using DataTransfer;
-using WebApplication.Interfaces;
-using WebApplication.Services;
 
 namespace WebApplication.Pages.Metrics
 {
