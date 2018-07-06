@@ -10,6 +10,12 @@ public class MetricContext : DbContext
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfiguration(new CPUContextEntityTypeConfiguration());
+        builder.ApplyConfiguration(new MEMContextEntityTypeConfiguration());
+        builder.ApplyConfiguration(new ExceptionContextEntityTypeConfiguration());
+        builder.ApplyConfiguration(new HTTPContextEntityTypeConfiguration());
+        builder.ApplyConfiguration(new ContentionContextEntityTypeConfiguration());
+        builder.ApplyConfiguration(new GCContextEntityTypeConfiguration());
+        builder.ApplyConfiguration(new JitContextEntityTypeConfiguration());
     }
     public DbSet<CPU_Usage> CPU_Data { get; set; }
     public DbSet<Mem_Usage> MEM_Data { get; set; }

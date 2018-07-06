@@ -47,7 +47,6 @@ namespace WebApplication.Pages.Metrics
             this.oldStamp = newStamp;
             this.newStamp = DateTime.Now.ToUniversalTime();
         }
-
         /*
         // Attempting to use SignalR
         public void useSignalR(string httpGetRequestEnd)
