@@ -27,6 +27,10 @@ namespace WebApplication.Pages.Metrics
             {
                 contentions.Add(c);
             }
+
+            // Reset timers
+            this.oldStamp = newStamp;
+            this.newStamp = DateTime.Now.ToUniversalTime();
         }
     }
 }
