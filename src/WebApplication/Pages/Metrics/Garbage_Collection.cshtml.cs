@@ -11,12 +11,9 @@ using WebApplication.Services;
 namespace WebApplication.Pages.Metrics
 {
     public class Garbage_CollectionModel : PageModel
-    {
-        private readonly IMetricService<DataTransfer.GC> _gcMetricService = new MetricService<DataTransfer.GC>();
-        
+    {        
         public List<DataTransfer.GC> gc { get; set; } = new List<DataTransfer.GC>();
 
-        // Counter that detects when 5 seconds pass so HTTP get requests are sent every 5 seconds
         // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
         private DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime();
         private DateTime newStamp = DateTime.Now.ToUniversalTime();

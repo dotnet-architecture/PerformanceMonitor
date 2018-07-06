@@ -21,34 +21,32 @@ namespace WebApplication
 
             String type = "";
 
-            Console.WriteLine(typeof(T));
-
             //TO DO: make into switch and case
-            if (typeof(T).ToString().Equals("PerfMonitor.CPU_Usage"))
+            if (typeof(T).ToString().Equals("DataTransfer.CPU_Usage"))
             {
                 type = "CPU";
             }
-            else if (typeof(T).ToString().Equals("PerfMonitor.Mem_usage"))
+            else if (typeof(T).ToString().Equals("DataTransfer.Mem_Usage"))
             {
                 type = "Memory";
             }
-            else if (typeof(T).ToString().Equals("PerfMonitor.Exceptions"))
+            else if (typeof(T).ToString().Equals("DataTransfer.Exceptions"))
             {
                 type = "Exceptions";
             }
-            else if (typeof(T).ToString().Equals("PerfMonitor.Http_Request"))
+            else if (typeof(T).ToString().Equals("DataTransfer.Http_Request"))
             {
-                type = "HttpRequest";
+                type = "HTTP";
             }
-            else if (typeof(T).ToString().Equals("PerfMonitor.Contentions"))
+            else if (typeof(T).ToString().Equals("DataTransfer.Contention"))
             {
                 type = "Contention";
             }
-            else if (typeof(T).ToString().Equals("PerfMonitor.GC"))
+            else if (typeof(T).ToString().Equals("DataTransfer.GC"))
             {
                 type = "GC"; 
             }
-            else if (typeof(T).ToString().Equals("PerfMonitor.Jit"))
+            else if (typeof(T).ToString().Equals("DataTransfer.Jit"))
             {
                 type = "Jit";
             }
@@ -67,7 +65,6 @@ namespace WebApplication
                 addOn = await _metricService.getServiceUsage();
             }
 
-            Console.WriteLine(type + " " + addOn.Count + " " + addOn);
             return addOn;
 
         }
