@@ -27,8 +27,9 @@
         <tbody>
             @if (Model.exceptions != null)
             {
-                @foreach (Exceptions e in Model.exceptions)
+                @for (int i = Model.exceptions.Count - 1; i >= 0; i--)
                 {
+                    Exceptions e = Model.exceptions.ElementAt<Exceptions>(i);
                     <tr>
                         <td>@e.type</td>
                         <td>@e.timestamp</td>
