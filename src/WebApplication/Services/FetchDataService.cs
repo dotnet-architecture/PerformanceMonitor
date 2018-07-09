@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using WebApplication.Services;
 using WebApplication.Interfaces;
 using System.Net.Http;
-using DataTransfer;
 
 namespace WebApplication
 {
@@ -21,7 +20,6 @@ namespace WebApplication
 
             String type = "";
 
-            //TO DO: make into switch and case
             if (typeof(T).ToString().Equals("DataTransfer.CPU_Usage"))
             {
                 type = "CPU";
@@ -30,13 +28,13 @@ namespace WebApplication
             {
                 type = "Memory";
             }
-            else if (typeof(T).ToString().Equals("DataTransfer.Exceptions"))
-            {
-                type = "Exceptions";
-            }
             else if (typeof(T).ToString().Equals("DataTransfer.Http_Request"))
             {
                 type = "HTTP";
+            }
+            else if (typeof(T).ToString().Equals("DataTransfer.Exceptions"))
+            {
+                type = "Exceptions";
             }
             else if (typeof(T).ToString().Equals("DataTransfer.Contention"))
             {
