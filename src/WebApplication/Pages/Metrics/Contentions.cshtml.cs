@@ -1,12 +1,10 @@
 ﻿using System;
+using System.Windows;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.AspNet.SignalR.Client;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using DataTransfer;
-using WebApplication.Interfaces;
-using WebApplication.Services;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNet.SignalR.Client;
 
 namespace WebApplication.Pages.Metrics
 {
@@ -27,6 +25,10 @@ namespace WebApplication.Pages.Metrics
             {
                 contentions.Add(c);
             }
+
+            // Reset timers
+            this.oldStamp = newStamp;
+            this.newStamp = DateTime.Now.ToUniversalTime();
         }
     }
 }

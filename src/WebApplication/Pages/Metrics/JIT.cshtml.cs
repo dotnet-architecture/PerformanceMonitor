@@ -23,6 +23,10 @@ namespace WebApplication.Pages.Metrics
             {
                 jit.Add(j);
             }
+
+            // Reset timers
+            this.oldStamp = newStamp;
+            this.newStamp = DateTime.Now.ToUniversalTime();
         }
     }
 }
