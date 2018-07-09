@@ -42,11 +42,9 @@ namespace DataTransfer
         public static List<Mem_Usage> MemVals = new List<Mem_Usage>();
 
         // Exception block:
-        // list containing instances of exceptions
         public static List<Exceptions> ExceptionVals = new List<Exceptions>();
 
         // HTTP Request block:
-        // list containing request start/stop events
         public static List<Http_Request> RequestVals = new List<Http_Request>();
 
         // Contention block:
@@ -65,11 +63,10 @@ namespace DataTransfer
          */ 
         public void Record()  // sets timer that calls Collect every five seconds
         {
-            // sets base address for HTTP requests - in local testing, this will need to be changed periodically
-
+            // sets base address for HTTP requests - in local testing, this may need to be changed periodically
             client.BaseAddress = new Uri("http://localhost:51249/");
 
-            // starts event collection via TraceEvent
+            // starts event collection via TraceEvent in separate task
             Task.Factory.StartNew(() =>
             {
                 TraceEvents();
@@ -93,6 +90,7 @@ namespace DataTransfer
                             httpTime = DateTime.Now;
                             // creates object that will store all event instances
                             Metric_List list = new Metric_List();
+
                             list.cpu = CPUVals;
                             list.mem = MemVals;
                             list.exceptions = ExceptionVals;
@@ -100,7 +98,9 @@ namespace DataTransfer
                             list.contentions = ContentionVals;
                             list.gc = GCVals;
                             list.jit = JitVals;
+
                             SendHTTP(list);
+
                             CPUVals.Clear();
                             MemVals.Clear();
                             ExceptionVals.Clear();
@@ -133,9 +133,7 @@ namespace DataTransfer
                         Exceptions e = new Exceptions();
                         e.type = data.ExceptionType;
                         e.timestamp = DateTime.Now;
-                        // adds exception to list of exceptions found
                         ExceptionVals.Add(e);
-                        //Console.WriteLine("Exception found: {0} at {1}", e.type, e.timestamp);
                     }
                 };
 
@@ -303,6 +301,7 @@ namespace DataTransfer
                         request.type = "Start";
                         request.timestamp = DateTime.Now;
                         request.id = data.ActivityID;
+                        // event message parsing to fetch method and path of request
                         String datas = data.ToString();
                         int index = datas.IndexOf("method");
                         int index2 = datas.IndexOf("\"", index);
@@ -326,10 +325,7 @@ namespace DataTransfer
                 session.EnableProvider(new Guid("2e5dba47-a3d2-4d16-8ee0-6671ffdcd7b5"), TraceEventLevel.Informational, 0x80);
                 var AspSourceGuid = TraceEventProviders.GetEventSourceGuidFromName("Microsoft-AspNetCore-Hosting");
                 session.EnableProvider(AspSourceGuid);
-                session.EnableProvider(ClrTraceEventParser.ProviderGuid, TraceEventLevel.Verbose, 0x8000);  // Exceptions
-                session.EnableProvider(ClrTraceEventParser.ProviderGuid, TraceEventLevel.Verbose, 0x4000);  // Contentions
-                session.EnableProvider(ClrTraceEventParser.ProviderGuid, TraceEventLevel.Verbose, 0x1);  // GC
-                session.EnableProvider(ClrTraceEventParser.ProviderGuid, TraceEventLevel.Verbose, 0x10);  // Jit
+                session.EnableProvider(ClrTraceEventParser.ProviderGuid, TraceEventLevel.Verbose, (0x8000 | 0x4000 | 0x1 | 0x10));
                 session.Source.Process();    // call the callbacks for each event
             }
         }
@@ -371,9 +367,7 @@ namespace DataTransfer
             // finds CPU usage for process as a percentage of total CPU time across the machine
             cpu.usage = (change / (period * processorTotal) * 100.0);
             cpu.timestamp = newStamp;
-            // adds CPU value to list of instances
             CPUVals.Add(cpu);
-            //Console.WriteLine("CPU: {0}; time: {1}", cpu.usage, cpu.timestamp);
         }
 
         private static void FetchMem()  // fetches Memory usage
@@ -381,9 +375,7 @@ namespace DataTransfer
             Mem_Usage mem = new Mem_Usage();
             mem.usage = process.WorkingSet64;
             mem.timestamp = DateTime.Now;
-            // adds Memory reading to list of instances
             MemVals.Add(mem);
-            //Console.WriteLine("Mem: {0}; time: {1}", mem.usage, mem.timestamp);
         }
 
         // setup to stop TraceEvent session upon application termination
