@@ -11,6 +11,7 @@ namespace MonitorTest
             monitor.Record();
             GCTest.Test();
             //ExceptionTest.Test();
+            //ContentionTest.Test();
         }
     }
 }
