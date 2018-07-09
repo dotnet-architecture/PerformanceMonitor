@@ -23,7 +23,7 @@ namespace DataTransfer.Controllers
 
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.Created)]
-        public async Task<IActionResult> CreateCPUDatapointFromJSON([FromBody]string j)
+        public async Task<IActionResult> CreateGeneralDatapointFromJSON([FromBody]string j)
         {
             Metric_List met = new Metric_List();
             met = JsonConvert.DeserializeObject<Metric_List>(j);

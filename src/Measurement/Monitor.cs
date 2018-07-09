@@ -64,7 +64,7 @@ namespace DataTransfer
         public void Record()  // sets timer that calls Collect every five seconds
         {
             // sets base address for HTTP requests - in local testing, this may need to be changed periodically
-            client.BaseAddress = new Uri("http://localhost:51249/");
+            client.BaseAddress = new Uri("http://localhost:54022/");
 
             // starts event collection via TraceEvent in separate task
             Task.Factory.StartNew(() =>
