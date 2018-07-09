@@ -60,11 +60,11 @@ namespace DataTransfer
 
         /*
          * METHOD DECLARATION BLOCK
-         */ 
+         */
         public void Record()  // sets timer that calls Collect every five seconds
         {
             // sets base address for HTTP requests - in local testing, this may need to be changed periodically
-            client.BaseAddress = new Uri("http://localhost:51249/");
+            client.BaseAddress = new Uri("http://localhost:54022/");
 
             // starts event collection via TraceEvent in separate task
             Task.Factory.StartNew(() =>
@@ -337,6 +337,7 @@ namespace DataTransfer
                 // converts list of metric measurements into a JSON object string
                 string output = JsonConvert.SerializeObject(metricList);
                 Console.WriteLine(output);
+
                 // escapes string so that JSON object is interpreted as a single string
                 output = JsonConvert.ToString(output);
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "api/v1/General");

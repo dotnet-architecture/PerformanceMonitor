@@ -27,8 +27,9 @@
         <tbody>
             @if (Model.contentions != null)
             {
-                @foreach (Contention c in Model.contentions)
+                @for (int i = Model.contentions.Count - 1; i >= 0; i--)
                 {
+                    Contention c = Model.contentions.ElementAt<Contention>(i);
                     <tr>
                         <td>@c.type</td>
                         <td>@c.timestamp</td>

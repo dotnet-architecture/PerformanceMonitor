@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using DataTransfer;
+using Newtonsoft.Json;
 
 namespace WebApplication.Pages.Metrics
 {
@@ -22,8 +23,9 @@ namespace WebApplication.Pages.Metrics
         public async Task OnGet()
         {
             newStamp = DateTime.Now.ToUniversalTime();
+
             List<CPU_Usage> cpu_addOn = await FetchDataService.getUpdatedData<CPU_Usage>(oldStamp, newStamp);
-            List<Mem_Usage> mem_addOn = await FetchDataService.getUpdatedData<Mem_Usage>(oldStamp, newStamp);
+            List<Mem_Usage> mem_addOn = await FetchDataService.getUpdatedData<Mem_Usage>(oldStamp, newStamp); 
 
             double totalCPU = avgCPU * timeAccounted; // Weighting previous avgCPU
 

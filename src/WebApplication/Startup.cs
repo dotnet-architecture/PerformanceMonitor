@@ -4,13 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNet.SignalR;
-using Microsoft.Owin;
-using Owin;
-using WebApplication.Services;
-using WebApplication.Interfaces;
-using Microsoft.AspNetCore.Owin;
-using Microsoft.AspNetCore.SpaServices;
+using DataTransfer.Hubs;
 
 namespace WebApplication
 {
@@ -22,11 +16,6 @@ namespace WebApplication
         }
 
         public IConfiguration Configuration { get; }
-
-        public static void COnfigureSignalR(IAppBuilder app)
-        {
-            //app.MapSignalR();
-        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -40,6 +29,8 @@ namespace WebApplication
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,7 +50,10 @@ namespace WebApplication
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
-            //Services.AddTransient<IMetricService, MetricService>(); 
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<MetricHub>("/metricHub");
+            });
 
             app.UseMvc();
         }

@@ -11,10 +11,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="/SignalR/hubs"></script>
 </head>
 
 <div class="main">
+
     <font size="50">CPU and Memory Usage</font>
 
     <p>Average CPU Usage: @Model.avgCPU</p>
@@ -29,10 +29,11 @@
                 </tr>
             </thead>
             <tbody>
-                @if (Model.cpu != null) 
+                @if (Model.cpu != null)
                 {
-                    @foreach (CPU_Usage c in Model.cpu)
+                    @for (int i = Model.cpu.Count - 1; i >= 0; i--)
                     {
+                        CPU_Usage c = Model.cpu.ElementAt<CPU_Usage>(i);
                         <tr>
                             <td>@c.usage</td>
                             <td>@c.timestamp</td>
@@ -41,7 +42,7 @@
                 }
                 else
                 {
-                <tr>Unable to retrieve data</tr>
+                    <tr>Unable to retrieve data</tr>
 
                 }
             </tbody>
@@ -59,8 +60,9 @@
         <tbody>
             @if (Model.mem != null)
             {
-                @foreach (Mem_Usage m in Model.mem)
+                @for (int i = Model.mem.Count - 1; i >= 0; i--)
                 {
+                    Mem_Usage m = Model.mem.ElementAt<Mem_Usage>(i);
                     <tr>
                         <td>@m.usage</td>
                         <td>@m.timestamp</td>
@@ -77,3 +79,32 @@
     </table>
 
 </div>
+
+
+<!--
+   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+   <script type="text/javascript">
+       google.charts.load('current', { 'packages': ['corechart'] });
+       google.charts.setOnLoadCallback(drawChart);
+
+       function drawChart() {
+           var data = google.visualization.arrayToDataTable([
+               ['TimeStamp', 'CPU'],
+               ['2001', @Model.cpu[0].usage],
+               ['2002', @Model.cpu[1].usage],
+               //['2006', 660, 1120],
+               //['2007', 1030, 540]
+           ]);
+
+           var options = {
+               title: 'CPU Usage',
+               curveType: 'function',
+               legend: { position: 'bottom' }
+           };
+
+           var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+           chart.draw(data, options);
+       }
+   </script> -->
