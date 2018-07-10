@@ -18,7 +18,10 @@ namespace MonitorTest
                 {
                     lock (valueTypeLock)
                     {
-                        valueType = 0;
+                        while (DateTime.Now.Subtract(timer).TotalSeconds < 2)
+                        {
+                            valueType = 0;
+                        }
                     }
                     timer = DateTime.Now;
                 }
@@ -32,7 +35,7 @@ namespace MonitorTest
                 {
                     while (true)
                     {
-                        valueType = 0;
+                        valueType = 1;
                     }
                 }
             }

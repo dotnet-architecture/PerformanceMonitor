@@ -7,9 +7,11 @@ namespace MonitorTest
     {
         static void Main(string[] args)
         {
-            Monitor monitor = new Monitor();
+            Monitor monitor = new Monitor("App");
             monitor.Record();
-            GCTest.Test();
+
+            CPUMemTest.Test();
+            //GCTest.Test();
             //ExceptionTest.Test();
             //ContentionTest.Test();
         }
