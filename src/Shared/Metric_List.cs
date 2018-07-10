@@ -5,6 +5,9 @@ namespace DataTransfer
 {
     public class Metric_List  // class used to aggregate events for transmission via JSON
     {
+        public String app { get; set; }
+        public int processorCount { get; set; }
+        public String os { get; set; }
         public List<CPU_Usage> cpu { get; set; }
         public List<Mem_Usage> mem { get; set; }
         public List<Exceptions> exceptions { get; set; }
