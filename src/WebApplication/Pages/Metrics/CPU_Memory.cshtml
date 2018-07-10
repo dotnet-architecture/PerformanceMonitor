@@ -14,11 +14,44 @@
     <script src="https://cdn.plot.ly/plotly-1.2.0.min.js"></script>
 </head>
 
-<body onload="JavaScript:timedRefresh(5000);">
+<body>
     <div class="main">
 
         <font size="50">CPU and Memory Usage</font>
 
+        <div id="chart"></div>
+        <script>
+            function getData() {
+                return @Model.cpu[@Model.cpu.Count -1].usage;
+            }
+
+            var increment = -1;
+            function incrementer() {
+                increment++;
+                return increment;
+            }
+
+            Plotly.plot('chart', [{
+                y: [getData()],
+                type:'line'
+            }])
+
+            var cnt = 0;
+            setInterval(function () {
+                Plotly.extendTraces('chart', { y: [[getData()]] }, [0]);
+                cnt++;
+                if (cnt > 100) {
+                    Plotly.relayout('chart', {
+                        xaxis: {
+                            range: [cnt - 100, cnt]
+                        }
+                    });
+                }
+            }, 15);
+        </script>
+
+
+        <!--
         <div id="tester"></div>
         <script>
             TESTER = document.getElementById('tester');
@@ -29,37 +62,6 @@
                     margin: { t: 0 }
                 });
         </script>
-
-        <div id="chart"></div>
-        <script>
-            function getData() {
-                return @Model.cpu[@Model.cpu.Count -1].usage;
-            }
-
-            var increment = -1;
-            function incrementer() {
-                increment++; 
-                return increment;
-            }
-
-            Plotly.plot('chart', [{
-                y: [getData()],
-                type:'line'
-            }])
-
-            setInterval(function () {
-                Plotly.extendTraces('chart', { y: [[getData()]] }, [0]);
-                cnt++;
-                if (cnt > 100) {
-                    Plotly.relayout('chart', {
-                        xaxis: {
-                            range: [cnt - 500, cnt]
-                        }
-                    });
-                }
-            }, 15);
-        </script>
-
 
         <div id="cpu"></div>
         <script>
@@ -72,6 +74,7 @@
             var data = [trace1];
             Plotly.plot('cpu', data);
         </script>
+        -->
 
         <p>Average CPU Usage: @Model.avgCPU</p>
 
