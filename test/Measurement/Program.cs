@@ -9,6 +9,10 @@ namespace MonitorTest
         {
             Monitor monitor = new Monitor();
             monitor.Record();
+
+            while (true)
+            {
+            }
             //GCTest.Test();
             //ExceptionTest.Test();
         }
