@@ -65,10 +65,10 @@ namespace WebApplication.Pages.Metrics
         // Returns cpu time stamp list as increasing integers for now
         public Array getCPUTimeStamps()
         {
-            List<int> cpuTime = new List<int>();
+            List<long> cpuTime = new List<long>();
             for (int i = 0; i < cpu.Count; i++)
             {
-                cpuTime.Add(i);
+                cpuTime.Add(cpu[i].timestamp.ToBinary());
             }
             return cpuTime.ToArray();
         }
