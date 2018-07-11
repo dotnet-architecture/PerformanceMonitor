@@ -1,5 +1,4 @@
-# PerformanceMonitor Data Collection
-Portion of Performance Monitor responsible for collection of application performance counters
+# .NET Core PerformanceMonitor
 
 ## Architecture Overview
 The Performance Monitor application allows .NET Core 2.1 developers to track application performance metrics via a web application. The application consists of three major components: performance data collection, data storage and handling, and data presentation. 
