@@ -13,10 +13,22 @@ namespace DataTransfer
 {
     public class Monitor
     {
+        public String app;
+        public int sampleRate;
+        public int sendRate;
+
+        public Monitor(String app = null, int sampleRate = 1000, int sendRate = 5000)
+        {
+            this.app = app;
+            this.sampleRate = sampleRate;
+            this.sendRate = sendRate;
+        }
+
         /*
          * VARIABLE DECLARATION BLOCK
          */
         public Process myProcess = Process.GetCurrentProcess();
+        public String myOS = Environment.OSVersion.ToString();
         // creates an HTTP client so that server requests can be made
         HttpClient client = new HttpClient();
         // time object used to check if data should be transmitted (would be done every five seconds)
@@ -77,7 +89,7 @@ namespace DataTransfer
                 while (true)
                 {
                     // if a second has passed since data collection
-                    if (DateTime.Now.Subtract(metricTime).TotalMilliseconds >= 1000)
+                    if (DateTime.Now.Subtract(metricTime).TotalMilliseconds >= sampleRate)
                     {
                         // reset timer and fetch metrics
                         metricTime = DateTime.Now;
@@ -85,12 +97,15 @@ namespace DataTransfer
                         FetchMem();
 
                         // if five seconds have passed since HTTP request was made
-                        if (DateTime.Now.Subtract(httpTime).TotalMilliseconds >= 5000)
+                        if (DateTime.Now.Subtract(httpTime).TotalMilliseconds >= sendRate)
                         {
                             httpTime = DateTime.Now;
                             // creates object that will store all event instances
                             Metric_List list = new Metric_List();
 
+                            list.app = app;
+                            list.processorCount = processorTotal;
+                            list.os = myOS;
                             list.cpu = CPUVals;
                             list.mem = MemVals;
                             list.exceptions = ExceptionVals;
@@ -334,12 +349,16 @@ namespace DataTransfer
         {
             if (metricList.cpu.Count != 0)
             {
-                // converts list of metric measurements into a JSON object string
-                string output = JsonConvert.SerializeObject(metricList);
-                Console.WriteLine(output);
+                string output;
+                lock (metricList)
+                {
+                    // converts list of metric measurements into a JSON object string
+                    output = JsonConvert.SerializeObject(metricList);
+                    Console.WriteLine(output);
+                    // escapes string so that JSON object is interpreted as a single string
+                    output = JsonConvert.ToString(output);
+                }
 
-                // escapes string so that JSON object is interpreted as a single string
-                output = JsonConvert.ToString(output);
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "api/v1/General");
                 request.Content = new StringContent(output, System.Text.Encoding.UTF8, "application/json");
                 // sends POST request to server, containing JSON representation of events
@@ -347,7 +366,7 @@ namespace DataTransfer
                 {
                     HttpResponseMessage response = client.SendAsync(request).Result;
                 }
-                catch {}
+                catch { }
             }
         }
 
