@@ -7,9 +7,11 @@ The Performance Monitor application allows .NET Core 2.1 developers to track app
 The first step of the process, data collection, is performed by a C# class library function that simply needs to be included in the beginning of the user's application code. The function will trigger application performance reading on the user's machine, and periodically send packets of data to an Azure SQL database. To utilize this service, include the PerfMonitor library and write the following at the start of the tracked application's Main method or equivalent:
 
 ```cs
-Monitor monitor = new Monitor();
+Monitor monitor = new Monitor([application name (String)], [sampling rate (int)], [transmission rate (int)]);
 monitor.Record();
 ```
+
+All arguments for Monitor class instantiation are optional - the default sampling rate is one second and the default transmission rate (rate at which data is sent to the server) is five seconds. If a rate is specified, the arguments should be provided in milliseconds. Providing an application name will allow an application with multiple processes to have its processes grouped within the performance monitor's tracking. To do so, simply run performance monitoring for each process simultaneously, with each Monitor instantiation specifying the same application name.
 
 This will trigger performance metric tracking that is done on the user's machine through a number of channels. The first of these channels is the System.Diagnostics namespace, which is used to fetch the current process to be tracked. This process can then have its CPU and memory usage fetched via the Process.TotalProcessorTime and Process.WorkingSet64 fields. The CPU usage reported by the monitor tool represents the percentage of total CPU on the machine, accounting for the number of logical cores present (which is detected via the System.Environment class).
 
