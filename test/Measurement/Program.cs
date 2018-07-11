@@ -11,7 +11,7 @@ namespace MonitorTest
             monitor.Record();
 
             CPUMemTest.Test();
-            //GCTest.Test(); 
+            //GCTest.Test();
             //ExceptionTest.Test();
 
             ContentionTest.Test();
