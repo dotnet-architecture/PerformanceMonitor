@@ -81,6 +81,8 @@ namespace DataTransfer
             // sets base address for HTTP requests - in local testing, this may need to be changed periodically
             client.BaseAddress = new Uri("http://localhost:54022/");
             session.process = (processName + " " + processID);
+            session.sampleRate = sampleRate;
+            session.sendRate = sendRate;
             session.processorCount = processorTotal;
             session.os = myOS;
             session.app = app;
