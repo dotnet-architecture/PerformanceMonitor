@@ -5,6 +5,8 @@ namespace DataTransfer
 {
     public class GC  // contains the percentage of total CPU usage and DateTime of instant
     {
+        public String app { get; set; }
+        public String process { get; set; }
         public String type { get; set; }
         public int id { get; set; }
         [Key]
