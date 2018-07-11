@@ -21,14 +21,9 @@
 
         <div id="chart"></div>
         <script>
-            function getData() {
-                return @Model.cpu[@Model.cpu.Count -1].usage;
-            }
 
-            var increment = -1;
-            function incrementer() {
-                increment++;
-                return increment;
+            function getData() {
+                return @Model.cpu[Model.cpu.Count - 1].usage;
             }
 
             Plotly.plot('chart', [{
@@ -47,34 +42,61 @@
                         }
                     });
                 }
-            }, 15);
-        </script>
-
-
-        <!--
-        <div id="tester"></div>
-        <script>
-            TESTER = document.getElementById('tester');
-            Plotly.plot(TESTER, [{
-                x: [1, 2, 3, 4, 5],
-                y: [1, 2, 4, 8, 16]
-            }], {
-                    margin: { t: 0 }
-                });
+            }, 5);
         </script>
 
         <div id="cpu"></div>
         <script>
-            TESTER = document.getElementById('cpu');
-            var trace1 = {
-                x: [1],
-                y: [2],
+
+            var CPU_Usage = {
+                y: @Model.getCPUUsage(),
                 type: 'scatter'
             };
-            var data = [trace1];
-            Plotly.plot('cpu', data);
+            
+            var data = [CPU_Usage];
+
+            var layout = {
+                xaxis: {
+                    visible: true,
+                    title: "Time"
+                },
+                yaxis: {
+                    visible: true, 
+                    title: "CPU Usage"
+                }
+            }
+
+            var graphOptions = {
+                layout: layout,
+            };
+
+            Plotly.plot('test', data, graphOptions);
         </script>
-        -->
+
+        <!--
+    <div id="tester"></div>
+    <script>
+        TESTER = document.getElementById('tester');
+        Plotly.plot(TESTER, [{
+            x: [1, 2, 3, 4, 5],
+            y: [1, 2, 4, 8, 16]
+        }], {
+                margin: { t: 0 }
+            });
+    </script>
+
+    <div id="cpu"></div>
+    <script>
+        TESTER = document.getElementById('cpu');
+        var trace1 = {
+            x: [1],
+            y: [2],
+            type: 'scatter'
+        };
+        var data = [trace1];
+        Plotly.plot('cpu', data);
+    </script>
+    -->
 
         <script>
         const start = `@Html.Encode(Model.oldStampString)`;
