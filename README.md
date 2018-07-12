@@ -11,13 +11,13 @@ Monitor monitor = new Monitor(String application_name, int sampling_rate, int tr
 monitor.Record();
 ```
 
-All arguments for Monitor class instantiation are optional - the default sampling rate is one second and the default transmission rate (rate at which data is sent to the server) is five seconds. If a rate is specified, the arguments should be provided in milliseconds and the sampling rate should be lower than the transmission rate for expected performance. Providing an application name will allow an application with multiple processes to have its processes grouped within the performance monitor's tracking. To do so, simply run performance monitoring for each process simultaneously, with each Monitor instantiation specifying the same application name.
+All arguments for _Monitor_ class instantiation are optional - the default sampling rate is one second and the default transmission rate (rate at which data is sent to the server) is five seconds. If a rate is specified, the arguments should be provided in milliseconds and the sampling rate should be lower than the transmission rate for expected performance. Providing an application name will allow an application with multiple processes to have its processes grouped within the performance monitor's tracking. To do so, simply run performance monitoring for each process simultaneously, with each Monitor instantiation specifying the same application name.
 
-This will trigger performance metric tracking that is done on the user's machine through two channels. The first of these channels is the System.Diagnostics namespace, which is used to fetch the current process to be tracked. This process can then have its CPU and memory usage fetched via the Process.TotalProcessorTime and Process.WorkingSet64 fields. The CPU usage reported by the monitor tool represents the percentage of total CPU on the machine, accounting for the number of logical cores present (which is detected via the System.Environment class).
+This will trigger performance metric tracking that is done on the user's machine through two channels. The first of these channels is the _System.Diagnostics_ namespace, which is used to fetch the current process to be tracked. This process can then have its CPU and memory usage fetched via the _Process.TotalProcessorTime_ and _Process.WorkingSet64_ fields. The CPU usage reported by the monitor tool represents the percentage of total CPU on the machine, accounting for the number of logical cores present (which is detected via the _System.Environment_ class).
 
 The other channel for data collection is the TraceEvent library (repo found here: https://github.com/Microsoft/perfview/tree/master/src/TraceEvent). A new TraceEvent session is initialized upon starting the program, and delegates are added for responses to certain exception, GC, contention, JIT, and HTTP request events (request events will only be triggered by interaction with ASP.NET Core applications). A list of tracked events and how they are collected can be found further on in this document within the technical detail section. Handling events via TraceEvent is not done with a controlled sampling rate, since event responses are triggered live as events are discovered by the event parsers.
 
-Data collection is (by default) performed roughly every second, by looping through a function that performs a check of the current time via System.DateTime.Now. Each time a piece of data is recorded, a class instance is created for the datapoint (each form of data has its own class, with fields containing relevant information for the data). This class instance is added to a Collection of the data type. Every five seconds (by default), the collected data is aggregated into a Metric_List class instance - which is simply a class whose fields consist of the Collections of each monitored data type. This Metric_List instance is then serialized into a JSON string, and is sent in the body of a POST request to the monitor application's web API via the System.Net.Http.HttpClient class. After the data is sent, the Collections containing the datapoints are cleared and the process begins again.
+Data collection is (by default) performed roughly every second, by looping through a function that performs a check of the current time via _System.DateTime.Now_. Each time a piece of data is recorded, a class instance is created for the datapoint (each form of data has its own class, with fields containing relevant information for the data). This class instance is added to a Collection of the data type. Every five seconds (by default), the collected data is aggregated into a _Metric_List_ class instance - which is simply a class whose fields consist of the Collections of each monitored data type. This _Metric_List_ instance is then serialized into a JSON string, and is sent in the body of a POST request to the monitor application's web API via the _System.Net.Http.HttpClient_ class. After the data is sent, the Collections containing the datapoints are cleared and the process begins again.
 
 ### Data Storage
 The data collected is currently being hosted on a SQL database running through Docker. This allows for local testing of the application. In the future, the database will be moved to AzureSQL. This will allow the final product to run with minimal setup from the user. Startup.cs holds the location of the connection string for the server, and can be changed as necessary.
@@ -32,50 +32,50 @@ The web application is built using ASP.NET CORE and Razor Pages to create a dyna
 ### Data Collection
 
 #### Testing
-The MonitorTest project within the solution contains C# classes that are each used to test a particular type of metric collection. The project's executable file is Program.cs, which contains only a Main method. In order to run a test for a particular metric, uncomment the metric's test line within Main - for example, to test collection of GC events, uncomment the line reading "GCTest.Test();". Then run MonitorTest, and GC events will be triggered for debugging. As it stands, only one test file can be run at a time (if multiple lines are uncommented, only the first test to appear in the code will run).
+The _MonitorTest_ project within the solution contains C# classes that are each used to test a particular type of metric collection. The project's executable file is Program.cs, which contains only a Main method. In order to run a test for a particular metric, uncomment the metric's test line within Main - for example, to test collection of GC events, uncomment the line reading "GCTest.Test();". Then run _MonitorTest_, and GC events will be triggered for debugging. As it stands, only one test file can be run at a time (if multiple lines are uncommented, only the first test to appear in the code will run).
 
-IMPORTANT: When running MonitorTest, a console window will pop up and display the program's output. In order to safely terminate the program, press Ctrl+C before closing the window. If Ctrl+C is not pressed, the session allowing TraceEvent to run and collect events will not terminate. The next run of MonitorTest would attempt to recreate the same session, and an error would be triggered. If you forget to Ctrl+C and run into this error, open up your machine's terminal or command prompt and run the command "logman stop MySession -ets". This will close the session, and you will be able to run MonitorTest again.
+__IMPORTANT__: When running _MonitorTest_, a console window will pop up and display the program's output. In order to safely terminate the program, press Ctrl+C before closing the window. If Ctrl+C is not pressed, the session allowing TraceEvent to run and collect events will not terminate. The next run of _MonitorTest_ would attempt to recreate the same session, and an error would be triggered. If you forget to Ctrl+C and run into this error, open up your machine's terminal or command prompt and run the command "logman stop MySession -ets". This will close the session, and you will be able to run _MonitorTest_ again.
 
 ## Functionality Specifics
 ### Data Collection
-The actual code that performs data collection is Monitor.cs, within the PerfMonitor C# class library. It specifies the Monitor class, includes all necessary C# libraries, and contains the functions that perform data collection and interfacing with the other components of the PerformanceMonitor project.
+The actual code that performs data collection is Monitor.cs, within the PerfMonitor C# class library. It specifies the _Monitor_ class, includes all necessary C# libraries, and contains the functions that perform data collection and interfacing with the other components of the PerformanceMonitor project.
 
 The performance metrics that are monitored by the PerformanceMonitor are as follows:
 
-1. CPU usage
-2. Memory usage
-3. HTTP requests
+__1.__ CPU usage
+__2.__ Memory usage
+__3.__ HTTP requests
   * Method
   * Path
   * Duration
   * Frequency
-4. Exceptions
+__4.__ Exceptions
   * Type
   * Frequency
-5. Garbage Collection
+__5.__ Garbage Collection
   * Type
   * Duration
   * Frequency
-6. Contention
+__6.__ Contention
   * Duration
   * Frequency
-7. JIT events
+__7.__ JIT events
   * Method
   * Count
 
 #### Recording Metrics (System.Diagnostics.Process class)
-As mentioned above, CPU and memory usage are fetched via the System.Diagnostics.Process class. A new Monitor class instance must be created for each process that a user would like to monitor, because the data is fetched by first calling Process.GetCurrentProcess();, which will return a Process class instance. This class instance contains a number of fields that are used to track CPU and memory performance. These metrics will be sampled as often as the sampling rate dictates. This is done by looping through a while(true) loop in the Record() function, and comparing a TimeSpan between the last sample and the current time to the sampling rate.
+As mentioned above, CPU and memory usage are fetched via the _System.Diagnostics.Process_ class. A new _Monitor_ class instance must be created for each process that a user would like to monitor, because the data is fetched by first calling Process.GetCurrentProcess();, which will return a _Process_ class instance. This class instance contains a number of fields that are used to track CPU and memory performance. These metrics will be sampled as often as the sampling rate dictates. This is done by looping through a while(true) loop in the Record() function, and comparing a TimeSpan between the last sample and the current time to the sampling rate.
 
 ##### CPU
-Tracking CPU usage requires a small amount of overhead for calculation and comparison of a few variables. The total time that a machine's logical processors spend running the user's process is described by Process.TotalProcessorTime, and this is what is used to calculate the percentage of time that the processor (accounting for all logical cores) has spent running the user's code. The time between samplings in recording using DateTime objects, and the amount of time is multiplied by the number of logical cores (fetched by System.Environment.ProcessorCount) to determine the total amount of time that the processors can allocate to work during the interval. These values are used to generate a percentage of time spent running the process.
+Tracking CPU usage requires a small amount of overhead for calculation and comparison of a few variables. The total time that a machine's logical processors spend running the user's process is described by _Process.TotalProcessorTime_, and this is what is used to calculate the percentage of time that the processor (accounting for all logical cores) has spent running the user's code. The time between samplings in recording using DateTime objects, and the amount of time is multiplied by the number of logical cores (fetched by _System.Environment.ProcessorCount_) to determine the total amount of time that the processors can allocate to work during the interval. These values are used to generate a percentage of time spent running the process.
 
 Like all other metrics that are collected, there is a unique class used by the project components in order to standardize data representation and make JSON (de)serialization easier for data sharing. All classes contain a field for an application name (String that the user can specify), process descriptor (String that's generated from the process name and ID), and timestamp (DateTime specifying the instance the data was collected). The CPU class also contains a "usage" field, which is a double containing the percentage of CPU usage for a given sample. This class, like all other shared classes in the project, exists within the Shared class library.
 
 ##### Memory
-Memory usage sampling is much more straightforward than CPU sampling - the process' memory usage can be fetched with a single fetching of the process' WorkingSet64 property. The memory usage class looks essentially identical to the CPU class, except the usage is stored as a long (the return value of the WorkingSet64 property).
+Memory usage sampling is much more straightforward than CPU sampling - the process' memory usage can be fetched with a single fetching of the process' _WorkingSet64_ property. The memory usage class looks essentially identical to the CPU class, except the usage is stored as a long (the return value of the _WorkingSet64_ property).
 
 #### Recording Metrics (TraceEvent library)
-The rest of the collected metrics are discovered via the TraceEvent library. As mentioned before, these events are not sampled at regular intervals. Instead, delegate actions are set up in response to the discovery of events as they occur, through an independent task established upon calling Monitor.Record(). It's worth noting that due to data structure locking, all event tracing is paused for the duration of HTTP requests to the database which stores the performance metrics. This means that certain events, and certain CPU/memory usage data points, may go missing periodically (typically around startup).
+The rest of the collected metrics are discovered via the TraceEvent library. As mentioned before, these events are not sampled at regular intervals. Instead, delegate actions are set up in response to the discovery of events as they occur, through an independent task established upon calling _Monitor.Record()_. It's worth noting that due to data structure locking, all event tracing is paused for the duration of HTTP requests to the database which stores the performance metrics. This means that certain events, and certain CPU/memory usage data points, may go missing periodically (typically around startup).
 
 The following event collection descriptions will mention terms and processes specific to TraceEvent, so  please refer to the TraceEvent programmer's guide (https://github.com/Microsoft/dotnet-samples/blob/master/Microsoft.Diagnostics.Tracing/TraceEvent/docs/TraceEvent.md) in order to gain a better understanding of how the library works.
 
