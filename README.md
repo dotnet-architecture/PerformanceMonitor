@@ -43,7 +43,9 @@ The actual code that performs data collection is Monitor.cs, within the PerfMoni
 The performance metrics that are monitored by the PerformanceMonitor are as follows:
 
 1. __CPU usage__
+
 2. __Memory usage__
+
 3. __HTTP requests__
   * Method
   * Path
