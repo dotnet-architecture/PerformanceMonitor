@@ -170,6 +170,7 @@ namespace DataTransfer
                         c.app = app;
                         c.process = (processName + " " + processID);
                         c.type = "Start";
+                        c.id = data.ActivityID;
                         c.timestamp = DateTime.Now;
                         ContentionVals.Add(c);
                     }
@@ -183,6 +184,7 @@ namespace DataTransfer
                         c.app = app;
                         c.process = (processName + " " + processID);
                         c.type = "Stop";
+                        c.id = data.ActivityID;
                         c.timestamp = DateTime.Now;
                         ContentionVals.Add(c);
                     }
