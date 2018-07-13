@@ -124,10 +124,10 @@ For garbage collection, delegates must be set up for a number of different event
 Both contention and JIT events are very straightforward in how they are tracked. ContentionStart and ContentionStop events are correlated by activity ID to determine time per contention, and JIT events are recorded every time a method within the process is jitted. The contention class includes a "type" field (String - "Start" or "Stop") as well as an activity ID field (GUID), and the JIT class includes the jitted method's name (String). Method jitting will typically be heaviest upon startup and then fall off in frequency.
 
 #### Data Transmission
-There are two more shared classes within the project, in addition to the classes for each metric type: a _Session_ class and a _Metric___List_ class.
+There are two more shared classes within the project, in addition to the classes for each metric type: a _Session_ class and a _Metric_List_ class.
 
 ##### The _Session_ class
 The _Session_ class is meant to contain information unique to a user's process and michine that will help the user 1. identify and recognize unique processes within a single application, and 2. understand performance metrics in the context of the local machine's environment. The class has six fields: "app" (String containing the user-specified application name), "process" (String composed of the process' name - for example, "dotnet" - and unique ID), "sampleRate" (int - milliseconds between CPU and memory measurements), "sendRate" (int - milliseconds between data transmissions to server), "processorCount" (int - number of logical processors on machine), and "os" (String describing the machine's operating system).
 
-##### The _Metric___List_ class
-The _Metric___List_ class is meant to be used for data packaging and efficient sharing between the different components of the project. Its fields are: "session", "cpu", "mem", "exceptions", "requests", "contentions", "gc", and "jit". The session field contains an instance of the _Session_ class for the current process - this will not change throughout the running of a single process. Each of the fields corresponding to a performance metric type is a Collection of class instances for the given type.
+##### The _Metric_List_ class
+The _Metric_List_ class is meant to be used for data packaging and efficient sharing between the different components of the project. Its fields are: "session", "cpu", "mem", "exceptions", "requests", "contentions", "gc", and "jit". The session field contains an instance of the _Session_ class for the current process - this will not change throughout the running of a single process. Each of the fields corresponding to a performance metric type is a Collection of class instances for the given type.
