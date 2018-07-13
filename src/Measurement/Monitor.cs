@@ -27,49 +27,49 @@ namespace DataTransfer
         /*
          * VARIABLE DECLARATION BLOCK
          */
-        public static Process myProcess = Process.GetCurrentProcess();
-        public String processName = myProcess.ProcessName;
-        public String processID = myProcess.Id.ToString();
-        public String myOS = Environment.OSVersion.ToString();
-        public static Session session = new Session();
+        private static Process myProcess = Process.GetCurrentProcess();
+        private static String processName = myProcess.ProcessName;
+        private static String processID = myProcess.Id.ToString();
+        private static String myOS = Environment.OSVersion.ToString();
+        private static Session session = new Session();
         
         // creates an HTTP client so that server requests can be made
         HttpClient client = new HttpClient();
         // time object used to check if data should be transmitted (would be done every five seconds)
-        public static DateTime httpTime = DateTime.Now;
+        private static DateTime httpTime = DateTime.Now;
 
         // CPU block:
         // fetches the processor count for the machine for total CPU calculation
-        public static int processorTotal = Environment.ProcessorCount;
-        static double oldTime = 0;
-        static DateTime oldStamp = DateTime.Now;
-        static double newTime = 0;
-        static DateTime newStamp = DateTime.Now;
-        static double change = 0;
-        static double period = 0;
-        // time object used to check if data should be collected (would be done every second)
-        public static DateTime metricTime = DateTime.Now;
+        private static int processorTotal = Environment.ProcessorCount;
+        private static double oldTime = 0;
+        private static DateTime oldStamp = DateTime.Now;
+        private static double newTime = 0;
+        private static DateTime newStamp = DateTime.Now;
+        private static double change = 0;
+        private static double period = 0;
+        // time object used to check if data should be collected
+        private static DateTime metricTime = DateTime.Now;
         // list containing instances of CPU readings
-        public static List<CPU_Usage> CPUVals = new List<CPU_Usage>();
+        private static List<CPU_Usage> CPUVals = new List<CPU_Usage>();
 
         // Mem block:
         // list containing instances of Memory readings
-        public static List<Mem_Usage> MemVals = new List<Mem_Usage>();
+        private static List<Mem_Usage> MemVals = new List<Mem_Usage>();
 
         // Exception block:
-        public static List<Exceptions> ExceptionVals = new List<Exceptions>();
+        private static List<Exceptions> ExceptionVals = new List<Exceptions>();
 
         // HTTP Request block:
-        public static List<Http_Request> RequestVals = new List<Http_Request>();
+        private static List<Http_Request> RequestVals = new List<Http_Request>();
 
         // Contention block:
-        public static List<Contention> ContentionVals = new List<Contention>();
+        private static List<Contention> ContentionVals = new List<Contention>();
 
         // Garbage Collection block:
-        public static List<GC> GCVals = new List<GC>();
+        private static List<GC> GCVals = new List<GC>();
 
         // Jit block:
-        public static List<Jit> JitVals = new List<Jit>();
+        private static List<Jit> JitVals = new List<Jit>();
 
 
 
@@ -136,7 +136,7 @@ namespace DataTransfer
             });
         }
 
-        public void TraceEvents()
+        private void TraceEvents()
         {
             using (var session = new TraceEventSession("MySession"))
             {
@@ -170,6 +170,7 @@ namespace DataTransfer
                         c.app = app;
                         c.process = (processName + " " + processID);
                         c.type = "Start";
+                        c.id = data.ActivityID;
                         c.timestamp = DateTime.Now;
                         ContentionVals.Add(c);
                     }
@@ -183,6 +184,7 @@ namespace DataTransfer
                         c.app = app;
                         c.process = (processName + " " + processID);
                         c.type = "Stop";
+                        c.id = data.ActivityID;
                         c.timestamp = DateTime.Now;
                         ContentionVals.Add(c);
                     }
@@ -244,20 +246,6 @@ namespace DataTransfer
                         GCVals.Add(gc);
                     }
                 };
-                // subscribe to all restart starts
-                clrParser.GCRestartEEStart += delegate (GCNoUserDataTraceData data)
-                {
-                    if (data.ProcessID == myProcess.Id)
-                    {
-                        GC gc = new GC();
-                        gc.app = app;
-                        gc.process = (processName + " " + processID);
-                        gc.type = "Restart EE Start";
-                        gc.timestamp = DateTime.Now;
-                        gc.id = data.ThreadID;
-                        GCVals.Add(gc);
-                    }
-                };
                 // subscribe to all restart stops
                 clrParser.GCRestartEEStop += delegate (GCNoUserDataTraceData data)
                 {
@@ -281,20 +269,6 @@ namespace DataTransfer
                         gc.app = app;
                         gc.process = (processName + " " + processID);
                         gc.type = "Suspend EE Start";
-                        gc.timestamp = DateTime.Now;
-                        gc.id = data.ThreadID;
-                        GCVals.Add(gc);
-                    }
-                };
-                // subscribe to all suspension stops
-                clrParser.GCSuspendEEStop += delegate (GCNoUserDataTraceData data)
-                {
-                    if (data.ProcessID == myProcess.Id)
-                    {
-                        GC gc = new GC();
-                        gc.app = app;
-                        gc.process = (processName + " " + processID);
-                        gc.type = "Suspend EE Stop";
                         gc.timestamp = DateTime.Now;
                         gc.id = data.ThreadID;
                         GCVals.Add(gc);
@@ -375,7 +349,7 @@ namespace DataTransfer
                     }
                 };
 
-                // set up providers for events using GUIDs
+                // set up providers for events using GUIDs - first EnableProvider command is to receive activity IDs for associated events
                 session.EnableProvider(new Guid("2e5dba47-a3d2-4d16-8ee0-6671ffdcd7b5"), TraceEventLevel.Informational, 0x80);
                 var AspSourceGuid = TraceEventProviders.GetEventSourceGuidFromName("Microsoft-AspNetCore-Hosting");
                 session.EnableProvider(AspSourceGuid);
@@ -384,7 +358,7 @@ namespace DataTransfer
             }
         }
 
-        public void SendHTTP(Metric_List metricList)  // sends collected data to API
+        private void SendHTTP(Metric_List metricList)  // sends collected data to API
         {
             if (metricList.cpu.Count != 0)
             {
@@ -409,7 +383,7 @@ namespace DataTransfer
             }
         }
 
-        public void FetchCPU()  // calculates CPU usage
+        private void FetchCPU()  // calculates CPU usage
         {
             // clear the process' cached information
             myProcess.Refresh();
@@ -431,7 +405,7 @@ namespace DataTransfer
             CPUVals.Add(cpu);
         }
 
-        public void FetchMem()  // fetches Memory usage
+        private void FetchMem()  // fetches Memory usage
         {
             Mem_Usage mem = new Mem_Usage();
             mem.app = app;

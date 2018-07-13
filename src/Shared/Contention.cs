@@ -8,6 +8,7 @@ namespace DataTransfer
         public String app { get; set; }
         public String process { get; set; }
         public String type { get; set; }
+        public Guid id { get; set; }
         [Key]
         public DateTime timestamp { get; set; }
     }
