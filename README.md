@@ -11,7 +11,7 @@ Monitor monitor = new Monitor(String application_name, int sampling_rate, int tr
 monitor.Record();
 ```
 
-All arguments for _Monitor_ class instantiation are optional - the default sampling rate is one second and the default transmission rate (rate at which data is sent to the server) is five seconds. If a rate is specified, the arguments should be provided in milliseconds and the sampling rate should be lower than the transmission rate for expected performance. Providing an application name will allow an application with multiple processes to have its processes grouped within the performance monitor's tracking. To do so, simply run performance monitoring for each process simultaneously, with each Monitor instantiation specifying the same application name.
+All arguments for _Monitor_ class instantiation are optional - the default sampling rate is one second and the default transmission rate (rate at which data is sent to the server) is five seconds. If a rate is specified, the arguments should be provided in milliseconds and the sampling rate value should be smaller than the transmission rate value for expected performance. Providing an application name will allow an application with multiple processes to have its processes grouped within the performance monitor's tracking. To do so, simply run performance monitoring for each process simultaneously, with each Monitor instantiation specifying the same application name.
 
 This will trigger performance metric tracking that is done on the user's machine through two channels. The first of these channels is the _System.Diagnostics_ namespace, which is used to fetch the current process to be tracked. This process can then have its CPU and memory usage fetched via the _Process.TotalProcessorTime_ and _Process.WorkingSet64_ fields. The CPU usage reported by the monitor tool represents the percentage of total CPU on the machine, accounting for the number of logical cores present (which is detected via the _System.Environment_ class).
 
@@ -122,3 +122,12 @@ For garbage collection, delegates must be set up for a number of different event
 
 ##### Contention and JIT
 Both contention and JIT events are very straightforward in how they are tracked. ContentionStart and ContentionStop events are correlated by activity ID to determine time per contention, and JIT events are recorded every time a method within the process is jitted. The contention class includes a "type" field (String - "Start" or "Stop") as well as an activity ID field (GUID), and the JIT class includes the jitted method's name (String). Method jitting will typically be heaviest upon startup and then fall off in frequency.
+
+#### Data Transmission
+There are two more shared classes within the project, in addition to the classes for each metric type: a _Session_ class and a _Metric___List_ class.
+
+##### The _Session_ class
+The _Session_ class is meant to contain information unique to a user's process and michine that will help the user 1. identify and recognize unique processes within a single application, and 2. understand performance metrics in the context of the local machine's environment. The class has six fields: "app" (String containing the user-specified application name), "process" (String composed of the process' name - for example, "dotnet" - and unique ID), "sampleRate" (int - milliseconds between CPU and memory measurements), "sendRate" (int - milliseconds between data transmissions to server), "processorCount" (int - number of logical processors on machine), and "os" (String describing the machine's operating system).
+
+##### The _Metric___List_ class
+The _Metric___List_ class is meant to be used for data packaging and efficient sharing between the different components of the project. Its fields are: "session", "cpu", "mem", "exceptions", "requests", "contentions", "gc", and "jit". The session field contains an instance of the _Session_ class for the current process - this will not change throughout the running of a single process. Each of the fields corresponding to a performance metric type is a Collection of class instances for the given type.
