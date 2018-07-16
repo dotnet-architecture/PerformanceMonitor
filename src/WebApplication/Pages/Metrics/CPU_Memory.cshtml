@@ -12,12 +12,12 @@
     <script src="https://cdn.plot.ly/plotly-1.2.0.min.js"></script>
 </head>
 
-    <div class="main">
+<div class="main">
 
-        <font size="50">CPU and Memory Usage</font>
+    <font size="50">CPU and Memory Usage</font>
 
-        <div id="chart"></div>
-        <script>
+    <div id="chart"></div>
+    <script>
 
             function getData() {
                 return @Model.cpu[Model.cpu.Count - 1].usage;
@@ -40,10 +40,10 @@
                     });
                 }
             }, 5);
-        </script>
+    </script>
 
-        <div id="cpu"></div>
-        <script>
+    <div id="cpu"></div>
+    <script>
 
             var yy = [@Model.avgCPU, 2];
 
@@ -66,31 +66,46 @@
             };
 
             Plotly.plot('cpu', data, graphOptions);
-        </script>
+    </script>
 
-        <!--
-            <script>
-            const url = 'https://randomuser.me/api/?results=10';
-            fetch(url)
-                .then((response) => response.json())
-                .then(function (myJson) {
-                    Console.log(myJson);
-                    Console.Write(myJson)
-                });           
-        </script>
-            -->
-
+    <!--
         <script>
-            const url = 'http://localhost:54022/api/v1/CPU/Daterange?start=2018-06-14T00%3A31%3A35.444&end=2018-07-17T00%3A31%3A36.401';
-            var result = fetch(url)
-                .then((response) => response.json())
-                .then(function (myJson) {
-                    document.write(myJson);
-                });
-            var test = result;
-        </script>
+        const url = 'https://randomuser.me/api/?results=10';
+        fetch(url)
+            .then((response) => response.json())
+            .then(function (myJson) {
+                Console.log(myJson);
+                Console.Write(myJson)
+            });
+    </script>
+        -->
 
-        <!--
+    <script>
+        const url = 'http://localhost:54022/api/v1/CPU/Daterange?start=2018-06-14T00%3A31%3A35.444&end=2018-07-17T00%3A31%3A36.401';
+        var result = fetch(url)
+            .then((response) => response.json())
+            .then(function (myJson) {
+                document.write(myJson);
+            });
+        var test = result;
+    </script>
+
+    <!--
+    <script>
+        var url = 'http://localhost:54022/api/v1/CPU/Daterange?start=' +
+            @Model.oldStampString +
+            '&end=' +
+            @Model.newStampString;
+        var result = fetch(url)
+            .then((response) => response.json())
+            .then(function (myJson) {
+                document.write(myJson);
+            });
+        var test = result;
+    </script>
+    -->
+
+    <!--
     <div id="tester"></div>
     <script>
         TESTER = document.getElementById('tester');
@@ -115,57 +130,27 @@
     </script>
     -->
 
-        <p>Average CPU Usage: @Model.avgCPU</p>
+    <p>Average CPU Usage: @Model.avgCPU</p>
 
-        <p>Log of CPU Usage</p>
-        <div class="CPU-table" max-width="600px">
-            <table class="table table-hover table-bordered">
-                <thead>
-                    <tr>
-                        <th>CPU</th>
-                        <th>Timestamp</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model.cpu != null)
-                    {
-                        @for (int i = Model.cpu.Count - 1; i >= 0; i--)
-                        {
-                            CPU_Usage c = Model.cpu.ElementAt<CPU_Usage>(i);
-                            <tr>
-                                <td>@c.usage</td>
-                                <td>@c.timestamp</td>
-                            </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr>Unable to retrieve data</tr>
-
-                    }
-                </tbody>
-            </table>
-        </div>
-
-        <p>Log of Memory Usage</p>
+    <p>Log of CPU Usage</p>
+    <div class="CPU-table" max-width="600px">
         <table class="table table-hover table-bordered">
             <thead>
                 <tr>
-                    <th>Memory</th>
+                    <th>CPU</th>
                     <th>Timestamp</th>
                 </tr>
             </thead>
             <tbody>
-                @if (Model.mem != null)
+                @if (Model.cpu != null)
                 {
-                    @for (int i = Model.mem.Count - 1; i >= 0; i--)
+                    @for (int i = Model.cpu.Count - 1; i >= 0; i--)
                     {
-                        Mem_Usage m = Model.mem.ElementAt<Mem_Usage>(i);
+                        CPU_Usage c = Model.cpu.ElementAt<CPU_Usage>(i);
                         <tr>
-                            <td>@m.usage</td>
-                            <td>@m.timestamp</td>
+                            <td>@c.usage</td>
+                            <td>@c.timestamp</td>
                         </tr>
-
                     }
                 }
                 else
@@ -175,5 +160,35 @@
                 }
             </tbody>
         </table>
-
     </div>
+
+    <p>Log of Memory Usage</p>
+    <table class="table table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>Memory</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.mem != null)
+            {
+                @for (int i = Model.mem.Count - 1; i >= 0; i--)
+                {
+                    Mem_Usage m = Model.mem.ElementAt<Mem_Usage>(i);
+                    <tr>
+                        <td>@m.usage</td>
+                        <td>@m.timestamp</td>
+                    </tr>
+
+                }
+            }
+            else
+            {
+                <tr>Unable to retrieve data</tr>
+
+            }
+        </tbody>
+    </table>
+
+</div>
