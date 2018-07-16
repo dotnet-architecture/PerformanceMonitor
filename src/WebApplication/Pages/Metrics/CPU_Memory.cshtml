@@ -9,8 +9,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-1.2.0.min.js"></script>
 <<<<<<< HEAD
 =======
@@ -18,7 +16,6 @@
 >>>>>>> graphing with data from CPU_Usage (not fully implemented)
 </head>
 
-<body>
     <div class="main">
 
         <font size="50">CPU and Memory Usage</font>
@@ -52,21 +49,19 @@
         <div id="cpu"></div>
         <script>
 
-            var CPU_Usage = {
-                y: @Model.getCPUUsage(),
+            var yy = [@Model.avgCPU, 2];
+
+            var trace1 = {
+                y: yy,
                 type: 'scatter'
             };
-            
-            var data = [CPU_Usage];
+
+            var data = [trace1];
 
             var layout = {
-                xaxis: {
-                    visible: true,
-                    title: "Time"
-                },
                 yaxis: {
-                    visible: true, 
-                    title: "CPU Usage"
+                    visible: true,
+                    title: 'CPU Usage'
                 }
             }
 
@@ -74,7 +69,29 @@
                 layout: layout,
             };
 
-            Plotly.plot('test', data, graphOptions);
+            Plotly.plot('cpu', data, graphOptions);
+        </script>
+
+        <!--
+            <script>
+            const url = 'https://randomuser.me/api/?results=10';
+            fetch(url)
+                .then((response) => response.json())
+                .then(function (myJson) {
+                    Console.log(myJson);
+                    Console.Write(myJson)
+                });           
+        </script>
+            -->
+
+        <script>
+            const url = 'http://localhost:54022/api/v1/CPU/Daterange?start=2018-06-14T00%3A31%3A35.444&end=2018-07-17T00%3A31%3A36.401';
+            var result = fetch(url)
+                .then((response) => response.json())
+                .then(function (myJson) {
+                    document.write(myJson);
+                });
+            var test = result;
         </script>
 
         <!--
@@ -164,32 +181,3 @@
         </table>
 
     </div>
-    </body>
-
-<!--
-   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
-        <script type="text/javascript">
-       google.charts.load('current', { 'packages': ['corechart'] });
-       google.charts.setOnLoadCallback(drawChart);
-
-       function drawChart() {
-           var data = google.visualization.arrayToDataTable([
-               ['TimeStamp', 'CPU'],
-               ['2001', @Model.cpu[0].usage],
-               ['2002', @Model.cpu[1].usage],
-               //['2006', 660, 1120],
-               //['2007', 1030, 540]
-           ]);
-
-           var options = {
-               title: 'CPU Usage',
-               curveType: 'function',
-               legend: { position: 'bottom' }
-           };
-
-           var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-
-           chart.draw(data, options);
-       }
-        </script> -->
