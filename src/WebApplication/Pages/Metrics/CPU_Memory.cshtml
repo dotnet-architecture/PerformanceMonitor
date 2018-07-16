@@ -9,12 +9,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-1.2.0.min.js"></script>
 </head>
 
-<body>
     <div class="main">
 
         <font size="50">CPU and Memory Usage</font>
@@ -47,22 +44,19 @@
 
         <div id="cpu"></div>
         <script>
+            var yy = [@Model.avgCPU, 2];
 
-            var CPU_Usage = {
-                y: @Model.getCPUUsage(),
+            var trace1 = {
+                y: yy,
                 type: 'scatter'
             };
-            
-            var data = [CPU_Usage];
+
+            var data = [trace1];
 
             var layout = {
-                xaxis: {
-                    visible: true,
-                    title: "Time"
-                },
                 yaxis: {
-                    visible: true, 
-                    title: "CPU Usage"
+                    visible: true,
+                    title: 'CPU Usage'
                 }
             }
 
@@ -70,10 +64,32 @@
                 layout: layout,
             };
 
-            Plotly.plot('test', data, graphOptions);
+            Plotly.plot('cpu', data, graphOptions);
         </script>
 
         <!--
+            <script>
+            const url = 'https://randomuser.me/api/?results=10';
+            fetch(url)
+                .then((response) => response.json())
+                .then(function (myJson) {
+                    Console.log(myJson);
+                    Console.Write(myJson)
+                });           
+        </script>
+            -->
+
+        <script>
+            const url = 'http://localhost:54022/api/v1/CPU/Daterange?start=2018-06-14T00%3A31%3A35.444&end=2018-07-17T00%3A31%3A36.401';
+            var result = fetch(url)
+                .then((response) => response.json())
+                .then(function (myJson) {
+                    document.write(myJson);
+                });
+            var test = result;
+        </script>
+
+    <!--
     <div id="tester"></div>
     <script>
         TESTER = document.getElementById('tester');
@@ -182,8 +198,7 @@
                 }
             </tbody>
         </table>
-    </div>
-
+        </div>
     <!--
        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
