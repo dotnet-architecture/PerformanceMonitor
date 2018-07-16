@@ -1,3 +1,4 @@
+
 using System.Data.SqlClient;
 using Xunit;
 
@@ -12,6 +13,7 @@ namespace UnitTestProject1
         {
             bool isOpen = false;
             var connection = "Server = 10.0.75.1,1433; Initial Catalog = PerformanceData  ; User Id = sa; Password = Abc12345";
+
             using (var serCon = new SqlConnection(connection))
             {
                 try
@@ -25,7 +27,6 @@ namespace UnitTestProject1
                 }
             }
             Assert.True(isOpen);
-
         }
     }
 }
