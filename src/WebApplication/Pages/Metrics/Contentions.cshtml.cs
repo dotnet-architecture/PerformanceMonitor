@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using DataTransfer;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNet.SignalR.Client;
+//using Microsoft.AspNet.SignalR.Client;
 
 namespace WebApplication.Pages.Metrics
 {

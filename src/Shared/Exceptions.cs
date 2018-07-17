@@ -5,10 +5,10 @@ namespace DataTransfer
 {
     public class Exceptions  // contains type of exception and timestamp
     {
-        public String app { get; set; }
-        public String process { get; set; }
-        public String type { get; set; }
-        [Key]
+        public string type { get; set; }
         public DateTime timestamp { get; set; }
+        public int AppId { get; set; }
+
+        public Session App { get; set; }
     }
 }
