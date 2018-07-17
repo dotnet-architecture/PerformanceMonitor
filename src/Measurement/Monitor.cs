@@ -31,7 +31,7 @@ namespace DataTransfer
         private static String processName = myProcess.ProcessName;
         private static String processID = myProcess.Id.ToString();
         private static String myOS = Environment.OSVersion.ToString();
-        private static Session session = new Session();
+        private static Session instance = new Session();
         
         // creates an HTTP client so that server requests can be made
         HttpClient client = new HttpClient();
@@ -80,12 +80,12 @@ namespace DataTransfer
         {
             // sets base address for HTTP requests - in local testing, this may need to be changed periodically
             client.BaseAddress = new Uri("http://localhost:54022/");
-            session.processs = (processName + " " + processID);
-            session.sampleRate = sampleRate;
-            session.sendRate = sendRate;
-            session.processorCount = processorTotal;
-            session.os = myOS;
-            session.application = app;
+            instance.processs = (processName + " " + processID);
+            instance.sampleRate = sampleRate;
+            instance.sendRate = sendRate;
+            instance.processorCount = processorTotal;
+            instance.os = myOS;
+            instance.application = app;
 
             // starts event collection via TraceEvent in separate task
             Task.Factory.StartNew(() =>
@@ -112,7 +112,7 @@ namespace DataTransfer
                             // creates object that will store all event instances
                             Metric_List list = new Metric_List();
 
-                            list.session = session;
+                            list.session = instance;
                             list.cpu = CPUVals;
                             list.mem = MemVals;
                             list.exceptions = ExceptionVals;
@@ -155,6 +155,7 @@ namespace DataTransfer
                         Exceptions e = new Exceptions();
                         e.type = data.ExceptionType;
                         e.timestamp = DateTime.Now;
+                        e.App = instance;
                         ExceptionVals.Add(e);
                     }
                 };
@@ -168,6 +169,7 @@ namespace DataTransfer
                         c.type = "Start";
                         c.id = data.ActivityID;
                         c.timestamp = DateTime.Now;
+                        c.App = instance;
                         ContentionVals.Add(c);
                     }
                 };  
@@ -180,6 +182,7 @@ namespace DataTransfer
                         c.type = "Stop";
                         c.id = data.ActivityID;
                         c.timestamp = DateTime.Now;
+                        c.App = instance;
                         ContentionVals.Add(c);
                     }
                 };
@@ -193,6 +196,7 @@ namespace DataTransfer
                         gc.type = "Start";
                         gc.timestamp = DateTime.Now;
                         gc.id = data.ThreadID;
+                        gc.App = instance;
                         GCVals.Add(gc);
                     }
                 };
@@ -205,6 +209,7 @@ namespace DataTransfer
                         gc.type = "Stop";
                         gc.timestamp = DateTime.Now;
                         gc.id = data.ThreadID;
+                        gc.App = instance;
                         GCVals.Add(gc);
                     }
                 };
@@ -217,6 +222,7 @@ namespace DataTransfer
                         gc.type = "Allocation Tick";
                         gc.timestamp = DateTime.Now;
                         gc.id = data.ThreadID;
+                        gc.App = instance;
                         GCVals.Add(gc);
                     }
                 };
@@ -229,6 +235,7 @@ namespace DataTransfer
                         gc.type = "Create Concurrent Thread";
                         gc.timestamp = DateTime.Now;
                         gc.id = data.ThreadID;
+                        gc.App = instance;
                         GCVals.Add(gc);
                     }
                 };
@@ -241,6 +248,7 @@ namespace DataTransfer
                         gc.type = "Restart EE Stop";
                         gc.timestamp = DateTime.Now;
                         gc.id = data.ThreadID;
+                        gc.App = instance;
                         GCVals.Add(gc);
                     }
                 };
@@ -253,6 +261,7 @@ namespace DataTransfer
                         gc.type = "Suspend EE Start";
                         gc.timestamp = DateTime.Now;
                         gc.id = data.ThreadID;
+                        gc.App = instance;
                         GCVals.Add(gc);
                     }
                 };
@@ -265,6 +274,7 @@ namespace DataTransfer
                         gc.type = "Concurrent Thread Termination";
                         gc.timestamp = DateTime.Now;
                         gc.id = data.ThreadID;
+                        gc.App = instance;
                         GCVals.Add(gc);
                     }
                 };
@@ -277,6 +287,7 @@ namespace DataTransfer
                         gc.type = "Triggered";
                         gc.timestamp = DateTime.Now;
                         gc.id = data.ThreadID;
+                        gc.App = instance;
                         GCVals.Add(gc);
                     }
                 };
@@ -289,6 +300,7 @@ namespace DataTransfer
                         Jit j = new Jit();
                         j.method = data.MethodName;
                         j.timestamp = DateTime.Now;
+                        j.App = instance;
                         JitVals.Add(j);
                     }
                 };
@@ -301,6 +313,7 @@ namespace DataTransfer
                         request.type = "Start";
                         request.timestamp = DateTime.Now;
                         request.id = data.ActivityID;
+                        request.App = instance;
                         // event message parsing to fetch method and path of request
                         String datas = data.ToString();
                         int index = datas.IndexOf("method");
@@ -317,6 +330,7 @@ namespace DataTransfer
                         request.type = "Stop";
                         request.timestamp = DateTime.Now;
                         request.id = data.ActivityID;
+                        request.App = instance;
                         RequestVals.Add(request);
                     }
                 };
