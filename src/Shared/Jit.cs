@@ -1,14 +1,14 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace DataTransfer
 {
-    public class Jit  // contains the percentage of total CPU usage and DateTime of instant
+    public partial class Jit
     {
-        public String app { get; set; }
-        public String process { get; set; }
-        public String method { get; set; }
-        [Key]
+        public string method { get; set; }
         public DateTime timestamp { get; set; }
+        public int AppId { get; set; }
+
+        public Session App { get; set; }
     }
 }
