@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using DataTransfer;
 using Newtonsoft.Json;
+using System.Net.Http;
 
 namespace WebApplication.Pages.Metrics
 {
@@ -12,13 +13,19 @@ namespace WebApplication.Pages.Metrics
         public List<CPU_Usage> cpu { get; set; } = new List<CPU_Usage>();
         public List<Mem_Usage> mem { get; set; } = new List<Mem_Usage>();
 
+        public List<double> cpuUsage { get; set; } = new List<double>();
+
         public double avgCPU;
         public int timeAccounted; // Total time that is accounted for in the average CPU. Used to update to new avgCPU
 
         // Counter that detects when 5 seconds pass so HTTP get requests are sent every 5 seconds
         // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
-        private DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime(); 
-        private DateTime newStamp = DateTime.Now.ToUniversalTime();
+        public DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime();
+        public DateTime newStamp = DateTime.Now.ToUniversalTime();
+
+        public String dateRange;
+        public String oldStampString;
+        public String newStampString;
 
         public async Task OnGet()
         {
@@ -45,10 +52,38 @@ namespace WebApplication.Pages.Metrics
                 mem.Add(m);
             }
 
+            getCPUUsage();
+
+            dateRange = FetchDataService.convertDateTime(oldStamp) + "&end=" + FetchDataService.convertDateTime(newStamp);
+            oldStampString = FetchDataService.convertDateTime(oldStamp);
+            newStampString = FetchDataService.convertDateTime(newStamp);
+            Console.WriteLine("test" + dateRange);
+
             // Reset timers
-            this.oldStamp = newStamp;
-            this.newStamp = DateTime.Now.ToUniversalTime();
+            oldStamp = newStamp;
+            newStamp = DateTime.Now.ToUniversalTime();
         }
+
+        // Returns cpu usage list as a double and reversed
+        public void getCPUUsage()
+        {
+            for (int i = cpu.Count - 1; i >= 0; i--)
+            {
+                cpuUsage.Add(cpu[i].usage);         
+            }
+        }
+
+        // Returns cpu time stamp list as increasing integers for now
+        public void getCPUTimeStamps()
+        {
+            List<long> cpuTime = new List<long>();
+            for (int i = 0; i < cpu.Count; i++)
+            {
+                cpuTime.Add(cpu[i].timestamp.ToBinary());
+            }
+
+        }
+
         /*
         // Attempting to use SignalR
         public void useSignalR(string httpGetRequestEnd)
@@ -60,48 +95,5 @@ namespace WebApplication.Pages.Metrics
             await hubConnection.Start();
         }
         */
-
-        // Repeatedly sends data fetch request every 5 seconds
-        public async Task fiveSecondFetcher()
-        {
-            while (true)
-            {
-                this.newStamp = DateTime.Now.ToUniversalTime();
-                if (newStamp.Subtract(oldStamp).TotalMilliseconds >= 5000)
-                {
-                    await getInfo(newStamp);
-                }
-            }
-        }
-
-        public async Task getInfo(DateTime updatedStamp)
-        {
-            // Make new HTTP get request and update cpu and mem
-            List<CPU_Usage> cpu_addOn = await FetchDataService.getUpdatedData<CPU_Usage>(oldStamp, updatedStamp);
-            List<Mem_Usage> mem_addOn = await FetchDataService.getUpdatedData<Mem_Usage>(oldStamp, updatedStamp);
-
-            double totalCPU = avgCPU * timeAccounted; // Weighting previous avgCPU
-
-            // Updates CPU_Usage list and totalCPU to calculate new average
-            foreach (CPU_Usage c in cpu_addOn)
-            {
-                totalCPU += c.usage;
-                cpu.Add(c);
-            }
-
-            // Calculating new avgCPUs
-            this.timeAccounted += cpu_addOn.Count;
-            this.avgCPU = totalCPU / (double)timeAccounted;
-
-            foreach (Mem_Usage m in mem_addOn)
-            {
-                mem.Add(m);
-            }
-
-            // Reset timers
-            this.oldStamp = updatedStamp;
-            this.newStamp = DateTime.Now.ToUniversalTime();
-        }
-
     }
 }

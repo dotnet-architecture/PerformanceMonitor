@@ -9,9 +9,11 @@ namespace MonitorTest
         {
             Monitor monitor = new Monitor("App");
             monitor.Record();
-            //CPUMemTest.Test();
+
+            CPUMemTest.Test();
             //GCTest.Test();
             //ExceptionTest.Test();
+
             ContentionTest.Test();
         }
     }
