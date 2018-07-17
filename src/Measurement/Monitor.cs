@@ -32,6 +32,9 @@ namespace DataTransfer
         private static String processID = myProcess.Id.ToString();
         private static String myOS = Environment.OSVersion.ToString();
         private static Session instance = new Session();
+
+        // "hold" describes a lock on data used for transmission - used to avoid serialization issues
+        private static int hold = 0;
         
         // creates an HTTP client so that server requests can be made
         HttpClient client = new HttpClient();
@@ -80,7 +83,7 @@ namespace DataTransfer
         {
             // sets base address for HTTP requests - in local testing, this may need to be changed periodically
             client.BaseAddress = new Uri("http://localhost:54022/");
-            instance.processs = (processName + " " + processID);
+            instance.process = (processName + " " + processID);
             instance.sampleRate = sampleRate;
             instance.sendRate = sendRate;
             instance.processorCount = processorTotal;
@@ -121,7 +124,9 @@ namespace DataTransfer
                             list.gc = GCVals;
                             list.jit = JitVals;
 
+                            hold = 1;
                             SendHTTP(list);
+                            hold = 0;
 
                             CPUVals.Clear();
                             MemVals.Clear();
@@ -150,7 +155,7 @@ namespace DataTransfer
                 clrParser.ExceptionStart += delegate (ExceptionTraceData data)
                 {
                     // if exception was in user process, add it to list of exceptions
-                    if (data.ProcessID == myProcess.Id)
+                    if (data.ProcessID == myProcess.Id && hold == 0)
                     {
                         Exceptions e = new Exceptions();
                         e.type = data.ExceptionType;
@@ -163,7 +168,7 @@ namespace DataTransfer
                 // subscribe to all contention start events
                 clrParser.ContentionStart += delegate (ContentionTraceData data)
                 {
-                    if (data.ProcessID == myProcess.Id)
+                    if (data.ProcessID == myProcess.Id && hold == 0)
                     {
                         Contention c = new Contention();
                         c.type = "Start";
@@ -176,7 +181,7 @@ namespace DataTransfer
                 // subscribe to all contention stop events
                 clrParser.ContentionStop += delegate (ContentionTraceData data)
                 {
-                    if (data.ProcessID == myProcess.Id)
+                    if (data.ProcessID == myProcess.Id && hold == 0)
                     {
                         Contention c = new Contention();
                         c.type = "Stop";
@@ -190,7 +195,7 @@ namespace DataTransfer
                 // subscribe to all GC start events
                 clrParser.GCStart += delegate (GCStartTraceData data)
                 {
-                    if (data.ProcessID == myProcess.Id)
+                    if (data.ProcessID == myProcess.Id && hold == 0)
                     {
                         GC gc = new GC();
                         gc.type = "Start";
@@ -203,7 +208,7 @@ namespace DataTransfer
                 // subscribe to all GC stop events
                 clrParser.GCStop += delegate (GCEndTraceData data)
                 {
-                    if (data.ProcessID == myProcess.Id)
+                    if (data.ProcessID == myProcess.Id && hold == 0)
                     {
                         GC gc = new GC();
                         gc.type = "Stop";
@@ -216,7 +221,7 @@ namespace DataTransfer
                 // subscribe to all GC memory allocation ticks
                 clrParser.GCAllocationTick += delegate (GCAllocationTickTraceData data)
                 {
-                    if (data.ProcessID == myProcess.Id)
+                    if (data.ProcessID == myProcess.Id && hold == 0)
                     {
                         GC gc = new GC();
                         gc.type = "Allocation Tick";
@@ -229,7 +234,7 @@ namespace DataTransfer
                 // subscribe to all creations of concurrent threads for GC
                 clrParser.GCCreateConcurrentThread += delegate (GCCreateConcurrentThreadTraceData data)
                 {
-                    if (data.ProcessID == myProcess.Id)
+                    if (data.ProcessID == myProcess.Id && hold == 0)
                     {
                         GC gc = new GC();
                         gc.type = "Create Concurrent Thread";
@@ -242,7 +247,7 @@ namespace DataTransfer
                 // subscribe to all restart stops
                 clrParser.GCRestartEEStop += delegate (GCNoUserDataTraceData data)
                 {
-                    if (data.ProcessID == myProcess.Id)
+                    if (data.ProcessID == myProcess.Id && hold == 0)
                     {
                         GC gc = new GC();
                         gc.type = "Restart EE Stop";
@@ -255,7 +260,7 @@ namespace DataTransfer
                 // subscribe to all suspension starts
                 clrParser.GCSuspendEEStart += delegate (GCSuspendEETraceData data)
                 {
-                    if (data.ProcessID == myProcess.Id)
+                    if (data.ProcessID == myProcess.Id && hold == 0)
                     {
                         GC gc = new GC();
                         gc.type = "Suspend EE Start";
@@ -268,7 +273,7 @@ namespace DataTransfer
                 // subscribe to all concurrent thread terminations
                 clrParser.GCTerminateConcurrentThread += delegate (GCTerminateConcurrentThreadTraceData data)
                 {
-                    if (data.ProcessID == myProcess.Id)
+                    if (data.ProcessID == myProcess.Id && hold == 0)
                     {
                         GC gc = new GC();
                         gc.type = "Concurrent Thread Termination";
@@ -281,7 +286,7 @@ namespace DataTransfer
                 // subscribe to all GC triggers
                 clrParser.GCTriggered += delegate (GCTriggeredTraceData data)
                 {
-                    if (data.ProcessID == myProcess.Id)
+                    if (data.ProcessID == myProcess.Id && hold == 0)
                     {
                         GC gc = new GC();
                         gc.type = "Triggered";
@@ -295,7 +300,7 @@ namespace DataTransfer
                 // subscribe to all Jit start events
                 clrParser.MethodJittingStarted += delegate (MethodJittingStartedTraceData data)
                 {
-                    if (data.ProcessID == myProcess.Id)
+                    if (data.ProcessID == myProcess.Id && hold == 0)
                     {
                         Jit j = new Jit();
                         j.method = data.MethodName;
@@ -307,7 +312,7 @@ namespace DataTransfer
 
                 // subscribe to all dynamic events (used for HTTP request event tracking)
                 session.Source.Dynamic.All += delegate (TraceEvent data) {
-                    if (data.ProcessID == myProcess.Id && data.EventName == "Request/Start")
+                    if (data.ProcessID == myProcess.Id && data.EventName == "Request/Start" && hold == 0)
                     {
                         Http_Request request = new Http_Request();
                         request.type = "Start";
@@ -324,7 +329,7 @@ namespace DataTransfer
                         request.path = datas.Substring(index2 + 1, datas.IndexOf("\"", index2 + 1) - index2);
                         RequestVals.Add(request);
                     }
-                    else if (data.ProcessID == myProcess.Id && data.EventName == "Request/Stop")
+                    else if (data.ProcessID == myProcess.Id && data.EventName == "Request/Stop" && hold == 0)
                     {
                         Http_Request request = new Http_Request();
                         request.type = "Stop";
@@ -348,15 +353,11 @@ namespace DataTransfer
         {
             if (metricList.cpu.Count != 0)
             {
-                string output;
-                lock (metricList)
-                {
-                    // converts list of metric measurements into a JSON object string
-                    output = JsonConvert.SerializeObject(metricList);
-                    Console.WriteLine(output);
-                    // escapes string so that JSON object is interpreted as a single string
-                    output = JsonConvert.ToString(output);
-                }
+                // converts list of metric measurements into a JSON object string
+                String output = JsonConvert.SerializeObject(metricList);
+                Console.WriteLine(output);
+                // escapes string so that JSON object is interpreted as a single string
+                output = JsonConvert.ToString(output);
 
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "api/v1/General");
                 request.Content = new StringContent(output, System.Text.Encoding.UTF8, "application/json");

@@ -17,7 +17,7 @@ namespace DataTransfer
         }
 
         public string application { get; set; }
-        public string processs { get; set; }
+        public string process { get; set; }
         public string os { get; set; }
         public int? sampleRate { get; set; }
         public int? sendRate { get; set; }
