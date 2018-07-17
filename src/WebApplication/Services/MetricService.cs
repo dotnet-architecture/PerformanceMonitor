@@ -16,10 +16,9 @@ namespace WebApplication.Services
         {
             var result = response.Content.ReadAsStringAsync().Result;
 
-            var deserial_obj = JsonConvert.DeserializeObject<List<T>>(result);
-
-            data = deserial_obj;
+            data = JsonConvert.DeserializeObject<List<T>>(result);
         }
+
         public async Task<List<T>> getServiceUsage()
         {
             return data;
