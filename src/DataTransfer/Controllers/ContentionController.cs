@@ -73,10 +73,10 @@ namespace DataTransfer.Controllers
         [ProducesResponseType((int)HttpStatusCode.Created)]
         public async Task<IActionResult> CreateCPUDatapoint([FromBody]Contention c)
         {
-            Contention point = new  Contention
+            Contention point = new Contention
             {
                 type = c.type,
-                timestamp = c.timestamp.ToUniversalTime()
+                timestamp = c.timestamp.ToUniversalTime(),
             };
             _MetricContext.Contention_Data.Add(point);
             await _MetricContext.SaveChangesAsync();

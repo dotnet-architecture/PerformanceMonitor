@@ -76,7 +76,8 @@ namespace DataTransfer.Controllers
             CPU_Usage point = new CPU_Usage
             {
                 usage = c.usage,
-                timestamp = c.timestamp.ToUniversalTime()
+                timestamp = c.timestamp.ToUniversalTime(),
+               
             };
             _MetricContext.CPU_Data.Add(point);
             await _MetricContext.SaveChangesAsync();
