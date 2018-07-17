@@ -68,6 +68,28 @@
             Plotly.plot('cpu', data, graphOptions);
     </script>
 
+    <script>
+        const start = `@Html.Encode(Model.oldStampString)`;
+        const end = `@Html.Encode(Model.newStampString)`;
+
+        const url = `http://localhost:54022/api/v1/CPU/Daterange?start=${start}&end=${end}`;
+        const dateRangePromise = fetch(url)
+            .then((response) => {
+                if (response.ok === false) {
+                    return response.text().then(text => {
+                        throw new Error(`${response.statusText}\n${text}`);
+                    });
+                }
+                return response;
+            })
+            .then((response) => response.json());
+
+        var result = Promise.all([dateRangePromise])
+            .then(function (myJson) {
+                document.write(myJson);
+            });
+    </script>
+
     <!--
         <script>
         const url = 'https://randomuser.me/api/?results=10';
@@ -79,32 +101,6 @@
             });
     </script>
         -->
-
-    <script>
-        const url = 'http://localhost:54022/api/v1/CPU/Daterange?start=2018-06-14T00%3A31%3A35.444&end=2018-07-17T00%3A31%3A36.401';
-        var result = fetch(url)
-            .then((response) => response.json())
-            .then(function (myJson) {
-                document.write(myJson);
-            });
-        var test = result;
-    </script>
-
-    <!--
-    <script>
-        var url = 'http://localhost:54022/api/v1/CPU/Daterange?start=' +
-            @Model.oldStampString +
-            '&end=' +
-            @Model.newStampString;
-        var result = fetch(url)
-            .then((response) => response.json())
-            .then(function (myJson) {
-                document.write(myJson);
-            });
-        var test = result;
-    </script>
-    -->
-
     <!--
     <div id="tester"></div>
     <script>
@@ -129,6 +125,8 @@
         Plotly.plot('cpu', data);
     </script>
     -->
+
+    <input type="button" value="Refresh Logs" onClick="window.location.reload()">
 
     <p>Average CPU Usage: @Model.avgCPU</p>
 
@@ -155,7 +153,9 @@
                 }
                 else
                 {
-                    <tr>Unable to retrieve data</tr>
+                    <tr>
+                        Unable to retrieve data
+                    </tr>
 
                 }
             </tbody>
@@ -185,7 +185,9 @@
             }
             else
             {
-                <tr>Unable to retrieve data</tr>
+                <tr>
+                    Unable to retrieve data
+                </tr>
 
             }
         </tbody>
