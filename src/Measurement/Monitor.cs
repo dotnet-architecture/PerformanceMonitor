@@ -80,12 +80,12 @@ namespace DataTransfer
         {
             // sets base address for HTTP requests - in local testing, this may need to be changed periodically
             client.BaseAddress = new Uri("http://localhost:54022/");
-            session.process = (processName + " " + processID);
+            session.processs = (processName + " " + processID);
             session.sampleRate = sampleRate;
             session.sendRate = sendRate;
             session.processorCount = processorTotal;
             session.os = myOS;
-            session.app = app;
+            session.application = app;
 
             // starts event collection via TraceEvent in separate task
             Task.Factory.StartNew(() =>
@@ -153,8 +153,6 @@ namespace DataTransfer
                     if (data.ProcessID == myProcess.Id)
                     {
                         Exceptions e = new Exceptions();
-                        e.app = app;
-                        e.process = (processName + " " + processID);
                         e.type = data.ExceptionType;
                         e.timestamp = DateTime.Now;
                         ExceptionVals.Add(e);
@@ -167,22 +165,18 @@ namespace DataTransfer
                     if (data.ProcessID == myProcess.Id)
                     {
                         Contention c = new Contention();
-                        c.app = app;
-                        c.process = (processName + " " + processID);
                         c.type = "Start";
                         c.id = data.ActivityID;
                         c.timestamp = DateTime.Now;
                         ContentionVals.Add(c);
                     }
-                };
+                };  
                 // subscribe to all contention stop events
                 clrParser.ContentionStop += delegate (ContentionTraceData data)
                 {
                     if (data.ProcessID == myProcess.Id)
                     {
                         Contention c = new Contention();
-                        c.app = app;
-                        c.process = (processName + " " + processID);
                         c.type = "Stop";
                         c.id = data.ActivityID;
                         c.timestamp = DateTime.Now;
@@ -196,8 +190,6 @@ namespace DataTransfer
                     if (data.ProcessID == myProcess.Id)
                     {
                         GC gc = new GC();
-                        gc.app = app;
-                        gc.process = (processName + " " + processID);
                         gc.type = "Start";
                         gc.timestamp = DateTime.Now;
                         gc.id = data.ThreadID;
@@ -210,8 +202,6 @@ namespace DataTransfer
                     if (data.ProcessID == myProcess.Id)
                     {
                         GC gc = new GC();
-                        gc.app = app;
-                        gc.process = (processName + " " + processID);
                         gc.type = "Stop";
                         gc.timestamp = DateTime.Now;
                         gc.id = data.ThreadID;
@@ -224,8 +214,6 @@ namespace DataTransfer
                     if (data.ProcessID == myProcess.Id)
                     {
                         GC gc = new GC();
-                        gc.app = app;
-                        gc.process = (processName + " " + processID);
                         gc.type = "Allocation Tick";
                         gc.timestamp = DateTime.Now;
                         gc.id = data.ThreadID;
@@ -238,8 +226,6 @@ namespace DataTransfer
                     if (data.ProcessID == myProcess.Id)
                     {
                         GC gc = new GC();
-                        gc.app = app;
-                        gc.process = (processName + " " + processID);
                         gc.type = "Create Concurrent Thread";
                         gc.timestamp = DateTime.Now;
                         gc.id = data.ThreadID;
@@ -252,8 +238,6 @@ namespace DataTransfer
                     if (data.ProcessID == myProcess.Id)
                     {
                         GC gc = new GC();
-                        gc.app = app;
-                        gc.process = (processName + " " + processID);
                         gc.type = "Restart EE Stop";
                         gc.timestamp = DateTime.Now;
                         gc.id = data.ThreadID;
@@ -266,8 +250,6 @@ namespace DataTransfer
                     if (data.ProcessID == myProcess.Id)
                     {
                         GC gc = new GC();
-                        gc.app = app;
-                        gc.process = (processName + " " + processID);
                         gc.type = "Suspend EE Start";
                         gc.timestamp = DateTime.Now;
                         gc.id = data.ThreadID;
@@ -280,8 +262,6 @@ namespace DataTransfer
                     if (data.ProcessID == myProcess.Id)
                     {
                         GC gc = new GC();
-                        gc.app = app;
-                        gc.process = (processName + " " + processID);
                         gc.type = "Concurrent Thread Termination";
                         gc.timestamp = DateTime.Now;
                         gc.id = data.ThreadID;
@@ -294,8 +274,6 @@ namespace DataTransfer
                     if (data.ProcessID == myProcess.Id)
                     {
                         GC gc = new GC();
-                        gc.app = app;
-                        gc.process = (processName + " " + processID);
                         gc.type = "Triggered";
                         gc.timestamp = DateTime.Now;
                         gc.id = data.ThreadID;
@@ -309,8 +287,6 @@ namespace DataTransfer
                     if (data.ProcessID == myProcess.Id)
                     {
                         Jit j = new Jit();
-                        j.app = app;
-                        j.process = (processName + " " + processID);
                         j.method = data.MethodName;
                         j.timestamp = DateTime.Now;
                         JitVals.Add(j);
@@ -322,8 +298,6 @@ namespace DataTransfer
                     if (data.ProcessID == myProcess.Id && data.EventName == "Request/Start")
                     {
                         Http_Request request = new Http_Request();
-                        request.app = app;
-                        request.process = (processName + " " + processID);
                         request.type = "Start";
                         request.timestamp = DateTime.Now;
                         request.id = data.ActivityID;
@@ -340,8 +314,6 @@ namespace DataTransfer
                     else if (data.ProcessID == myProcess.Id && data.EventName == "Request/Stop")
                     {
                         Http_Request request = new Http_Request();
-                        request.app = app;
-                        request.process = (processName + " " + processID);
                         request.type = "Stop";
                         request.timestamp = DateTime.Now;
                         request.id = data.ActivityID;
@@ -388,8 +360,6 @@ namespace DataTransfer
             // clear the process' cached information
             myProcess.Refresh();
             CPU_Usage cpu = new CPU_Usage();
-            cpu.app = app;
-            cpu.process = (processName + " " + processID);
             newTime = myProcess.TotalProcessorTime.TotalMilliseconds;
             newStamp = DateTime.Now;
             // calculates CPU usage since last measurement
@@ -408,8 +378,6 @@ namespace DataTransfer
         private void FetchMem()  // fetches Memory usage
         {
             Mem_Usage mem = new Mem_Usage();
-            mem.app = app;
-            mem.process = (processName + " " + processID);
             mem.usage = myProcess.WorkingSet64;
             mem.timestamp = DateTime.Now;
             MemVals.Add(mem);

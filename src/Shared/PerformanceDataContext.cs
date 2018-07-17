@@ -1,5 +1,4 @@
-﻿#if TEST_EF
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -16,210 +15,205 @@ namespace DataTransfer
         {
         }
 
-        public virtual DbSet<ApplicationData> ApplicationData { get; set; }
-        public virtual DbSet<ContentionData> ContentionData { get; set; }
-        public virtual DbSet<CpuData> CpuData { get; set; }
-        public virtual DbSet<ExceptionData> ExceptionData { get; set; }
-        public virtual DbSet<GcData> GcData { get; set; }
-        public virtual DbSet<HttpData> HttpData { get; set; }
-        public virtual DbSet<JitData> JitData { get; set; }
-        public virtual DbSet<MemData> MemData { get; set; }
+        public virtual DbSet<Contention> Contention { get; set; }
+        public virtual DbSet<CPU_Usage> CPU_Usage { get; set; }
+        public virtual DbSet<Exceptions> Exceptions { get; set; }
+        public virtual DbSet<GC> GC { get; set; }
+        public virtual DbSet<Http_Request> Http_Request { get; set; }
+        public virtual DbSet<Jit> Jit { get; set; }
+        public virtual DbSet<Mem_Usage> MemData { get; set; }
+        public virtual DbSet<Session> Session { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer("Server=10.0.75.1,1433;Initial Catalog=PerformanceData;Trusted_Connection=false;MultipleActiveResultSets=true;Persist Security Info=false;User Id=sa;Password=Abc12345;");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ApplicationData>(entity =>
+            modelBuilder.Entity<Contention>(entity =>
             {
-                entity.ToTable("Application_Data");
+                entity.HasKey(e => e.timestamp);
 
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.Application)
-                    .HasColumnName("application")
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Process)
-                    .HasColumnName("process")
-                    .IsUnicode(false);
-            });
-
-            modelBuilder.Entity<ContentionData>(entity =>
-            {
-                entity.HasKey(e => e.Timestamp);
-
-                entity.ToTable("Contention_Data");
-
-                entity.Property(e => e.Timestamp)
+                entity.Property(e => e.timestamp)
                     .HasColumnName("timestamp")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.AppId).HasColumnName("app_id");
+                entity.Property(e => e.AppId).HasColumnName("appId");
 
-                entity.Property(e => e.Type)
+                entity.Property(e => e.type)
                     .HasColumnName("type")
                     .IsUnicode(false);
 
                 entity.HasOne(d => d.App)
-                    .WithMany(p => p.ContentionData)
+                    .WithMany(p => p.Contention)
                     .HasForeignKey(d => d.AppId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Contention_Data_App");
+                    .HasConstraintName("FK_Session_ID");
             });
 
-            modelBuilder.Entity<CpuData>(entity =>
+            modelBuilder.Entity<CPU_Usage>(entity =>
             {
-                entity.HasKey(e => e.Timestamp);
+                entity.HasKey(e => e.timestamp);
 
-                entity.ToTable("CPU_Data");
+                entity.ToTable("CPU_Usage");
 
-                entity.Property(e => e.Timestamp)
+                entity.Property(e => e.timestamp)
                     .HasColumnName("timestamp")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.AppId).HasColumnName("app_id");
+                entity.Property(e => e.AppId).HasColumnName("appId");
 
-                entity.Property(e => e.Usage).HasColumnName("usage");
+                entity.Property(e => e.usage).HasColumnName("usage");
 
                 entity.HasOne(d => d.App)
-                    .WithMany(p => p.CpuData)
+                    .WithMany(p => p.CPU_Usage)
                     .HasForeignKey(d => d.AppId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_CPU_Data_App");
+                    .HasConstraintName("FK_CPU_Session_ID");
             });
 
-            modelBuilder.Entity<ExceptionData>(entity =>
+            modelBuilder.Entity<Exceptions>(entity =>
             {
-                entity.HasKey(e => e.Timestamp);
+                entity.HasKey(e => e.timestamp);
 
                 entity.ToTable("Exception_Data");
 
-                entity.Property(e => e.Timestamp)
+                entity.Property(e => e.timestamp)
                     .HasColumnName("timestamp")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.AppId).HasColumnName("app_id");
+                entity.Property(e => e.AppId).HasColumnName("appId");
 
-                entity.Property(e => e.Type)
+                entity.Property(e => e.type)
                     .HasColumnName("type")
                     .IsUnicode(false);
 
                 entity.HasOne(d => d.App)
-                    .WithMany(p => p.ExceptionData)
+                    .WithMany(p => p.Exceptions)
                     .HasForeignKey(d => d.AppId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Exception_Data_App");
+                    .HasConstraintName("FK_EXCEPTION_Session_ID");
             });
 
-            modelBuilder.Entity<GcData>(entity =>
+            modelBuilder.Entity<GC>(entity =>
             {
-                entity.HasKey(e => e.Timestamp);
+                entity.HasKey(e => e.timestamp);
 
-                entity.ToTable("GC_Data");
+                entity.ToTable("GC");
 
-                entity.Property(e => e.Timestamp)
+                entity.Property(e => e.timestamp)
                     .HasColumnName("timestamp")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.AppId).HasColumnName("app_id");
+                entity.Property(e => e.AppId).HasColumnName("appId");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.id).HasColumnName("id");
 
-                entity.Property(e => e.Type)
+                entity.Property(e => e.type)
                     .HasColumnName("type")
                     .IsUnicode(false);
 
                 entity.HasOne(d => d.App)
-                    .WithMany(p => p.GcData)
+                    .WithMany(p => p.Gc)
                     .HasForeignKey(d => d.AppId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_GC_Data_App");
+                    .HasConstraintName("FK_GC_Session_ID");
             });
 
-            modelBuilder.Entity<HttpData>(entity =>
+            modelBuilder.Entity<Http_Request>(entity =>
             {
-                entity.HasKey(e => e.Timestamp);
+                entity.HasKey(e => e.timestamp);
 
-                entity.ToTable("HTTP_Data");
+                entity.ToTable("Http_Request");
 
-                entity.Property(e => e.Timestamp)
+                entity.Property(e => e.timestamp)
                     .HasColumnName("timestamp")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.AppId).HasColumnName("app_id");
+                entity.Property(e => e.AppId).HasColumnName("appId");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.id).HasColumnName("id");
 
-                entity.Property(e => e.Method)
+                entity.Property(e => e.method)
                     .HasColumnName("method")
                     .IsUnicode(false);
 
-                entity.Property(e => e.Path)
+                entity.Property(e => e.path)
                     .HasColumnName("path")
                     .IsUnicode(false);
 
-                entity.Property(e => e.Type)
+                entity.Property(e => e.type)
                     .HasColumnName("type")
                     .IsUnicode(false);
 
                 entity.HasOne(d => d.App)
-                    .WithMany(p => p.HttpData)
+                    .WithMany(p => p.Http_Request)
                     .HasForeignKey(d => d.AppId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_HTTP_Data_App");
+                    .HasConstraintName("FK_HTTP_Session_ID");
             });
 
-            modelBuilder.Entity<JitData>(entity =>
+            modelBuilder.Entity<Jit>(entity =>
             {
-                entity.HasKey(e => e.Timestamp);
+                entity.HasKey(e => e.timestamp);
 
-                entity.ToTable("JIT_Data");
-
-                entity.Property(e => e.Timestamp)
+                entity.Property(e => e.timestamp)
                     .HasColumnName("timestamp")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.AppId).HasColumnName("app_id");
+                entity.Property(e => e.AppId).HasColumnName("appId");
 
-                entity.Property(e => e.Method)
+                entity.Property(e => e.method)
                     .HasColumnName("method")
                     .IsUnicode(false);
 
                 entity.HasOne(d => d.App)
-                    .WithMany(p => p.JitData)
+                    .WithMany(p => p.Jit)
                     .HasForeignKey(d => d.AppId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_JIT_Data_App");
+                    .HasConstraintName("FK_JIT_Session_ID");
             });
 
-            modelBuilder.Entity<MemData>(entity =>
+            modelBuilder.Entity<Mem_Usage>(entity =>
             {
-                entity.HasKey(e => e.Timestamp);
+                entity.HasKey(e => e.timestamp);
 
                 entity.ToTable("MEM_Data");
 
-                entity.Property(e => e.Timestamp)
+                entity.Property(e => e.timestamp)
                     .HasColumnName("timestamp")
                     .HasColumnType("datetime");
 
-                entity.Property(e => e.AppId).HasColumnName("app_id");
+                entity.Property(e => e.AppId).HasColumnName("appId");
 
-                entity.Property(e => e.Usage).HasColumnName("usage");
+                entity.Property(e => e.usage).HasColumnName("usage");
 
                 entity.HasOne(d => d.App)
                     .WithMany(p => p.MemData)
                     .HasForeignKey(d => d.AppId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_MEM_Data_App");
+                    .HasConstraintName("FK_MEM_Session_ID");
+            });
+
+            modelBuilder.Entity<Session>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.application)
+                    .HasColumnName("application")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.os)
+                    .HasColumnName("OS")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.processorCount).HasColumnName("processorCount");
+
+                entity.Property(e => e.processs)
+                    .HasColumnName("processs")
+                    .IsUnicode(false);
+
+                entity.Property(e => e.sampleRate).HasColumnName("sampleRate");
+
+                entity.Property(e => e.sendRate).HasColumnName("sendRate");
             });
         }
     }
 }
-#endif

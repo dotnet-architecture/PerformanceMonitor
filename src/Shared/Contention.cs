@@ -1,15 +1,16 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace DataTransfer
 {
-    public class Contention  // contains the percentage of total CPU usage and DateTime of instant
+    public partial class Contention
     {
-        public String app { get; set; }
-        public String process { get; set; }
-        public String type { get; set; }
-        public Guid id { get; set; }
-        [Key]
+        public string type { get; set; }
         public DateTime timestamp { get; set; }
+        public Guid id { get; set; }
+
+        public int AppId { get; set; }
+
+        public Session App { get; set; }
     }
 }
