@@ -15,12 +15,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication", "src\WebAp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "src\Shared\Shared.csproj", "{66296F2A-D127-4724-AFAF-7D9AC80C5300}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonitorTest", "test\Measurement\MonitorTest.csproj", "{38A9601F-EFE9-4377-AFDD-AA97849E59EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonitorTest", "test\Measurement\MonitorTest\MonitorTest.csproj", "{38A9601F-EFE9-4377-AFDD-AA97849E59EE}"
 	ProjectSection(ProjectDependencies) = postProject
 		{FF9F473F-FB88-482D-91C1-A1AC5785BFC7} = {FF9F473F-FB88-482D-91C1-A1AC5785BFC7}
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestDataTransfer", "test\TestDataTransfer\TestDataTransfer.csproj", "{D04C5BC5-9052-4A22-AB1B-8E202B5AFFD9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonitorUnitTest", "test\Measurement\MonitorUnitTest\MonitorUnitTest.csproj", "{256F4936-080D-494E-A2FF-54E2101278DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,6 +54,10 @@ Global
 		{D04C5BC5-9052-4A22-AB1B-8E202B5AFFD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D04C5BC5-9052-4A22-AB1B-8E202B5AFFD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D04C5BC5-9052-4A22-AB1B-8E202B5AFFD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{256F4936-080D-494E-A2FF-54E2101278DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{256F4936-080D-494E-A2FF-54E2101278DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{256F4936-080D-494E-A2FF-54E2101278DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{256F4936-080D-494E-A2FF-54E2101278DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
