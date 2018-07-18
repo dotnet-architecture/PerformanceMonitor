@@ -11,7 +11,7 @@ namespace WebApplication.Pages
     {
         public void OnGet()
         {
-
+            //call api to get a list of all application and processes
         }
     }
 }
