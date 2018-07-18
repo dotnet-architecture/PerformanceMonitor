@@ -28,12 +28,19 @@ namespace DataTransfer.Controllers
         }
 
         [HttpGet]
-        [Route("SESSION")]
+        [Route("SESSIONBYAPPANDPRO")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetSessionDataByAppAndProcess(string app, string pro)
         {
             var point = await _MetricContext.Session.SingleOrDefaultAsync(sess => (sess.application == app && sess.process == pro ));
             return Ok(point);
         }
-    }
-}
+
+        [HttpGet]
+        [Route("RETURNALL")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetAllpoints(string app, string pro)
+        {
+            var point = await _MetricContext.Session.ToListAsync();
+            return Ok(point);
+        }
