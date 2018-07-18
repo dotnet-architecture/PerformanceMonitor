@@ -207,7 +207,7 @@ namespace DataTransfer
                 entity.Property(e => e.processorCount).HasColumnName("processorCount");
 
                 entity.Property(e => e.process)
-                    .HasColumnName("process")
+                    .HasColumnName("processs")
                     .IsUnicode(false);
 
                 entity.Property(e => e.sampleRate).HasColumnName("sampleRate");

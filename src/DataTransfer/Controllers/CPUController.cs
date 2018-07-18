@@ -14,9 +14,9 @@ namespace DataTransfer.Controllers
     [ApiController]
     public class CPUController : ControllerBase
     {
-        public MetricContext _MetricContext;
+        public PerformanceDataContext _MetricContext;
 
-        public CPUController(MetricContext context)
+        public CPUController(PerformanceDataContext context)
         {
             _MetricContext = context ?? throw new ArgumentNullException(nameof(context));
         }
@@ -24,9 +24,9 @@ namespace DataTransfer.Controllers
         [HttpGet]
         [Route("Daterange")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> getCPUDataByTimerange(DateTime start, DateTime end)
+        public async Task<IActionResult> getCPUDataByTimerange(DateTime start, DateTime end, Session sess)
         {
-            List<CPU_Usage> data = await _MetricContext.CPU_Data.Where(d => (d.timestamp.ToUniversalTime() > start.ToUniversalTime() && d.timestamp.ToUniversalTime() < end.ToUniversalTime())).ToListAsync();
+            List<CPU_Usage> data = await _MetricContext.CPU_Usage.Where(d => (d.timestamp.ToUniversalTime() > start.ToUniversalTime() && d.timestamp.ToUniversalTime() < end.ToUniversalTime() && sess.Id == d.AppId)).ToListAsync();
             string jsonOfData = JsonConvert.SerializeObject(data);
             return Ok(jsonOfData);
         }
@@ -36,10 +36,10 @@ namespace DataTransfer.Controllers
         [HttpGet]
         [Route("CPU")]
         [ProducesResponseType( (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetCPUDataByTime(DateTime d)
+        public async Task<IActionResult> GetCPUDataByTime(DateTime d, Session sess)
         {
 
-            CPU_Usage point =  await _MetricContext.CPU_Data.SingleOrDefaultAsync(cpu => (cpu.timestamp.ToUniversalTime() == d.ToUniversalTime()));
+            CPU_Usage point =  await _MetricContext.CPU_Usage.SingleOrDefaultAsync(cpu => (cpu.timestamp.ToUniversalTime() == d.ToUniversalTime() && sess.Id == cpu.AppId));
 
             return Ok(point);
         }
@@ -47,9 +47,9 @@ namespace DataTransfer.Controllers
         [HttpGet]
         [Route("CPUBYUSAGE")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetCPUDataByUsage(float usage)
+        public async Task<IActionResult> GetCPUDataByUsage(float usage, Session sess)
         {
-            var point = await _MetricContext.CPU_Data.SingleOrDefaultAsync(cpu => cpu.usage == usage);
+            var point = await _MetricContext.CPU_Usage.SingleOrDefaultAsync(cpu => cpu.usage == usage && sess.Id == cpu.AppId);
             return Ok(point);
         }
 
@@ -63,7 +63,7 @@ namespace DataTransfer.Controllers
             met = JsonConvert.DeserializeObject<Metric_List>(j);
             foreach(CPU_Usage point in met.cpu)
             {
-                _MetricContext.CPU_Data.Add(point);
+                _MetricContext.CPU_Usage.Add(point);
             }
             await _MetricContext.SaveChangesAsync();
             return CreatedAtAction("CPU Data Created", new { obj = j }, null);
@@ -79,7 +79,7 @@ namespace DataTransfer.Controllers
                 timestamp = c.timestamp.ToUniversalTime(),
                
             };
-            _MetricContext.CPU_Data.Add(point);
+            _MetricContext.CPU_Usage.Add(point);
             await _MetricContext.SaveChangesAsync();
             return CreatedAtAction("CPU Data Created", new { date = point.timestamp }, null);
         }

@@ -13,18 +13,18 @@ namespace DataTransfer.Controllers
     [ApiController]
     public class HTTPController : ControllerBase
     {
-        public MetricContext _MetricContext;
+        public PerformanceDataContext _MetricContext;
 
-        public HTTPController(MetricContext context)
+        public HTTPController(PerformanceDataContext context)
         {
             _MetricContext = context ?? throw new ArgumentNullException(nameof(context));
         }
         [HttpGet]
         [Route("Daterange")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> getHTTPDataByTimerange(DateTime start, DateTime end)
+        public async Task<IActionResult> getHTTPDataByTimerange(DateTime start, DateTime end, Session sess)
         {
-            List<Http_Request> data = await _MetricContext.HTTP_Data.Where(d => (d.timestamp > start && d.timestamp < end)).ToListAsync();
+            List<Http_Request> data = await _MetricContext.Http_Request.Where(d => (d.timestamp > start && d.timestamp < end && sess.Id == d.AppId)).ToListAsync();
             string jsonOfData = JsonConvert.SerializeObject(data);
             return Ok(jsonOfData);
         }
@@ -32,9 +32,9 @@ namespace DataTransfer.Controllers
         [HttpGet]
         [Route("HTTP")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetHTTPDataByTime(DateTime d)
+        public async Task<IActionResult> GetHTTPDataByTime(DateTime d, Session sess)
         {
-            var point = await _MetricContext.HTTP_Data.SingleOrDefaultAsync(cpu => cpu.timestamp == d);
+            var point = await _MetricContext.Http_Request.SingleOrDefaultAsync(cpu => cpu.timestamp == d && sess.Id == cpu.AppId);
             return Ok(point);
         }
 
@@ -47,7 +47,7 @@ namespace DataTransfer.Controllers
             met = JsonConvert.DeserializeObject<Metric_List>(j);
             foreach (Http_Request point in met.requests)
             {
-                _MetricContext.HTTP_Data.Add(point);
+                _MetricContext.Http_Request.Add(point);
             }
             await _MetricContext.SaveChangesAsync();
             return CreatedAtAction("HTTP Data Created", new { obj = j }, null);
@@ -64,7 +64,7 @@ namespace DataTransfer.Controllers
                 path = c.path,
                 timestamp = c.timestamp
             };
-            _MetricContext.HTTP_Data.Add(point);
+            _MetricContext.Http_Request.Add(point);
             await _MetricContext.SaveChangesAsync();
             return CreatedAtAction("HTTP Data Created", new { date = point.timestamp }, null);
         }
