@@ -1,4 +1,4 @@
-@page
+﻿@page
 @model WebApplication.Pages.Metrics.CPU_MemoryModel
 @using DataTransfer;
 @{
@@ -86,6 +86,10 @@
             .then(function (myJson) {
                 document.write(myJson);
             });
+
+        for (var i = 0; i < result.length; i++) {
+
+        }
     </script>
 
     <input type="button" value="Refresh Logs" onClick="window.location.reload()">
@@ -142,10 +146,7 @@
             }
             else
             {
-                <tr>
-                    Unable to retrieve data
-                </tr>
-
+                <tr>Unable to retrieve data</tr>
             }
         </tbody>
     </table>
