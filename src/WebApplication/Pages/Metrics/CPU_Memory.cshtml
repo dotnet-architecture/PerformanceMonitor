@@ -13,33 +13,31 @@
 </head>
 
 <div class="main">
-
     <font size="50">CPU and Memory Usage</font>
 
     <div id="chart"></div>
     <script>
+        function getData() {
+            return @Model.cpu[Model.cpu.Count - 1].usage;
+        }
 
-            function getData() {
-                return @Model.cpu[Model.cpu.Count - 1].usage;
+        Plotly.plot('chart', [{
+            y: [getData()],
+            type: 'line'
+        }])
+
+        var cnt = 0;
+        setInterval(function () {
+            Plotly.extendTraces('chart', { y: [[getData()]] }, [0]);
+            cnt++;
+            if (cnt > 100) {
+                Plotly.relayout('chart', {
+                    xaxis: {
+                        range: [cnt - 100, cnt]
+                    }
+                });
             }
-
-            Plotly.plot('chart', [{
-                y: [getData()],
-                type:'line'
-            }])
-
-            var cnt = 0;
-            setInterval(function () {
-                Plotly.extendTraces('chart', { y: [[getData()]] }, [0]);
-                cnt++;
-                if (cnt > 100) {
-                    Plotly.relayout('chart', {
-                        xaxis: {
-                            range: [cnt - 100, cnt]
-                        }
-                    });
-                }
-            }, 5);
+        }, 5);
     </script>
 
     <div id="cpu"></div>
@@ -66,31 +64,6 @@
 
             Plotly.plot('cpu', data, graphOptions);
     </script>
-
-    <!--
-    <div id="tester"></div>
-    <script>
-        TESTER = document.getElementById('tester');
-        Plotly.plot(TESTER, [{
-            x: [1, 2, 3, 4, 5],
-            y: [1, 2, 4, 8, 16]
-        }], {
-                margin: { t: 0 }
-            });
-    </script>
-
-    <div id="cpu"></div>
-    <script>
-        TESTER = document.getElementById('cpu');
-        var trace1 = {
-            x: [1],
-            y: [2],
-            type: 'scatter'
-        };
-        var data = [trace1];
-        Plotly.plot('cpu', data);
-    </script>
-    -->
 
     <script>
         const start = `@Html.Encode(Model.oldStampString)`;
@@ -175,56 +148,4 @@
             }
         </tbody>
     </table>
-
 </div>
-    <!--
-       <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
-            <script type="text/javascript">
-           google.charts.load('current', { 'packages': ['corechart'] });
-           google.charts.setOnLoadCallback(drawChart);
-
-           function drawChart() {
-               var data = google.visualization.arrayToDataTable([
-                   ['TimeStamp', 'CPU'],
-                   ['2001', @Model.cpu[0].usage],
-                   ['2002', @Model.cpu[1].usage],
-                   //['2006', 660, 1120],
-                   //['2007', 1030, 540]
-               ]);
-
-               var options = {
-                   title: 'CPU Usage',
-                   curveType: 'function',
-                   legend: { position: 'bottom' }
-               };
-
-               var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-
-               chart.draw(data, options);
-           }
-            </script> -->
-    <!--
-    <div id="tester"></div>
-    <script>
-        TESTER = document.getElementById('tester');
-        Plotly.plot(TESTER, [{
-            x: [1, 2, 3, 4, 5],
-            y: [1, 2, 4, 8, 16]
-        }], {
-                margin: { t: 0 }
-            });
-    </script>
-
-    <div id="cpu"></div>
-    <script>
-        TESTER = document.getElementById('cpu');
-        var trace1 = {
-            x: [1],
-            y: [2],
-            type: 'scatter'
-        };
-        var data = [trace1];
-        Plotly.plot('cpu', data);
-    </script>
-    -->
