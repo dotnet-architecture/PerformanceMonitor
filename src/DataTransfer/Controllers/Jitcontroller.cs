@@ -13,9 +13,9 @@ namespace DataTransfer.Controllers
     [ApiController]
     public class JitController : ControllerBase
     {
-        public MetricContext _MetricContext;
+        public PerformanceDataContext _MetricContext;
 
-        public JitController(MetricContext context)
+        public JitController(PerformanceDataContext context)
         {
             _MetricContext = context ?? throw new ArgumentNullException(nameof(context));
         }
@@ -24,7 +24,7 @@ namespace DataTransfer.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> getJitDataByTimerange(DateTime start, DateTime end, Session sess)
         {
-            List<Jit> data = await _MetricContext.Jit_Data.Where(d => (d.timestamp > start && d.timestamp < end && sess.Id == d.AppId)).ToListAsync();
+            List<Jit> data = await _MetricContext.Jit.Where(d => (d.timestamp > start && d.timestamp < end && sess.Id == d.AppId)).ToListAsync();
             string jsonOfData = JsonConvert.SerializeObject(data);
             return Ok(jsonOfData);
         }
@@ -34,7 +34,7 @@ namespace DataTransfer.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetJitDataByTime(DateTime d, Session sess)
         {
-            var point = await _MetricContext.Jit_Data.SingleOrDefaultAsync(jit => jit.timestamp == d && sess.Id == jit.AppId);
+            var point = await _MetricContext.Jit.SingleOrDefaultAsync(jit => jit.timestamp == d && sess.Id == jit.AppId);
             return Ok(point);
         }
 
@@ -47,7 +47,7 @@ namespace DataTransfer.Controllers
             met = JsonConvert.DeserializeObject<Metric_List>(j);
             foreach (Jit point in met.jit)
             {
-                _MetricContext.Jit_Data.Add(point);
+                _MetricContext.Jit.Add(point);
             }
             await _MetricContext.SaveChangesAsync();
             return CreatedAtAction("Jit Data Created", new { obj = j }, null);
@@ -62,7 +62,7 @@ namespace DataTransfer.Controllers
                 method = c.method,
                 timestamp = c.timestamp
             };
-            _MetricContext.Jit_Data.Add(point);
+            _MetricContext.Jit.Add(point);
             await _MetricContext.SaveChangesAsync();
             return CreatedAtAction("HTTP Data Created", new { date = point.timestamp }, null);
         }

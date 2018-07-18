@@ -13,9 +13,9 @@ namespace DataTransfer.Controllers
     [ApiController]
     public class GCController : ControllerBase
     {
-        public MetricContext _MetricContext;
+        public PerformanceDataContext _MetricContext;
 
-        public GCController(MetricContext context)
+        public GCController(PerformanceDataContext context)
         {
             _MetricContext = context ?? throw new ArgumentNullException(nameof(context));
         }
@@ -24,7 +24,7 @@ namespace DataTransfer.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> getGCDataByTimerange(DateTime start, DateTime end, Session sess)
         {
-            List<GC> data = await _MetricContext.GC_Data.Where(d => (d.timestamp > start && d.timestamp < end && sess.Id == d.AppId)).ToListAsync();
+            List<GC> data = await _MetricContext.GC.Where(d => (d.timestamp > start && d.timestamp < end && sess.Id == d.AppId)).ToListAsync();
             string jsonOfData = JsonConvert.SerializeObject(data);
             return Ok(jsonOfData);
         }
@@ -34,7 +34,7 @@ namespace DataTransfer.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetGCDataByTime(DateTime d, Session sess)
         {
-            var point = await _MetricContext.GC_Data.SingleOrDefaultAsync(gc => gc.timestamp == d && sess.Id == gc.AppId);
+            var point = await _MetricContext.GC.SingleOrDefaultAsync(gc => gc.timestamp == d && sess.Id == gc.AppId);
             return Ok(point);
         }
 
@@ -47,7 +47,7 @@ namespace DataTransfer.Controllers
             met = JsonConvert.DeserializeObject<Metric_List>(j);
             foreach (GC point in met.gc)
             {
-                _MetricContext.GC_Data.Add(point);
+                _MetricContext.GC.Add(point);
             }
             await _MetricContext.SaveChangesAsync();
             return CreatedAtAction("GC Data Created", new { obj = j }, null);
@@ -62,7 +62,7 @@ namespace DataTransfer.Controllers
                 type = c.type,
                 timestamp = c.timestamp
             };
-            _MetricContext.GC_Data.Add(point);
+            _MetricContext.GC.Add(point);
             await _MetricContext.SaveChangesAsync();
             return CreatedAtAction("GC Data Created", new { date = point.timestamp }, null);
         }

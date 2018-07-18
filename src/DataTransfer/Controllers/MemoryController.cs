@@ -13,9 +13,9 @@ namespace DataTransfer.Controllers
     [ApiController]
     public class MemoryController : ControllerBase
     {
-        public MetricContext _MetricContext;
+        public PerformanceDataContext _MetricContext;
 
-        public MemoryController(MetricContext context)
+        public MemoryController(PerformanceDataContext context)
         {
             _MetricContext = context ?? throw new ArgumentNullException(nameof(context));
         }
@@ -24,7 +24,7 @@ namespace DataTransfer.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> getMEMDataByTimerange(DateTime start, DateTime end, Session sess)
         {
-            List<Mem_Usage> data = await _MetricContext.MEM_Data.Where(d => (d.timestamp > start && d.timestamp < end && sess.Id == d.AppId)).ToListAsync();
+            List<Mem_Usage> data = await _MetricContext.MemData.Where(d => (d.timestamp > start && d.timestamp < end && sess.Id == d.AppId)).ToListAsync();
             string jsonOfData = JsonConvert.SerializeObject(data);
             return Ok(jsonOfData);
         }
@@ -34,7 +34,7 @@ namespace DataTransfer.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetMEMDataByTime(DateTime d, Session sess )
         {
-            var point = await _MetricContext.MEM_Data.SingleOrDefaultAsync(mem => mem.timestamp == d && sess.Id == mem.AppId);
+            var point = await _MetricContext.MemData.SingleOrDefaultAsync(mem => mem.timestamp == d && sess.Id == mem.AppId);
             return Ok(point);
         }
 
@@ -43,7 +43,7 @@ namespace DataTransfer.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetMEMDataByUsage(float usage, Session sess)
         {
-            var point = await _MetricContext.MEM_Data.SingleOrDefaultAsync(mem => mem.usage == usage && sess.Id == mem.AppId);
+            var point = await _MetricContext.MemData.SingleOrDefaultAsync(mem => mem.usage == usage && sess.Id == mem.AppId);
             return Ok(point);
         }
         [HttpPost]
@@ -55,7 +55,7 @@ namespace DataTransfer.Controllers
             met = JsonConvert.DeserializeObject<Metric_List>(j);
             foreach (Mem_Usage point in met.mem)
             {
-                _MetricContext.MEM_Data.Add(point);
+                _MetricContext.MemData.Add(point);
             }
             await _MetricContext.SaveChangesAsync();
             return CreatedAtAction("MEM Data Created", new { obj = j }, null);
@@ -70,7 +70,7 @@ namespace DataTransfer.Controllers
                 usage = c.usage,
                 timestamp = c.timestamp
             };
-            _MetricContext.MEM_Data.Add(point);
+            _MetricContext.MemData.Add(point);
             await _MetricContext.SaveChangesAsync();
             return CreatedAtAction("MEM Data Created", new { date = point.timestamp }, null);
         }

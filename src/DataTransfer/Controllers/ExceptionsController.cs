@@ -13,9 +13,9 @@ namespace DataTransfer.Controllers
     [ApiController]
     public class ExceptionController : ControllerBase
     {
-        public MetricContext _MetricContext;
+        public PerformanceDataContext _MetricContext;
 
-        public ExceptionController(MetricContext context)
+        public ExceptionController(PerformanceDataContext context)
         {
             _MetricContext = context ?? throw new ArgumentNullException(nameof(context));
         }
@@ -24,7 +24,7 @@ namespace DataTransfer.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> getExceptionDataByTimerange(DateTime start, DateTime end, Session sess)
         {
-            List<Exceptions> data = await _MetricContext.Exception_Data.Where(d => (d.timestamp > start && d.timestamp < end && sess.Id == d.AppId)).ToListAsync();
+            List<Exceptions> data = await _MetricContext.Exceptions.Where(d => (d.timestamp > start && d.timestamp < end && sess.Id == d.AppId)).ToListAsync();
             string jsonOfData = JsonConvert.SerializeObject(data);
             return Ok(jsonOfData);
         }
@@ -34,7 +34,7 @@ namespace DataTransfer.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetExceptionDataByTime(DateTime d, Session sess)
         {
-            var point = await _MetricContext.Exception_Data.SingleOrDefaultAsync(exception => exception.timestamp == d && sess.Id == exception.AppId);
+            var point = await _MetricContext.Exceptions.SingleOrDefaultAsync(exception => exception.timestamp == d && sess.Id == exception.AppId);
             return Ok(point);
         }
 
@@ -43,7 +43,7 @@ namespace DataTransfer.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetExceptionDataByType(string kind, Session sess)
         {
-            var point = await _MetricContext.Exception_Data.SingleOrDefaultAsync(exception => exception.type == kind && sess.Id == exception.AppId);
+            var point = await _MetricContext.Exceptions.SingleOrDefaultAsync(exception => exception.type == kind && sess.Id == exception.AppId);
             return Ok(point);
         }
         [HttpPost]
@@ -55,7 +55,7 @@ namespace DataTransfer.Controllers
             met = JsonConvert.DeserializeObject<Metric_List>(j);
             foreach (Exceptions point in met.exceptions)
             {
-                _MetricContext.Exception_Data.Add(point);
+                _MetricContext.Exceptions.Add(point);
             }
             await _MetricContext.SaveChangesAsync();
             return CreatedAtAction("Exception Data Created", new { obj = j }, null);
@@ -70,7 +70,7 @@ namespace DataTransfer.Controllers
                 type = c.type,
                 timestamp = c.timestamp
             };
-            _MetricContext.Exception_Data.Add(point);
+            _MetricContext.Exceptions.Add(point);
             await _MetricContext.SaveChangesAsync();
             return CreatedAtAction("Exceptions Data Created", new { date = point.timestamp }, null);
         }
