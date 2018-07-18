@@ -27,6 +27,7 @@ namespace DataTransfer
         /*
          * VARIABLE DECLARATION BLOCK
          */
+        // fetching properties unique to current data collection session
         private static Process myProcess = Process.GetCurrentProcess();
         private static String processName = myProcess.ProcessName;
         private static String processID = myProcess.Id.ToString();
