@@ -22,9 +22,9 @@ namespace DataTransfer.Controllers
         [HttpGet]
         [Route("Daterange")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> getHTTPDataByTimerange(DateTime start, DateTime end)
+        public async Task<IActionResult> getHTTPDataByTimerange(DateTime start, DateTime end, Session sess)
         {
-            List<Http_Request> data = await _MetricContext.HTTP_Data.Where(d => (d.timestamp > start && d.timestamp < end)).ToListAsync();
+            List<Http_Request> data = await _MetricContext.HTTP_Data.Where(d => (d.timestamp > start && d.timestamp < end && sess.Id == d.AppId)).ToListAsync();
             string jsonOfData = JsonConvert.SerializeObject(data);
             return Ok(jsonOfData);
         }
@@ -32,9 +32,9 @@ namespace DataTransfer.Controllers
         [HttpGet]
         [Route("HTTP")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetHTTPDataByTime(DateTime d)
+        public async Task<IActionResult> GetHTTPDataByTime(DateTime d, Session sess)
         {
-            var point = await _MetricContext.HTTP_Data.SingleOrDefaultAsync(cpu => cpu.timestamp == d);
+            var point = await _MetricContext.HTTP_Data.SingleOrDefaultAsync(cpu => cpu.timestamp == d && sess.Id == cpu.AppId);
             return Ok(point);
         }
 

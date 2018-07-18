@@ -22,9 +22,9 @@ namespace DataTransfer.Controllers
         [HttpGet]
         [Route("Daterange")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> getExceptionDataByTimerange(DateTime start, DateTime end)
+        public async Task<IActionResult> getExceptionDataByTimerange(DateTime start, DateTime end, Session sess)
         {
-            List<Exceptions> data = await _MetricContext.Exception_Data.Where(d => (d.timestamp > start && d.timestamp < end)).ToListAsync();
+            List<Exceptions> data = await _MetricContext.Exception_Data.Where(d => (d.timestamp > start && d.timestamp < end && sess.Id == d.AppId)).ToListAsync();
             string jsonOfData = JsonConvert.SerializeObject(data);
             return Ok(jsonOfData);
         }
@@ -32,18 +32,18 @@ namespace DataTransfer.Controllers
         [HttpGet]
         [Route("Exceptions")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetExceptionDataByTime(DateTime d)
+        public async Task<IActionResult> GetExceptionDataByTime(DateTime d, Session sess)
         {
-            var point = await _MetricContext.Exception_Data.SingleOrDefaultAsync(cpu => cpu.timestamp == d);
+            var point = await _MetricContext.Exception_Data.SingleOrDefaultAsync(exception => exception.timestamp == d && sess.Id == exception.AppId);
             return Ok(point);
         }
 
         [HttpGet]
         [Route("EXCEPTIONSBYUSAGE")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetExceptionDataByType(string kind)
+        public async Task<IActionResult> GetExceptionDataByType(string kind, Session sess)
         {
-            var point = await _MetricContext.Exception_Data.SingleOrDefaultAsync(exception => exception.type == kind);
+            var point = await _MetricContext.Exception_Data.SingleOrDefaultAsync(exception => exception.type == kind && sess.Id == exception.AppId);
             return Ok(point);
         }
         [HttpPost]

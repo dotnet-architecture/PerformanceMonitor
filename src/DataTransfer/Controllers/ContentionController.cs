@@ -24,9 +24,9 @@ namespace DataTransfer.Controllers
         [HttpGet]
         [Route("Daterange")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> getContentionDataByTimerange(DateTime start, DateTime end)
+        public async Task<IActionResult> getContentionDataByTimerange(DateTime start, DateTime end, Session sess)
         {
-            List<Contention> data = await _MetricContext.Contention_Data.Where(d => (d.timestamp.ToUniversalTime() > start.ToUniversalTime() && d.timestamp.ToUniversalTime() < end.ToUniversalTime())).ToListAsync();
+            List<Contention> data = await _MetricContext.Contention_Data.Where(d => (d.timestamp.ToUniversalTime() > start.ToUniversalTime() && d.timestamp.ToUniversalTime() < end.ToUniversalTime() && sess.Id == d.AppId)).ToListAsync();
             string jsonOfData = JsonConvert.SerializeObject(data);
             return Ok(jsonOfData);
         }
@@ -36,10 +36,10 @@ namespace DataTransfer.Controllers
         [HttpGet]
         [Route("Contention")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetContentionDataByTime(DateTime d)
+        public async Task<IActionResult> GetContentionDataByTime(DateTime d, Session sess)
         {
 
-            Contention point = await _MetricContext.Contention_Data.SingleOrDefaultAsync(cont => (cont.timestamp.ToUniversalTime() == d.ToUniversalTime()));
+            Contention point = await _MetricContext.Contention_Data.SingleOrDefaultAsync(cont => (cont.timestamp.ToUniversalTime() == d.ToUniversalTime() && sess.Id == cont.AppId));
 
             return Ok(point);
         }
@@ -47,9 +47,9 @@ namespace DataTransfer.Controllers
         [HttpGet]
         [Route("ContentionBYUSAGE")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetContentionDataByType(string type)
+        public async Task<IActionResult> GetContentionDataByType(string type, Session sess)
         {
-            var point = await _MetricContext.Contention_Data.SingleOrDefaultAsync(cont => cont.type == type);
+            var point = await _MetricContext.Contention_Data.SingleOrDefaultAsync(cont => cont.type == type && sess.Id == cont.AppId);
             return Ok(point);
         }
 

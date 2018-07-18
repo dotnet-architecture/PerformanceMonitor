@@ -22,9 +22,9 @@ namespace DataTransfer.Controllers
         [HttpGet]
         [Route("Daterange")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> getMEMDataByTimerange(DateTime start, DateTime end)
+        public async Task<IActionResult> getMEMDataByTimerange(DateTime start, DateTime end, Session sess)
         {
-            List<Mem_Usage> data = await _MetricContext.MEM_Data.Where(d => (d.timestamp > start && d.timestamp < end)).ToListAsync();
+            List<Mem_Usage> data = await _MetricContext.MEM_Data.Where(d => (d.timestamp > start && d.timestamp < end && sess.Id == d.AppId)).ToListAsync();
             string jsonOfData = JsonConvert.SerializeObject(data);
             return Ok(jsonOfData);
         }
@@ -32,18 +32,18 @@ namespace DataTransfer.Controllers
         [HttpGet]
         [Route("MEM")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetMEMDataByTime(DateTime d)
+        public async Task<IActionResult> GetMEMDataByTime(DateTime d, Session sess )
         {
-            var point = await _MetricContext.MEM_Data.SingleOrDefaultAsync(cpu => cpu.timestamp == d);
+            var point = await _MetricContext.MEM_Data.SingleOrDefaultAsync(mem => mem.timestamp == d && sess.Id == mem.AppId);
             return Ok(point);
         }
 
         [HttpGet]
         [Route("MEMBYUSAGE")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetMEMDataByUsage(float usage)
+        public async Task<IActionResult> GetMEMDataByUsage(float usage, Session sess)
         {
-            var point = await _MetricContext.MEM_Data.SingleOrDefaultAsync(cpu => cpu.usage == usage);
+            var point = await _MetricContext.MEM_Data.SingleOrDefaultAsync(mem => mem.usage == usage && sess.Id == mem.AppId);
             return Ok(point);
         }
         [HttpPost]

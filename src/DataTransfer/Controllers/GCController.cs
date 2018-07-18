@@ -22,9 +22,9 @@ namespace DataTransfer.Controllers
         [HttpGet]
         [Route("Daterange")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> getGCDataByTimerange(DateTime start, DateTime end)
+        public async Task<IActionResult> getGCDataByTimerange(DateTime start, DateTime end, Session sess)
         {
-            List<GC> data = await _MetricContext.GC_Data.Where(d => (d.timestamp > start && d.timestamp < end)).ToListAsync();
+            List<GC> data = await _MetricContext.GC_Data.Where(d => (d.timestamp > start && d.timestamp < end && sess.Id == d.AppId)).ToListAsync();
             string jsonOfData = JsonConvert.SerializeObject(data);
             return Ok(jsonOfData);
         }
@@ -32,9 +32,9 @@ namespace DataTransfer.Controllers
         [HttpGet]
         [Route("GC")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetGCDataByTime(DateTime d)
+        public async Task<IActionResult> GetGCDataByTime(DateTime d, Session sess)
         {
-            var point = await _MetricContext.GC_Data.SingleOrDefaultAsync(cpu => cpu.timestamp == d);
+            var point = await _MetricContext.GC_Data.SingleOrDefaultAsync(gc => gc.timestamp == d && sess.Id == gc.AppId);
             return Ok(point);
         }
 
