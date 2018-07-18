@@ -41,7 +41,7 @@
         }, 5);
     </script>
 
-    <div id="cpu"></div>
+    <div id="test"></div>
     <script>
             var yy = [@Model.avgCPU, 2];
 
@@ -63,9 +63,10 @@
                 layout: layout,
             };
 
-            Plotly.plot('cpu', data, graphOptions);
+            Plotly.plot('test', data, graphOptions);
     </script>
 
+    <div id="cpu"></div>
     <script>
         const start = `@Html.Encode(Model.oldStampString)`;
         const end = `@Html.Encode(Model.newStampString)`;
@@ -87,9 +88,29 @@
                 document.write(myJson);
             });
 
-        for (var i = 0; i < result.length; i++) {
-
+        var cpuUsageList = []; 
+        for (var i = 0; i < result.lenght; i++) {
+            cpuUsageList.push(result[i].usage);
         }
+
+        var trace1 = {
+            y: cpuUsageList,
+            type: 'scatter'
+        };
+
+        var data = [trace1]; 
+        var layout = {
+            yaxis: {
+                visible: true,
+                title: 'CPU Usage'
+            }
+        }
+
+        var graphOptions = {
+            layout: layout,
+        };
+
+        Plotly.plot('cpu', data, graphOptions);
     </script>
 
     <script>
