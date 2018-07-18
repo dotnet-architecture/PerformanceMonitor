@@ -70,14 +70,16 @@
 
     <!--surround the select box with a "custom-select" DIV element. Remember to set the width:-->
     <div class="custom-select" style="width:200px;">
-        <select>
-            <option>Application Name...</option>
+        <select id="'list" onchange="getSelectValue()">
+            <option value="test">Application Name...</option>
         </select>
     </div>
 
-
     <script>
         function getSelectValue() {
+            var selectedValue = document.getElementById("list").value;
+            // parse selectedValue to find the application name and process
+            // use data to find the id number and store
         }
         var x, i, j, selElmnt, a, b, c;
         /*look for any elements with the class "custom-select":*/
