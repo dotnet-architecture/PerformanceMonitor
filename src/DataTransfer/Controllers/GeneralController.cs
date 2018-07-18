@@ -14,9 +14,9 @@ namespace DataTransfer.Controllers
     [ApiController]
     public class General : ControllerBase
     {
-        public MetricContext _MetricContext;
+        public PerformanceDataContext _MetricContext;
 
-        public General(MetricContext context)
+        public General(PerformanceDataContext context)
         {
             _MetricContext = context ?? throw new ArgumentNullException(nameof(context));
         }
@@ -25,35 +25,40 @@ namespace DataTransfer.Controllers
         [ProducesResponseType((int)HttpStatusCode.Created)]
         public async Task<IActionResult> CreateGeneralDatapointFromJSON([FromBody]string j)
         {
+            //Deserializes json
             Metric_List met = new Metric_List();
             met = JsonConvert.DeserializeObject<Metric_List>(j);
+
+            //Adds Application to app table
+            _MetricContext.Session.Add(met.session);
+            //Adds datapoints to respective tables
             foreach (CPU_Usage point in met.cpu)
             {
-                _MetricContext.CPU_Data.Add(point);
+                _MetricContext.CPU_Usage.Add(point);
             }
-            foreach(Mem_Usage point in met.mem)
+            foreach (Mem_Usage point in met.mem)
             {
-                _MetricContext.MEM_Data.Add(point); 
+                _MetricContext.MemData.Add(point);
             }
-            foreach(Exceptions point in met.exceptions)
+            foreach (Exceptions point in met.exceptions)
             {
-                _MetricContext.Exception_Data.Add(point);
+                _MetricContext.Exceptions.Add(point);
             }
-            foreach(Http_Request point in met.requests)
+            foreach (Http_Request point in met.requests)
             {
-                _MetricContext.HTTP_Data.Add(point);
+                _MetricContext.Http_Request.Add(point);
             }
-            foreach(Jit point in met.jit)
+            foreach (Jit point in met.jit)
             {
-                _MetricContext.Jit_Data.Add(point);
+                _MetricContext.Jit.Add(point);
             }
             foreach (Contention point in met.contentions)
             {
-                _MetricContext.Contention_Data.Add(point);
+                _MetricContext.Contention.Add(point);
             }
             foreach (GC point in met.gc)
             {
-                _MetricContext.GC_Data.Add(point);
+                _MetricContext.GC.Add(point);
             }
             await _MetricContext.SaveChangesAsync();
             return CreatedAtAction("CPU Data Created", new { obj = j }, null);
