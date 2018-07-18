@@ -14,9 +14,9 @@ namespace DataTransfer.Controllers
     [ApiController]
     public class ContentionController : ControllerBase
     {
-        public MetricContext _MetricContext;
+        public PerformanceDataContext _MetricContext;
 
-        public ContentionController(MetricContext context)
+        public ContentionController(PerformanceDataContext context)
         {
             _MetricContext = context ?? throw new ArgumentNullException(nameof(context));
         }
@@ -24,9 +24,9 @@ namespace DataTransfer.Controllers
         [HttpGet]
         [Route("Daterange")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> getContentionDataByTimerange(DateTime start, DateTime end)
+        public async Task<IActionResult> getContentionDataByTimerange(DateTime start, DateTime end, Session sess)
         {
-            List<Contention> data = await _MetricContext.Contention_Data.Where(d => (d.timestamp.ToUniversalTime() > start.ToUniversalTime() && d.timestamp.ToUniversalTime() < end.ToUniversalTime())).ToListAsync();
+            List<Contention> data = await _MetricContext.Contention.Where(d => (d.timestamp.ToUniversalTime() > start.ToUniversalTime() && d.timestamp.ToUniversalTime() < end.ToUniversalTime() && sess.Id == d.AppId)).ToListAsync();
             string jsonOfData = JsonConvert.SerializeObject(data);
             return Ok(jsonOfData);
         }
@@ -36,10 +36,10 @@ namespace DataTransfer.Controllers
         [HttpGet]
         [Route("Contention")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetContentionDataByTime(DateTime d)
+        public async Task<IActionResult> GetContentionDataByTime(DateTime d, Session sess)
         {
 
-            Contention point = await _MetricContext.Contention_Data.SingleOrDefaultAsync(cont => (cont.timestamp.ToUniversalTime() == d.ToUniversalTime()));
+            Contention point = await _MetricContext.Contention.SingleOrDefaultAsync(cont => (cont.timestamp.ToUniversalTime() == d.ToUniversalTime() && sess.Id == cont.AppId));
 
             return Ok(point);
         }
@@ -47,9 +47,9 @@ namespace DataTransfer.Controllers
         [HttpGet]
         [Route("ContentionBYUSAGE")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetContentionDataByType(string type)
+        public async Task<IActionResult> GetContentionDataByType(string type, Session sess)
         {
-            var point = await _MetricContext.Contention_Data.SingleOrDefaultAsync(cont => cont.type == type);
+            var point = await _MetricContext.Contention.SingleOrDefaultAsync(cont => cont.type == type && sess.Id == cont.AppId);
             return Ok(point);
         }
 
@@ -63,7 +63,7 @@ namespace DataTransfer.Controllers
             met = JsonConvert.DeserializeObject<Metric_List>(j);
             foreach (Contention point in met.contentions)
             {
-                _MetricContext.Contention_Data.Add(point);
+                _MetricContext.Contention.Add(point);
             }
             await _MetricContext.SaveChangesAsync();
             return CreatedAtAction("Contention Data Created", new { obj = j }, null);
@@ -78,7 +78,7 @@ namespace DataTransfer.Controllers
                 type = c.type,
                 timestamp = c.timestamp.ToUniversalTime(),
             };
-            _MetricContext.Contention_Data.Add(point);
+            _MetricContext.Contention.Add(point);
             await _MetricContext.SaveChangesAsync();
             return CreatedAtAction("CPU Data Created", new { date = point.timestamp }, null);
         }
