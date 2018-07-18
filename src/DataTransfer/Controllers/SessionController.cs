@@ -39,7 +39,7 @@ namespace DataTransfer.Controllers
         [HttpGet]
         [Route("RETURNALL")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetAllpoints(string app, string pro)
+        public async Task<IActionResult> GetAllpoints()
         {
             var point = await _MetricContext.Session.ToListAsync();
             return Ok(point);
