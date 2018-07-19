@@ -14,6 +14,7 @@ namespace WebApplication.Pages
     public class IndexModel : PageModel
     {
         public List<Session> sess = new List<Session>();
+        public Session selected; 
         public async void OnGet()
         {
             IMetricService<Session> _metricService = new MetricService<Session>();
@@ -26,6 +27,7 @@ namespace WebApplication.Pages
             _metricService.updateUsingHttpResponse(response);
 
             sess = await _metricService.getServiceUsage();
+            selected = sess[0];
         }
     }
 }
