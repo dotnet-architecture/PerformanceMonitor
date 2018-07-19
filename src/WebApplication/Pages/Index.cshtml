@@ -1,5 +1,6 @@
 ﻿@page
 @model IndexModel
+@using DataTransfer; 
 @{
     ViewData["Title"] = "Home page";
 }
@@ -71,7 +72,12 @@
     <!--surround the select box with a "custom-select" DIV element. Remember to set the width:-->
     <div class="custom-select" style="width:200px;">
         <select id="'list" onchange="getSelectValue()">
-            <option value="test">Application Name...</option>
+            @for (int i = 0; i < Model.sess.Count; i++)
+            {
+                var valueString = Model.sess[i].application + "*" + Model.sess[i].process;
+                var valueIntString = i.ToString(); 
+                <option value="${valueIntString}">@Model.sess[i].application  @Model.sess[i].process</option>
+            }
         </select>
     </div>
 
@@ -79,7 +85,9 @@
         function getSelectValue() {
             var selectedValue = document.getElementById("list").value;
             // parse selectedValue to find the application name and process
+            var intSelectedValue = parseInt(selectedValue); 
             // use data to find the id number and store
+            //@Model.selected = @Model.sess[intSelectedValue];
         }
         var x, i, j, selElmnt, a, b, c;
         /*look for any elements with the class "custom-select":*/

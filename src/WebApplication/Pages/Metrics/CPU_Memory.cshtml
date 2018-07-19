@@ -41,7 +41,11 @@
         }, 5);
     </script>
 
+<<<<<<< HEAD
     <div id="cputest"></div>
+=======
+    <div id="test"></div>
+>>>>>>> upstream/master
     <script>
             var yy = [@Model.avgCPU, 2];
 
@@ -63,7 +67,11 @@
                 layout: layout,
             };
 
+<<<<<<< HEAD
             Plotly.plot('cputest', data, graphOptions);
+=======
+            Plotly.plot('test', data, graphOptions);
+>>>>>>> upstream/master
     </script>
 
     <div id="cpu"></div>
@@ -94,7 +102,7 @@
         }
 
         var trace1 = {
-            y: usage;
+            y: usage,
             type: 'scatter'
         };
 
@@ -108,7 +116,7 @@
         };
 
         var graphOptions = {
-            layout: layout;
+            layout: layout
         };
 
         Plotly.plot('cpu', data, graphOptions);
