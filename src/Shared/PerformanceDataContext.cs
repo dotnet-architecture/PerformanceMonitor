@@ -6,9 +6,7 @@ namespace DataTransfer
 {
     public partial class PerformanceDataContext : DbContext
     {
-        public PerformanceDataContext()
-        {
-        }
+  
 
         public PerformanceDataContext(DbContextOptions<PerformanceDataContext> options)
             : base(options)
