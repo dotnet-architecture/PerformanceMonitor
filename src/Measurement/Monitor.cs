@@ -35,7 +35,7 @@ namespace DataTransfer
         private static Session instance = new Session();
 
         // "hold" describes a lock on data used for transmission - used to avoid serialization issues
-        private static int hold = 0;
+        public static int hold = 0;
         
         // creates an HTTP client so that server requests can be made
         HttpClient client = new HttpClient();
@@ -54,26 +54,54 @@ namespace DataTransfer
         // time object used to check if data should be collected
         private static DateTime metricTime = DateTime.Now;
         // list containing instances of CPU readings
-        private static List<CPU_Usage> CPUVals = new List<CPU_Usage>();
+        public static List<CPU_Usage> CPUVals = new List<CPU_Usage>();
+        public int getCPUCount()
+        {
+            return CPUVals.Count;
+        }
 
         // Mem block:
         // list containing instances of Memory readings
-        private static List<Mem_Usage> MemVals = new List<Mem_Usage>();
+        public static List<Mem_Usage> MemVals = new List<Mem_Usage>();
+        public int getMemCount()
+        {
+            return MemVals.Count;
+        }
 
         // Exception block:
-        private static List<Exceptions> ExceptionVals = new List<Exceptions>();
+        public static List<Exceptions> ExceptionVals = new List<Exceptions>();
+        public int getExceptionCount()
+        {
+            return ExceptionVals.Count;
+        }
 
         // HTTP Request block:
-        private static List<Http_Request> RequestVals = new List<Http_Request>();
+        public static List<Http_Request> RequestVals = new List<Http_Request>();
+        public int getHTTPCount()
+        {
+            return RequestVals.Count;
+        }
 
         // Contention block:
-        private static List<Contention> ContentionVals = new List<Contention>();
+        public static List<Contention> ContentionVals = new List<Contention>();
+        public int getContentionCount()
+        {
+            return ContentionVals.Count;
+        }
 
         // Garbage Collection block:
-        private static List<GC> GCVals = new List<GC>();
+        public static List<GC> GCVals = new List<GC>();
+        public int getGCCount()
+        {
+            return GCVals.Count;
+        }
 
         // Jit block:
-        private static List<Jit> JitVals = new List<Jit>();
+        public static List<Jit> JitVals = new List<Jit>();
+        public int getJitCount()
+        {
+            return JitVals.Count;
+        }
 
 
 

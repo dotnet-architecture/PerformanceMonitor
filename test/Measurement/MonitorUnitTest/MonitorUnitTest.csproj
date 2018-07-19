@@ -12,4 +12,11 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\DataTransfer\DataTransfer.csproj" />
+    <ProjectReference Include="..\..\..\src\Measurement\PerfMonitor.csproj" />
+    <ProjectReference Include="..\..\..\src\Shared\Shared.csproj" />
+    <ProjectReference Include="..\MonitorTest\MonitorTest.csproj" />
+  </ItemGroup>
+
 </Project>
