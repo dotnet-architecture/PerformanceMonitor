@@ -41,7 +41,7 @@
         }, 5);
     </script>
 
-    <div id="cpu"></div>
+    <div id="test"></div>
     <script>
             var yy = [@Model.avgCPU, 2];
 
@@ -63,14 +63,61 @@
                 layout: layout,
             };
 
-            Plotly.plot('cpu', data, graphOptions);
+            Plotly.plot('test', data, graphOptions);
+    </script>
+
+    <div id="cpu"></div>
+    <script>
+        const start = `@Html.Encode(Model.oldStampString)`;
+        const end = `@Html.Encode(Model.newStampString)`;
+
+        const url = `http://localhost:54022/api/v1/CPU/Daterange?start=${start}&end=${end}`;
+        const dateRangePromise = fetch(url)
+            .then((response) => {
+                if (response.ok === false) {
+                    return response.text().then(text => {
+                        throw new Error(`${response.statusText}\n${text}`);
+                    });
+                }
+                return response;
+            })
+            .then((response) => response.json());
+
+        var result = Promise.all([dateRangePromise])
+            .then(function (myJson) {
+                document.write(myJson);
+            });
+
+        var cpuUsageList = []; 
+        for (var i = 0; i < result.lenght; i++) {
+            cpuUsageList.push(result[i].usage);
+        }
+
+        var trace1 = {
+            y: cpuUsageList,
+            type: 'scatter'
+        };
+
+        var data = [trace1]; 
+        var layout = {
+            yaxis: {
+                visible: true,
+                title: 'CPU Usage'
+            }
+        }
+
+        var graphOptions = {
+            layout: layout,
+        };
+
+        Plotly.plot('cpu', data, graphOptions);
     </script>
 
     <script>
         const start = `@Html.Encode(Model.oldStampString)`;
         const end = `@Html.Encode(Model.newStampString)`;
 
-        const url = `http://localhost:54022/api/v1/CPU/Daterange?start=${start}&end=${end}`;
+        const url = `http://localhost:54022/api/v1/Memory/Daterange?start=${start}&end=${end}`;
         const dateRangePromise = fetch(url)
             .then((response) => {
                 if (response.ok === false) {
