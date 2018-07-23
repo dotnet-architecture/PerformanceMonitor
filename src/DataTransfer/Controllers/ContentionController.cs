@@ -24,9 +24,9 @@ namespace DataTransfer.Controllers
         [HttpGet]
         [Route("Daterange")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> getContentionDataByTimerange(DateTime start, DateTime end, Session sess)
+        public async Task<IActionResult> getContentionDataByTimerange(DateTime start, DateTime end, int id)
         {
-            List<Contention> data = await _MetricContext.Contention.Where(d => (d.timestamp.ToUniversalTime() > start.ToUniversalTime() && d.timestamp.ToUniversalTime() < end.ToUniversalTime() && sess.Id == d.AppId)).ToListAsync();
+            List<Contention> data = await _MetricContext.Contention.Where(d => (d.timestamp.ToUniversalTime() > start.ToUniversalTime() && d.timestamp.ToUniversalTime() < end.ToUniversalTime() && id == d.AppId)).ToListAsync();
             string jsonOfData = JsonConvert.SerializeObject(data);
             return Ok(jsonOfData);
         }
