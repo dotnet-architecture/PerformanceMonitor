@@ -14,7 +14,9 @@ namespace WebApplication.Pages
     public class IndexModel : PageModel
     {
         public List<Session> sess = new List<Session>();
-        public Session selected; 
+        public Session selected;
+        public String process { get; set; } = "";
+        public String application { get; set; } = ""; 
         public async void OnGet()
         {
             IMetricService<Session> _metricService = new MetricService<Session>();
@@ -27,7 +29,26 @@ namespace WebApplication.Pages
             _metricService.updateUsingHttpResponse(response);
 
             sess = await _metricService.getServiceUsage();
-            selected = sess[0];
+            getSession();
+        }
+
+        public void getSession()
+        {
+            if (process.Equals("") || application.Equals(""))
+            {
+                return;
+            }
+
+            for (int i = 0; i < sess.Count; i++)
+            {
+                String sessApp = sess[i].application;
+                String sessProcess = sess[i].process; 
+
+                if (sessApp.Equals(application) && sessProcess.Equals(process))
+                {
+                    selected = sess[i]; 
+                }
+            }
         }
     }
 }
