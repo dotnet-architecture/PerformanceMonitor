@@ -23,12 +23,36 @@ namespace MonitorTest
         {
             return monitor.sendRate;
         }
+        public static double RequestTest()
+        {
+            DateTime timer = DateTime.Now;
+            while (true)
+            {
+                if (DateTime.Now.Subtract(timer).TotalSeconds >= 20)
+                {
+                    timer = DateTime.Now;
+                    int count = 0;
+                    double avg = 0;
+                    DateTime newTimer = DateTime.Now;
+                    while (DateTime.Now.Subtract(newTimer).TotalMilliseconds <= monitor.sendRate * 4)
+                    {
+                        if (monitor.getHold() == 1)
+                        {
+                            avg = (DateTime.Now.Subtract(timer).TotalMilliseconds + avg * count) / (count + 1);
+                            count++;
+                            timer = DateTime.Now;
+                        }
+                    }
+                    return avg;
+                }
+            }
+        }
         public static int CPUMemTest()
         {
             DateTime timer = DateTime.Now;
             while (true)
             {
-                if (DateTime.Now.Subtract(timer).TotalSeconds >= 16)
+                if (DateTime.Now.Subtract(timer).TotalSeconds >= 25)
                 {
                     timer = DateTime.Now;
                     while (true)
