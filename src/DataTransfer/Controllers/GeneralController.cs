@@ -30,8 +30,8 @@ namespace DataTransfer.Controllers
             met = JsonConvert.DeserializeObject<Metric_List>(j);
 
             //Adds Application to app table
-
-            if( null == _MetricContext.Session.SingleOrDefaultAsync(s => (s.Id == met.session.Id)))
+            Session info = await _MetricContext.Session.SingleOrDefaultAsync(s => (s.Id == met.session.Id));
+            if ( null == info)
             {
                 _MetricContext.Session.Add(met.session);
                 await _MetricContext.SaveChangesAsync();
