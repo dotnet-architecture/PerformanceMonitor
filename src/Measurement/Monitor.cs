@@ -36,6 +36,10 @@ namespace DataTransfer
 
         // "hold" describes a lock on data used for transmission - used to avoid serialization issues
         public static int hold = 0;
+        public int getHold()
+        {
+            return hold;
+        }
         
         // creates an HTTP client so that server requests can be made
         HttpClient client = new HttpClient();
@@ -384,7 +388,8 @@ namespace DataTransfer
             {
                 // converts list of metric measurements into a JSON object string
                 String output = JsonConvert.SerializeObject(metricList);
-                Console.WriteLine(output);
+                //Console.WriteLine(output);
+
                 // escapes string so that JSON object is interpreted as a single string
                 output = JsonConvert.ToString(output);
 
