@@ -69,6 +69,9 @@
     <font size="50">.NET Performance Monitor</font>
     <p>Check your app's performance by navigating the sidebar.</p>
 
+    Application: <input asp-for="application"/> <br/>
+    Process: <input asp-for="process" /> <br/>
+
     <!--surround the select box with a "custom-select" DIV element. Remember to set the width:-->
     <div class="custom-select" style="width:200px;">
         <select id="'list" onchange="getSelectValue()">
@@ -87,7 +90,6 @@
             // parse selectedValue to find the application name and process
             var intSelectedValue = parseInt(selectedValue); 
             // use data to find the id number and store
-           
         }
         var x, i, j, selElmnt, a, b, c;
         /*look for any elements with the class "custom-select":*/
