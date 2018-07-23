@@ -30,8 +30,12 @@ namespace DataTransfer.Controllers
             met = JsonConvert.DeserializeObject<Metric_List>(j);
 
             //Adds Application to app table
-            _MetricContext.Session.Add(met.session);
-            await _MetricContext.SaveChangesAsync();
+
+            if( null == _MetricContext.Session.SingleOrDefaultAsync(s => (s.Id == met.session.Id)))
+            {
+                _MetricContext.Session.Add(met.session);
+                await _MetricContext.SaveChangesAsync();
+            }
             //Adds datapoints to respective tables
             foreach (CPU_Usage point in met.cpu)
             {

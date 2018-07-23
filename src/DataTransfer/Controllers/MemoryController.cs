@@ -22,9 +22,9 @@ namespace DataTransfer.Controllers
         [HttpGet]
         [Route("Daterange")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> getMEMDataByTimerange(DateTime start, DateTime end, Session sess)
+        public async Task<IActionResult> getMEMDataByTimerange(DateTime start, DateTime end, int id)
         {
-            List<Mem_Usage> data = await _MetricContext.MemData.Where(d => (d.timestamp > start && d.timestamp < end && sess.Id == d.AppId)).ToListAsync();
+            List<Mem_Usage> data = await _MetricContext.MemData.Where(d => (d.timestamp > start && d.timestamp < end && id == d.AppId)).ToListAsync();
             string jsonOfData = JsonConvert.SerializeObject(data);
             return Ok(jsonOfData);
         }
