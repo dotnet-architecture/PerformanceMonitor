@@ -21,8 +21,8 @@
 
     Please select one of the above sessions...
     <form asp-action="GetSessionDataByAppAndProcess" method="post">
-        <input type ="text" placeholder="Application" asp-for="@Model.application" name="application"/> <br />
-        <input type="text" placeholder="Process" asp-for="@Model.process" name="process"/> <br />
+        <input type ="text" placeholder="Application" asp-for="@Model.application" name="app"/> <br />
+        <input type="text" placeholder="Process" asp-for="@Model.process" name="pro"/> <br />
         <button type="submit" value="@Model.getSession()">Examine</button>
     </form>
 </div>
