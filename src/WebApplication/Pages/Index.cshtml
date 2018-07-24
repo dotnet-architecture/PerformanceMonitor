@@ -12,17 +12,45 @@
     <font size="50">.NET Performance Monitor</font>
     <p>Check your app's performance by navigating the sidebar.</p>
 
-    Current Sessions: 
+    Current Sessions:
     @Model.sessions.Count
-    @for(int i = 0; i < Model.sessions.Count; i++)
+    @for (int i = 0; i < Model.sessions.Count; i++)
     {
         <p>Application: @Model.sessions[i].application Process: @Model.sessions[i].process</p>
     }
 
+    <p>Log of Session</p>
+    <table class="table table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>Application</th>
+                <th>Process</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.sessions != null)
+            {
+                @for (int i = Model.sessions.Count - 1; i >= 0; i--)
+                {
+                    Session s = Model.sessions.ElementAt<Session>(i);
+                    <tr>
+                        <td>@s.application</td>
+                        <td>@s.process</td>
+                    </tr>
+
+                }
+            }
+            else
+            {
+                <tr>Unable to retrieve data</tr>
+            }
+        </tbody>
+    </table>
+
     Please select one of the above sessions...
     <form asp-action="GetSessionDataByAppAndProcess" method="post">
-        <input type ="text" placeholder="Application" asp-for="@Model.application" name="app"/> <br />
-        <input type="text" placeholder="Process" asp-for="@Model.process" name="pro"/> <br />
+        <input type="text" placeholder="Application" asp-for="@Model.application" name="app" /> <br />
+        <input type="text" placeholder="Process" asp-for="@Model.process" name="pro" /> <br />
         <button type="submit" value="@Model.getSession()">Examine</button>
     </form>
 </div>
