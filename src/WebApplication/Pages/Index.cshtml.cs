@@ -8,13 +8,19 @@ using WebApplication.Services;
 using WebApplication.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.Web;
+using System.Net;
 
 namespace WebApplication.Pages
 {
     public class IndexModel : PageModel
     {
         public List<Session> sessions = new List<Session>();
-        public static Session selected { get; set; } = new Session();
+        public Session selectedSession { get; set; } = new Session();
+        public static int selectedSessionID { get; set; }
+
+        public String message = "Please enter the name of the application and process you would like to examine.";
 
         [BindProperty]
         public List<Session> sessionsReturned { get; set; } = new List<Session>();
@@ -22,25 +28,52 @@ namespace WebApplication.Pages
         [Required]
         [BindProperty]
         [DataType(DataType.Text)]
-        [Display(Name = "Application")]
-        public String application { get; set; } = "";
+        [Display(Name = "app")]
+        public String app { get; set; } = "";
         
         [Required]
         [BindProperty]
         [DataType(DataType.Text)]
-        [Display(Name = "Process")]
-        public String process { get; set; } = "";
+        [Display(Name = "pro")]
+        public String pro { get; set; } = "";
 
         public async Task OnGet()
         {
             sessions = await FetchDataService.getSessionData();
         }
 
+        public async Task OnPostAsync(String app, String pro)
+        {
+            HttpClient client = new HttpClient();
+
+            client.BaseAddress = new Uri("http://localhost:54022/");
+            String htmlAddress = "SESSIONBYAPPANDPRO?app=" +
+                Uri.EscapeDataString(app) +
+                "&pro=" +
+                Uri.EscapeDataString(pro);
+            HttpResponseMessage response = await client.GetAsync(htmlAddress);
+
+            var result = response.Content.ReadAsStringAsync().Result;
+
+            selectedSession = JsonConvert.DeserializeObject<Session>(result);
+
+            if (selectedSession == null || !selectedSession.application.Equals(app) || !selectedSession.process.Equals(pro))
+            {
+                message = "Error. Please try re-entering the application and process name. " +
+                    "Make sure it is one of the sessions listed above.";
+            } else
+            {
+                message = "Showing information of" + selectedSession.application + "and" + selectedSession.process;
+            }
+
+            await OnGet();
+        }
+
         // Returns true if an appropriate application and process are inputed
         // Returns false if no application and process string found OR they are not in the database
         public Boolean getSession()
         {
-            if (process.Equals("") || application.Equals(""))
+            if (pro.Equals("") || app.Equals(""))
             {
                 return false;
             }
@@ -50,9 +83,10 @@ namespace WebApplication.Pages
                 String sessApp = sessions[i].application;
                 String sessProcess = sessions[i].process; 
 
-                if (sessApp.Equals(application) && sessProcess.Equals(process))
+                if (sessApp.Equals(app) && sessProcess.Equals(pro))
                 {
-                    selected = sessions[i];
+                    selectedSession = sessions[i];
+                    selectedSessionID = selectedSession.Id;
                     return true;
                 }
             }

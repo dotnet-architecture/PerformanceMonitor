@@ -19,7 +19,7 @@ namespace WebApplication
             client.BaseAddress = new Uri("http://localhost:54022/");
 
             String dateRange = convertDateTime(oldStamp) + "&end=" + convertDateTime(newStamp);
-            String sessionId = "&id=" + IndexModel.selected.Id.ToString(); 
+            String sessionId = "&id=" + IndexModel.selectedSessionID.ToString(); 
 
             String type = "";
 
@@ -59,7 +59,7 @@ namespace WebApplication
             HttpResponseMessage response = await client.GetAsync("api/v1/" + 
                 type + 
                 "/Daterange?start=" + 
-                dateRange + 
+                dateRange +
                 sessionId);
             _metricService.updateUsingHttpResponse(response);
 
@@ -90,7 +90,6 @@ namespace WebApplication
             }
 
             return sessionData; 
-
         }
 
         // Converting DateTIme to a string that Http request will accept
