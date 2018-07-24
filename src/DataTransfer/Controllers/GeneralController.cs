@@ -21,7 +21,7 @@ namespace DataTransfer.Controllers
             _MetricContext = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        [HttpPost]  
+        [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.Created)]
         public async Task<IActionResult> CreateGeneralDatapointFromJSON([FromBody]string j)
         {
@@ -30,8 +30,8 @@ namespace DataTransfer.Controllers
             met = JsonConvert.DeserializeObject<Metric_List>(j);
 
             //Adds Application to app table
-            Session info = await _MetricContext.Session.SingleOrDefaultAsync(s => (s.Id == met.session.Id));
-            if ( null == info)
+            Session info = await _MetricContext.Session.SingleOrDefaultAsync(s => (s.application == met.session.application && s.process == met.session.process));
+            if (null == info)
             {
                 _MetricContext.Session.Add(met.session);
                 await _MetricContext.SaveChangesAsync();

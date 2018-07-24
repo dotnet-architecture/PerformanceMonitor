@@ -1,4 +1,4 @@
-[![Build status](https://performancemonitor.visualstudio.com/MyFirstProject/_apis/build/status/PerformanceMonitorCI?branch=master)](https://performancemonitor.visualstudio.com/MyFirstProject/_build/latest?definitionId=1&branch=master)]
+[![Build status](https://performancemonitor.visualstudio.com/MyFirstProject/_apis/build/status/PerformanceMonitorCI?branch=master)]
 
 # .NET Core PerformanceMonitor
 
