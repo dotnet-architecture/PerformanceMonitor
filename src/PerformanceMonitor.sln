@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication", "WebApplic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csproj", "{66296F2A-D127-4724-AFAF-7D9AC80C5300}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonitorTest", "..\test\Measurement\MonitorTest.csproj", "{5284B3FC-579A-4DDB-8E09-AC05A1FA11A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonitorTest", "..\test\Measurement\MonitorTest\MonitorTest.csproj", "{D6225C4B-FA38-425E-BB8C-22B10046B82B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +35,10 @@ Global
 		{66296F2A-D127-4724-AFAF-7D9AC80C5300}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66296F2A-D127-4724-AFAF-7D9AC80C5300}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66296F2A-D127-4724-AFAF-7D9AC80C5300}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5284B3FC-579A-4DDB-8E09-AC05A1FA11A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5284B3FC-579A-4DDB-8E09-AC05A1FA11A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5284B3FC-579A-4DDB-8E09-AC05A1FA11A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5284B3FC-579A-4DDB-8E09-AC05A1FA11A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6225C4B-FA38-425E-BB8C-22B10046B82B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6225C4B-FA38-425E-BB8C-22B10046B82B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6225C4B-FA38-425E-BB8C-22B10046B82B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6225C4B-FA38-425E-BB8C-22B10046B82B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
