@@ -18,12 +18,9 @@ namespace WebApplication.Pages
     {
         public List<Session> sessions = new List<Session>();
         public Session selectedSession { get; set; } = new Session();
-        public static int selectedSessionID { get; set; }
+        public static Session userSession { get; set; }
 
         public String message = "Please enter the name of the application and process you would like to examine.";
-
-        [BindProperty]
-        public List<Session> sessionsReturned { get; set; } = new List<Session>();
 
         [Required]
         [BindProperty]
@@ -63,7 +60,8 @@ namespace WebApplication.Pages
                     "Make sure it is one of the sessions listed above.";
             } else
             {
-                message = "Showing information of" + selectedSession.application + "and" + selectedSession.process;
+                message = "Showing information of " + selectedSession.application + " application and " + selectedSession.process + " process.";
+                userSession = selectedSession;
             }
 
             await OnGet();

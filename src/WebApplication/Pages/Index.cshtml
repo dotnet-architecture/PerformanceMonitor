@@ -41,26 +41,6 @@
         </tbody>
     </table>
 
-    <!--
-    <form asp-action="GetSessionDataByAppAndProcess" method="post">
-        <input type="text" placeholder="Application" asp-for="@Model.app" name="app" /> <br />
-        <input type="text" placeholder="Process" asp-for="@Model.pro" name="pro" /> <br />
-        <button type="submit">Examine</button>
-    </form>
-
-    <form action="http://localhost:54022/SESSIONBYAPPANDPRO" method="post">
-        <input type="text" placeholder="Application" asp-for="@Model.app" name="app" /> <br />
-        <input type="text" placeholder="Process" asp-for="@Model.pro" name="pro" /> <br />
-        <button type="submit" class="btn btn-default">Examine</button>
-    </form>
-
-    <form action="http://localhost:54022/SESSIONBYAPPANDPRO" method="post">
-        <input type="text" placeholder="Application" asp-for="@Model.app" name="app" /> <br />
-        <input type="text" placeholder="Process" asp-for="@Model.pro" name="pro" /> <br />
-        <button type="submit" id="submitButton" value="Call controller method">Examine</button>
-    </form>
-    -->
-
     @Model.message
     <form method="post">
         <input type="text" placeholder="Application" asp-for="@Model.app" name="app" /> <br />

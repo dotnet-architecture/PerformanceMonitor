@@ -19,7 +19,7 @@ namespace WebApplication
             client.BaseAddress = new Uri("http://localhost:54022/");
 
             String dateRange = convertDateTime(oldStamp) + "&end=" + convertDateTime(newStamp);
-            String sessionId = "&id=" + IndexModel.selectedSessionID.ToString(); 
+            String sessionId = "&id=" + IndexModel.userSession.Id.ToString(); 
 
             String type = "";
 
