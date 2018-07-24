@@ -13,16 +13,16 @@
     <p>Check your app's performance by navigating the sidebar.</p>
 
     Current Sessions: 
-    @for(int i = 0; i < Model.sess.Count; i++)
+    @Model.sessions.Count
+    @for(int i = 0; i < Model.sessions.Count; i++)
     {
-        <p>Application: @Model.sess[i].application Process: @Model.sess[i].process</p>
+        <p>Application: @Model.sessions[i].application Process: @Model.sessions[i].process</p>
     }
 
     Please select one of the above sessions...
-
-    <form asp-action="GetSession" method="post">
-        <input type ="text" placeholder="Application" asp-for="@Model.application" name="application"/> <br />
-        <input type="text" placeholder="Process" asp-for="@Model.process" name="process"/> <br />
+    <form asp-action="GetSessionDataByAppAndProcess" method="post">
+        <input type ="text" placeholder="Application" asp-for="@Model.application" name="app"/> <br />
+        <input type="text" placeholder="Process" asp-for="@Model.process" name="pro"/> <br />
         <button type="submit" value="@Model.getSession()">Examine</button>
     </form>
 </div>

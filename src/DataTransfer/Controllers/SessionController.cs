@@ -27,7 +27,7 @@ namespace DataTransfer.Controllers
             return Ok(point);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("SESSIONBYAPPANDPRO")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetSessionDataByAppAndProcess(string app, string pro)
@@ -43,29 +43,6 @@ namespace DataTransfer.Controllers
         {
             var point = await _MetricContext.Session.ToListAsync();
             return Ok(point);
-        }
-
-        [HttpPost]
-        [Route("GETSESSION")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        public IActionResult GetSession([FromForm] string application, [FromForm] string process)
-        {
-            var sessions = _MetricContext.Session
-                .Where(t => t.application == application && t.process == process);
-
-            if (sessions == null)
-            {
-                return NotFound(); 
-            }
-
-            return Ok(sessions);
-
-            /*
-             * return Ok(new {
-             *     application = application, 
-             *     process = process,
-             *     sessionsReturend =  sessions, //foreach....<p>session<p>
-             */
         }
     }
 }
