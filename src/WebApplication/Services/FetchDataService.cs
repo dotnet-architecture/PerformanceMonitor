@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using WebApplication.Services;
 using WebApplication.Interfaces;
 using System.Net.Http;
+using WebApplication.Pages;
 
 namespace WebApplication
 {
@@ -17,6 +18,7 @@ namespace WebApplication
             client.BaseAddress = new Uri("http://localhost:54022/");
 
             String dateRange = convertDateTime(oldStamp) + "&end=" + convertDateTime(newStamp);
+            String sessionId = "&id=" + IndexModel.selected.Id.ToString(); 
 
             String type = "";
 
@@ -53,7 +55,11 @@ namespace WebApplication
                 type = "error"; //should never hit this 
             }
 
-            HttpResponseMessage response = await client.GetAsync("api/v1/" + type + "/Daterange?start=" + dateRange);
+            HttpResponseMessage response = await client.GetAsync("api/v1/" + 
+                type + 
+                "/Daterange?start=" + 
+                dateRange + 
+                sessionId);
             _metricService.updateUsingHttpResponse(response);
 
             List<T> addOn = new List<T>();
