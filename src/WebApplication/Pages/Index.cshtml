@@ -7,17 +7,11 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <div class="main">
     <font size="50">.NET Performance Monitor</font>
     <p>Check your app's performance by navigating the sidebar.</p>
-
-    Current Sessions:
-    @Model.sessions.Count
-    @for (int i = 0; i < Model.sessions.Count; i++)
-    {
-        <p>Application: @Model.sessions[i].application Process: @Model.sessions[i].process</p>
-    }
 
     <p>Log of Session</p>
     <table class="table table-hover table-bordered">
