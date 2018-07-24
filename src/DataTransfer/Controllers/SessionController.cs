@@ -27,7 +27,7 @@ namespace DataTransfer.Controllers
             return Ok(point);
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("SESSIONBYAPPANDPRO")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetSessionDataByAppAndProcess(string app, string pro)
