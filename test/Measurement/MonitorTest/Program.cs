@@ -41,6 +41,7 @@ namespace MonitorTest
                             avg = (DateTime.Now.Subtract(timer).TotalMilliseconds + avg * count) / (count + 1);
                             count++;
                             timer = DateTime.Now;
+                            while (monitor.getHold() == 1) ;
                         }
                     }
                     return avg;
