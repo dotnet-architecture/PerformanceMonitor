@@ -5,6 +5,7 @@ using WebApplication.Services;
 using WebApplication.Interfaces;
 using System.Net.Http;
 using WebApplication.Pages;
+using DataTransfer; 
 
 namespace WebApplication
 {
@@ -70,6 +71,25 @@ namespace WebApplication
             }
 
             return addOn;
+        }
+
+        public static async Task<List<Session>> getSessionData()
+        {
+            IMetricService<Session> _metricService = new MetricService<Session>();
+
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri("http://localhost:54022/");
+            HttpResponseMessage response = await client.GetAsync("RETURNALL");
+
+            List<Session> sessionData = new List<Session>();
+
+            if (response.IsSuccessStatusCode)
+            {
+                sessionData = await _metricService.getServiceUsage();
+            }
+
+            return sessionData; 
+
         }
 
         // Converting DateTIme to a string that Http request will accept
