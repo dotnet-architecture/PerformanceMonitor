@@ -34,8 +34,6 @@ namespace WebApplication.Pages
         public async Task OnGet()
         {
             sessions = await FetchDataService.getSessionData();
-
-            int i = 1 + 1; 
         }
 
         // Returns true if an appropriate application and process are inputed

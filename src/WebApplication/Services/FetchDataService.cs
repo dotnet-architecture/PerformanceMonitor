@@ -80,6 +80,7 @@ namespace WebApplication
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri("http://localhost:54022/");
             HttpResponseMessage response = await client.GetAsync("RETURNALL");
+            _metricService.updateUsingHttpResponse(response);
 
             List<Session> sessionData = new List<Session>();
 
