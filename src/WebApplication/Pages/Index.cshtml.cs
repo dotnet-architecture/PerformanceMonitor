@@ -12,10 +12,6 @@ namespace WebApplication.Pages
 {
     public class IndexModel : PageModel
     {
-        public class InputModel
-        {
-
-        }
         public List<Session> sess = new List<Session>();
         public static Session selected { get; set; } = new Session();
 
@@ -46,12 +42,6 @@ namespace WebApplication.Pages
             _metricService.updateUsingHttpResponse(response);
 
             sess = await _metricService.getServiceUsage();
-        }
-
-        public void OnPost()
-        {
-            var app = Request.Form["emailaddress"];
-            var pro = Request.Form["process"];
         }
 
         // Returns true if an appropriate application and process are inputed
