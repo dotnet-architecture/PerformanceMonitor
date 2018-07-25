@@ -88,7 +88,7 @@
                 document.write(myJson);
             });
 
-        var usage = []; 
+        var usage = [];
         for (var i = 0; i < result.length; i++) {
             usage.push(result[i].usage);
         }
@@ -112,6 +112,22 @@
         };
 
         Plotly.plot('cpu', data, graphOptions);
+    </script>
+
+    <div id="cpu2"></div>
+    <script>
+        const start = `@Html.Encode(Model.oldStampString)`;
+        const end = `@Html.Encode(Model.newStampString)`;
+        const id = `@Html.Encode(IndexModel.userSession.Id)`;
+
+        var url = `http://localhost:54022/api/v1/CPU/Daterange?start=${start}&end=${end}&id=${id}`;
+
+        d3.json(url, function (error, data) {
+            if (error) return console.warn(error);
+            var layout = { barmode: 'group' };
+
+            Plotly.newPlot('cpu2', data.data, layout);
+          });
     </script>
 
     <input type="button" value="Refresh Logs" onClick="window.location.reload()">
