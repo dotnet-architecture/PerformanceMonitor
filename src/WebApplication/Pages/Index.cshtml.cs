@@ -4,13 +4,9 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using WebApplication.Services;
-using WebApplication.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using System.Web;
-using System.Net;
 
 namespace WebApplication.Pages
 {
