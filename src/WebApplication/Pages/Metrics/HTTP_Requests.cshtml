@@ -1,5 +1,5 @@
 ﻿@page
-@using DataTransfer
+@using WebApplication.ClientSideData;
 @model WebApplication.Pages.Metrics.HTTP_RequestsModel
 @{
     ViewData["Title"] = "HTTP_Requests";
@@ -20,11 +20,11 @@
     <table class="table table-hover table-bordered">
         <thead>
             <tr>
-                <th>Http Type</th>
                 <th>Method</th>
                 <th>Path</th>
-                <th>GUID</th>
-                <th>Timestamp</th>
+                <th>Start Timestamp</th>
+                <th>End TimeStamp</th>
+                <th>Duration</th>
             </tr>
         </thead>
         <tbody>
@@ -32,14 +32,26 @@
             {
                 @for (int i = Model.http.Count - 1; i >= 0; i--)
                 {
-                    Http_Request h = Model.http.ElementAt<Http_Request>(i);
-                    <tr>
-                        <td>@h.type</td>
-                        <td>@h.method</td>
-                        <td>@h.path</td>
-                        <td>@h.id</td>
-                        <td>@h.timestamp</td>
-                    </tr>
+                    Detailed_Http_Req h = Model.http.ElementAt<Detailed_Http_Req>(i);
+            <tr>
+
+                @if (h.endTimestamp != null)
+                {
+                    <td>@h.method</td>
+                    <td>@h.path</td>
+                    <td>@h.startTimestamp</td>
+                    <td>@h.endTimestamp</td>
+                    <td>@h.duration</td>
+                }
+                else
+                {
+                    <td>@h.method</td>
+                    <td>@h.path</td>
+                    <td>@h.startTimestamp</td>
+                    <td></td>
+                    <td></td>
+                }
+            </tr>
 
                 }
             }

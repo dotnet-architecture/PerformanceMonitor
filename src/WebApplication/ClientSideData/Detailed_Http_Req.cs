@@ -10,19 +10,17 @@ namespace WebApplication.ClientSideData
     {
         public string method { get; set; }
         public string path { get; set; }
-        public Guid id { get; set; }
         public DateTime startTimestamp { get; set; }
         public DateTime endTimestamp { get; set; }
         public long duration { get; set; } //measured in ms
 
         // Constructor that will take in values that are taken from Http_Request to make
         // a Detailed_Http_Request object.
-        public Detailed_Http_Req(string method, string path, Guid id, DateTime start)
+        public Detailed_Http_Req(Http_Request h)
         {
-            this.method = method;
-            this.path = path;
-            this.id = id;
-            this.startTimestamp = start; 
+            this.method = h.method;
+            this.path = h.path; //will always be the start time when using this constructor
+            this.startTimestamp = h.timestamp; 
         }
 
         // When the end timestamp of a Http request becomes available, the corresponding
