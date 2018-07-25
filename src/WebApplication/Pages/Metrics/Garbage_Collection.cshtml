@@ -1,5 +1,5 @@
 ﻿@page
-@using DataTransfer
+@using WebApplication.ClientSideData;
 @model WebApplication.Pages.Metrics.Garbage_CollectionModel
 @{
     ViewData["Title"] = "Garbage_Collection";
@@ -30,11 +30,21 @@
             {
                 @for (int i = Model.gc.Count - 1; i >= 0; i--)
                 {
-                    DataTransfer.GC g = Model.gc.ElementAt<DataTransfer.GC>(i);
+                    Client_GC g = Model.gc.ElementAt<Client_GC>(i);
                     <tr>
-                        <td>@g.type</td>
-                        <td>@g.id</td>
-                        <td>@g.timestamp</td>
+
+                        @if (g.EndTimestamp != null)
+                        {
+                            <td>@g.StartTimestamp</td>
+                            <td>@g.EndTimestamp</td>
+                            <td>@g.Duration</td>
+                        }
+                        else
+                        {
+                            <td>@g.StartTimestamp</td>
+                            <td></td>
+                            <td></td>
+                        }
                     </tr>
 
                 }
