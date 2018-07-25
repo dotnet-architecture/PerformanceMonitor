@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using DataTransfer;
+using WebApplication.ClientSideData;
 
 namespace WebApplication.Pages.Metrics
 {
     public class HTTP_RequestsModel : PageModel
     {
-        public List<Http_Request> http { get; set; } = new List<Http_Request>();
+        public List<Detailed_Http_Req> http { get; set; } = new List<Detailed_Http_Req>();
         public int totalHttpRequest = 0; 
 
         // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
