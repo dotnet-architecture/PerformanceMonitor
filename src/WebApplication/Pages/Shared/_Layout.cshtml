@@ -18,9 +18,9 @@
             <li><a asp-page="/Metrics/JIT">JIT</a></li>
             @if (IndexModel.userSession != null)
             {
-                <li>Currently viewing data for</li>
-                <li>Application: @IndexModel.userSession.application</li>
-                <li>Process: @IndexModel.userSession.process</li>
+                <li><font color="#CFCFCF">Currently viewing data for</font></li>
+                <li><font color="#CFCFCF">Application: @IndexModel.userSession.application</font></li>
+                <li><font color="#CFCFCF">Process: @IndexModel.userSession.process</font></li>
             }
         </ul>
     </div>
