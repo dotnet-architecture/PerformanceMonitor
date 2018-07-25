@@ -11,6 +11,7 @@ namespace WebApplication.Pages.Metrics
     public class ContentionsModel : PageModel
     {
         public List<Contention> contentions { get; set; } = new List<Contention>();
+        public int totalContentions = 0;
 
         // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
         private DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime();
@@ -29,6 +30,8 @@ namespace WebApplication.Pages.Metrics
             // Reset timers
             this.oldStamp = newStamp;
             this.newStamp = DateTime.Now.ToUniversalTime();
+
+            totalContentions = contentions.Count;
         }
     }
 }
