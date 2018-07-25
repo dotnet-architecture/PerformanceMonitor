@@ -14,6 +14,9 @@ namespace WebApplication.ClientSideData
         public DateTime startTimestamp { get; set; }
         public DateTime endTimestamp { get; set; }
         public long duration { get; set; } //measured in ms
+
+        // Constructor that will take in values that are taken from Http_Request to make
+        // a Detailed_Http_Request object.
         public Detailed_Http_Req(string method, string path, Guid id, DateTime start)
         {
             this.method = method;
@@ -21,6 +24,9 @@ namespace WebApplication.ClientSideData
             this.id = id;
             this.startTimestamp = start; 
         }
+
+        // When the end timestamp of a Http request becomes available, the corresponding
+        // Detailed_Http_Request can be updated using this method. It will also update the duration variable.
         public Boolean updateEndTimestamp(DateTime end){
             if (startTimestamp == null && endTimestamp == null)
             {
