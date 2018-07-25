@@ -16,12 +16,13 @@
             <li><a asp-page="/Metrics/Contentions">Contentions</a></li>
             <li><a asp-page="/Metrics/Garbage_Collection">Garbage Collection</a></li>
             <li><a asp-page="/Metrics/JIT">JIT</a></li>
+            @if (IndexModel.userSession != null)
+            {
+                <li>Currently viewing data for</li>
+                <li>Application: @IndexModel.userSession.application</li>
+                <li>Process: @IndexModel.userSession.process</li>
+            }
         </ul>
-        @if (IndexModel.userSession != null)
-        {
-            <p>Application: @IndexModel.userSession.application</p>
-            <p>Process: @IndexModel.userSession.process</p>
-        }
     </div>
 
     @RenderBody()
