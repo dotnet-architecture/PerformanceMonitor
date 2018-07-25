@@ -388,7 +388,7 @@ namespace DataTransfer
             {
                 // converts list of metric measurements into a JSON object string
                 String output = JsonConvert.SerializeObject(metricList);
-                //Console.WriteLine(output);
+                Console.WriteLine(output);
 
                 // escapes string so that JSON object is interpreted as a single string
                 output = JsonConvert.ToString(output);
