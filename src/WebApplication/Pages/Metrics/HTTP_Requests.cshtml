@@ -32,7 +32,7 @@
             {
                 @for (int i = Model.http.Count - 1; i >= 0; i--)
                 {
-                    Detailed_Http_Req h = Model.http.ElementAt<Detailed_Http_Req>(i);
+                    Client_Http_Request h = Model.http.ElementAt<Client_Http_Request>(i);
             <tr>
 
                 @if (h.endTimestamp != null)

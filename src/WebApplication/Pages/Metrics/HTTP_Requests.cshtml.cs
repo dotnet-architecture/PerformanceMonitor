@@ -10,8 +10,8 @@ namespace WebApplication.Pages.Metrics
 {
     public class HTTP_RequestsModel : PageModel
     {
-        public List<Detailed_Http_Req> http { get; set; } = new List<Detailed_Http_Req>();
-        public Dictionary<Guid, Detailed_Http_Req> httpTracker = new Dictionary<Guid, Detailed_Http_Req>(); 
+        public List<Client_Http_Request> http { get; set; } = new List<Client_Http_Request>();
+        public Dictionary<Guid, Client_Http_Request> httpTracker = new Dictionary<Guid, Client_Http_Request>(); 
         public int totalHttpRequest = 0; 
 
         // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
@@ -27,12 +27,12 @@ namespace WebApplication.Pages.Metrics
             {
                 if (h.type.Equals("Start"))
                 {
-                    Detailed_Http_Req clientH = new Detailed_Http_Req(h);
+                    Client_Http_Request clientH = new Client_Http_Request(h);
                     httpTracker[h.id] = clientH;
                     http.Add(clientH);
                 } else if (h.type.Equals("Stop"))
                 {
-                    Detailed_Http_Req clientH = httpTracker[h.id];
+                    Client_Http_Request clientH = httpTracker[h.id];
                     http.Remove(clientH);
                     clientH.updateEndTimestamp(h.timestamp);
                     http.Add(clientH);

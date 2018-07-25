@@ -6,7 +6,7 @@ using DataTransfer;
 
 namespace WebApplication.ClientSideData
 {
-    public class Detailed_Http_Req
+    public class Client_Http_Request
     {
         public string method { get; set; }
         public string path { get; set; }
@@ -16,7 +16,7 @@ namespace WebApplication.ClientSideData
 
         // Constructor that will take in values that are taken from Http_Request to make
         // a Detailed_Http_Request object.
-        public Detailed_Http_Req(Http_Request h)
+        public Client_Http_Request(Http_Request h)
         {
             this.method = h.method;
             this.path = h.path; //will always be the start time when using this constructor
