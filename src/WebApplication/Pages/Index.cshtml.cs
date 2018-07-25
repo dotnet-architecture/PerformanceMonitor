@@ -4,13 +4,9 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using WebApplication.Services;
-using WebApplication.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using System.Web;
-using System.Net;
 
 namespace WebApplication.Pages
 {
@@ -65,31 +61,6 @@ namespace WebApplication.Pages
             }
 
             await OnGet();
-        }
-
-        // Returns true if an appropriate application and process are inputed
-        // Returns false if no application and process string found OR they are not in the database
-        public Boolean getSession()
-        {
-            if (pro.Equals("") || app.Equals(""))
-            {
-                return false;
-            }
-
-            for (int i = 0; i < sessions.Count; i++)
-            {
-                String sessApp = sessions[i].application;
-                String sessProcess = sessions[i].process; 
-
-                if (sessApp.Equals(app) && sessProcess.Equals(pro))
-                {
-                    selectedSession = sessions[i];
-                    selectedSessionID = selectedSession.Id;
-                    return true;
-                }
-            }
-
-            return false;
-        }
+        }  
     }
 }
