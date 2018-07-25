@@ -4,13 +4,18 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using DataTransfer;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-//using Microsoft.AspNet.SignalR.Client;
+using WebApplication.ClientSideData;
+using System.Linq;
 
 namespace WebApplication.Pages.Metrics
 {
     public class ContentionsModel : PageModel
     {
-        public List<Contention> contentions { get; set; } = new List<Contention>();
+        public List<Client_Contention> contentions { get; set; } = new List<Client_Contention>();
+
+        // Contains contentions that do not yet have a endStamp
+        public Dictionary<Guid, Client_Contention> contentionTracker = new Dictionary<Guid, Client_Contention>();
+        public int totalContentions = 0;
 
         // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
         private DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime();
@@ -23,12 +28,30 @@ namespace WebApplication.Pages.Metrics
 
             foreach (Contention c in addOn)
             {
-                contentions.Add(c);
+                if (c.type.Equals("Start"))
+                {
+                    Client_Contention clientC = new Client_Contention(c);
+                    contentionTracker[c.id] = clientC;
+                    contentions.Add(clientC);
+                }
+                else if (c.type.Equals("Stop"))
+                {
+                    Client_Contention clientC = contentionTracker[c.id];
+                    contentions.Remove(clientC);
+                    clientC.updateEndTimestamp(c.timestamp);
+                    contentions.Add(clientC);
+                }
             }
+
+            contentions.OrderBy(c => c.StartTimestamp).ToList(); // updating http so that is sorted by time
+            contentions.Reverse(); // updating http so that the most current http requests are shown first
+
 
             // Reset timers
             this.oldStamp = newStamp;
             this.newStamp = DateTime.Now.ToUniversalTime();
+
+            totalContentions = contentions.Count;
         }
     }
 }
