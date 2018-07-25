@@ -41,7 +41,7 @@ namespace WebApplication.Pages.Metrics
                 }
             }
 
-            http.OrderBy(h => h.startTimestamp).ToList(); // updating http so that is sorted by time
+            http.OrderBy(h => h.StartTimestamp).ToList(); // updating http so that is sorted by time
             http.Reverse(); // updating http so that the most current http requests are shown first
 
             // Reset timers
