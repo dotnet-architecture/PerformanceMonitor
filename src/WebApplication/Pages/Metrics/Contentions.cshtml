@@ -1,5 +1,5 @@
 ﻿@page
-@using DataTransfer
+@using WebApplication.ClientSideData;
 @model WebApplication.Pages.Metrics.ContentionsModel
 @{
     ViewData["Title"] = "Contentions";
@@ -20,8 +20,9 @@
     <table class="table table-hover table-bordered">
         <thead>
             <tr>
-                <th>Contention Type</th>
-                <th>Timestamp</th>
+                <th>Start Timestamp</th>
+                <th>End Timestamp</th>
+                <th>Duration</th>
             </tr>
         </thead>
         <tbody>
@@ -29,10 +30,21 @@
             {
                 @for (int i = Model.contentions.Count - 1; i >= 0; i--)
                 {
-                    Contention c = Model.contentions.ElementAt<Contention>(i);
+                    Client_Contention c = Model.contentions.ElementAt<Client_Contention>(i);
                     <tr>
-                        <td>@c.type</td>
-                        <td>@c.timestamp</td>
+
+                        @if (c.EndTimestamp != null)
+                        {
+                            <td>@c.StartTimestamp</td>
+                            <td>@c.EndTimestamp</td>
+                            <td>@c.Duration</td>
+                        }
+                        else
+                        {
+                            <td>@c.StartTimestamp</td>
+                            <td></td>
+                            <td></td>
+                        }
                     </tr>
 
                 }

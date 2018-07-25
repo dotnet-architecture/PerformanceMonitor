@@ -19,8 +19,8 @@ namespace WebApplication.ClientSideData
         public Client_Http_Request(Http_Request h)
         {
             this.method = h.method;
-            this.path = h.path; //will always be the start time when using this constructor
-            this.startTimestamp = h.timestamp; 
+            this.path = h.path; 
+            this.startTimestamp = h.timestamp; //will always be the start time when using this constructor
         }
 
         // When the end timestamp of a Http request becomes available, the corresponding

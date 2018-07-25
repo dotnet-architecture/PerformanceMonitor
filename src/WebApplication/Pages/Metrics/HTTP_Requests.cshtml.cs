@@ -11,6 +11,8 @@ namespace WebApplication.Pages.Metrics
     public class HTTP_RequestsModel : PageModel
     {
         public List<Client_Http_Request> http { get; set; } = new List<Client_Http_Request>();
+
+        // Contains http requests that do not yet have a endStamp
         public Dictionary<Guid, Client_Http_Request> httpTracker = new Dictionary<Guid, Client_Http_Request>(); 
         public int totalHttpRequest = 0; 
 
