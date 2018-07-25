@@ -69,8 +69,9 @@
     <script>
         const start = `@Html.Encode(Model.oldStampString)`;
         const end = `@Html.Encode(Model.newStampString)`;
+        const id = `@Html.Encode(IndexModel.userSession.Id)`
 
-        const url = `http://localhost:54022/api/v1/CPU/Daterange?start=${start}&end=${end}`;
+        const url = `http://localhost:54022/api/v1/CPU/Daterange?start=${start}&end=${end}&id=${id}`;
         const dateRangePromise = fetch(url)
             .then((response) => {
                 if (response.ok === false) {
