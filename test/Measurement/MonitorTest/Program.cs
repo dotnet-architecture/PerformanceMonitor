@@ -10,7 +10,7 @@ namespace MonitorTest
         static void Main(string[] args)
         {
             monitor.Record();
-            CPUMemTest();
+            //CPUMemTest();
             //GCTest();
             //ExceptionTest();
             //ContentionTest();
@@ -104,7 +104,7 @@ namespace MonitorTest
         }
         static int valueType;
         static object valueTypeLock = new object();
-        public static void Test()
+        public static void ContentionTest()
         {
             Thread t = new Thread(new ThreadStart(ThreadMethod));
             t.Start();
