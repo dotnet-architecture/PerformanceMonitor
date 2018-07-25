@@ -9,6 +9,7 @@ namespace WebApplication.Pages.Metrics
     public class Garbage_CollectionModel : PageModel
     {        
         public List<DataTransfer.GC> gc { get; set; } = new List<DataTransfer.GC>();
+        public int totalGC = 0;
 
         // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
         private DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime();
@@ -23,6 +24,8 @@ namespace WebApplication.Pages.Metrics
             {
                 gc.Add(g);
             }
+
+            totalGC = gc.Count;
 
             // Reset timers
             this.oldStamp = newStamp;
