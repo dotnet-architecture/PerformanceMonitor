@@ -10,7 +10,7 @@ namespace MonitorTest
         static void Main(string[] args)
         {
             monitor.Record();
-            //CPUMemTest();
+            CPUMemTest();
             //GCTest();
             //ExceptionTest();
             //ContentionTest();
@@ -26,50 +26,38 @@ namespace MonitorTest
         public static double RequestTest()
         {
             DateTime timer = DateTime.Now;
-            while (true)
+            while (DateTime.Now.Subtract(timer).TotalSeconds <= monitor.sendRate * 4) ;
+            timer = DateTime.Now;
+            int count = 0;
+            double avg = 0;
+            DateTime newTimer = DateTime.Now;
+            while (DateTime.Now.Subtract(newTimer).TotalMilliseconds <= monitor.sendRate * 4)
             {
-                if (DateTime.Now.Subtract(timer).TotalSeconds >= 20)
+                if (monitor.getHold() == 1)
                 {
+                    avg = (DateTime.Now.Subtract(timer).TotalMilliseconds + avg * count) / (count + 1);
+                    count++;
                     timer = DateTime.Now;
-                    int count = 0;
-                    double avg = 0;
-                    DateTime newTimer = DateTime.Now;
-                    while (DateTime.Now.Subtract(newTimer).TotalMilliseconds <= monitor.sendRate * 4)
-                    {
-                        if (monitor.getHold() == 1)
-                        {
-                            avg = (DateTime.Now.Subtract(timer).TotalMilliseconds + avg * count) / (count + 1);
-                            count++;
-                            timer = DateTime.Now;
-                            while (monitor.getHold() == 1) ;
-                        }
-                    }
-                    return avg;
+                    while (monitor.getHold() == 1) ;
                 }
             }
+            return avg;
         }
         public static int CPUMemTest()
         {
             DateTime timer = DateTime.Now;
-            while (true)
+            while (DateTime.Now.Subtract(timer).TotalMilliseconds <= monitor.sendRate * 4) ;
+            timer = DateTime.Now;
+            int max = 0;
+            while (DateTime.Now.Subtract(timer).TotalMilliseconds <= monitor.sendRate)
             {
-                if (DateTime.Now.Subtract(timer).TotalSeconds >= 25)
+                double time = DateTime.Now.Subtract(timer).TotalMilliseconds;
+                if (monitor.getCPUCount() > max)
                 {
-                    timer = DateTime.Now;
-                    while (true)
-                    {
-                        int max = 0;
-                        if (DateTime.Now.Subtract(timer).TotalMilliseconds <= monitor.sendRate)
-                        {
-                            if (monitor.getCPUCount() > max)
-                            {
-                                max = monitor.getCPUCount();
-                            }
-                        }
-                        return max;
-                    }
+                    max = monitor.getCPUCount();
                 }
             }
+            return max;
         }
         public static void GCTest()
         {

@@ -18,7 +18,7 @@ namespace MonitorUnitTest
             int ans = Program.CPUMemTest();
             Debug.Assert(ans >= (ratio - per) && ans <= (ratio - per + per/2));
         }
-        
+        /*
         [Fact]
         public void Test2()
         {
@@ -26,5 +26,6 @@ namespace MonitorUnitTest
             double ans = Program.RequestTest();
             Debug.Assert(ans >= sample - sample / 10 && ans <= sample + sample / 10);
         }
+        */
     }
 }

@@ -13,12 +13,14 @@ namespace DataTransfer
 {
     public class Monitor
     {
+        public String process;
         public String app;
         public int sampleRate;
         public int sendRate;
 
-        public Monitor(String app = null, int sampleRate = 1000, int sendRate = 5000)
+        public Monitor(String process = "MyProcess", String app = null, int sampleRate = 1000, int sendRate = 5000)
         {
+            this.process = process;
             this.app = app;
             this.sampleRate = sampleRate;
             this.sendRate = sendRate;
@@ -29,8 +31,6 @@ namespace DataTransfer
          */
         // fetching properties unique to current data collection session
         private static Process myProcess = Process.GetCurrentProcess();
-        private static String processName = myProcess.ProcessName;
-        private static String processID = myProcess.Id.ToString();
         private static String myOS = Environment.OSVersion.ToString();
         private static Session instance = new Session();
 
@@ -116,7 +116,9 @@ namespace DataTransfer
         {
             // sets base address for HTTP requests - in local testing, this may need to be changed periodically
             client.BaseAddress = new Uri("http://localhost:54022/");
-            instance.process = (processName + " " + processID);
+
+            // assign all properties of the current process to the Session class instance
+            instance.process = (this.process);
             instance.sampleRate = sampleRate;
             instance.sendRate = sendRate;
             instance.processorCount = processorTotal;
@@ -158,7 +160,9 @@ namespace DataTransfer
                             list.jit = JitVals;
 
                             hold = 1;
+                            DateTime now = DateTime.Now;
                             SendHTTP(list);
+                            Console.WriteLine(getCPUCount());
                             hold = 0;
 
                             CPUVals.Clear();
@@ -168,6 +172,7 @@ namespace DataTransfer
                             ContentionVals.Clear();
                             GCVals.Clear();
                             JitVals.Clear();
+                            Console.WriteLine(getCPUCount());
                         }
                     }
                 }
@@ -388,7 +393,7 @@ namespace DataTransfer
             {
                 // converts list of metric measurements into a JSON object string
                 String output = JsonConvert.SerializeObject(metricList);
-                Console.WriteLine(output);
+                //Console.WriteLine(output);
 
                 // escapes string so that JSON object is interpreted as a single string
                 output = JsonConvert.ToString(output);
