@@ -12,6 +12,7 @@ namespace WebApplication.Pages.Metrics
     public class ExceptionsModel : PageModel
     {
         public List<Exceptions> exceptions { get; set; } = new List<Exceptions>();
+        public int totalExceptions = 0;
 
         // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
         private DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime();
@@ -52,10 +53,19 @@ namespace WebApplication.Pages.Metrics
 
             exceptionSorted = exceptionTracker.ToList();
             exceptionSorted.Sort((pair1, pair2) => pair1.Value.CompareTo(pair2.Value));
+
+            test = exceptionSorted.Count.ToString();
+            totalExceptions = exceptions.Count;
         }
         public async Task OnPostAsync(String app, String pro)
         {
-            message = "Currently showing top " + Math.Min(numOfExceptions, exceptions.Count) + " exceptions.";
+            if (userReqNum <= exceptionSorted.Count)
+            {
+                message = "Currently showing top " + userReqNum + " exceptions.";
+            } else
+            {
+                message = "Do not have " + userReqNum + " exceptions. Showing all exceptions seen so far.";
+            }
             await OnGet();
         }
     }

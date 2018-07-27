@@ -14,6 +14,13 @@
 <div class="main">
     <font size="50">Exceptions</font>
 
+    <p>Total number of exceptions: @Model.totalExceptions</p>
+
+    @if (Model.exceptionSorted.Count >= 1)
+    {
+        <p>Most common exception: @Model.exceptionSorted[0].Key</p>
+    }
+
     <p>Log of Exceptions</p>
     <table class="table table-hover table-bordered">
         <thead>
@@ -43,6 +50,7 @@
     </table>
 
     @Model.message
+    @Model.test
     <form method="post">
         <input type="text" placeholder="Number of Exceptions" asp-for="@Model.userReqNum" name="userReqNum" /> <br />
         <button class="btn btn-default">Examine</button>
@@ -64,7 +72,7 @@
                 {
                     numExceptions = Model.userReqNum - 1;
                 }
-                @for (int i = 0; i <= Math.Min(numExceptions, Model.exceptions.Count - 1); i++)
+                @for (int i = 0; i <= Math.Min(numExceptions, Model.exceptionTracker.Count - 1); i++)
                 {
                     KeyValuePair<string, int> e = Model.exceptionSorted[i];
                     <tr>
