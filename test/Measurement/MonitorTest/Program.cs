@@ -9,10 +9,9 @@ namespace MonitorTest
         static DataTransfer.Monitor monitor = new DataTransfer.Monitor("App");
         static void Main(string[] args)
         {
-            monitor.Record();
-            CPUMemTest();
+            //CPUMemTest();
             //GCTest();
-            ExceptionTest();
+            //ExceptionTest();
             //ContentionTest();
         }
         public static int getSampleRate()
@@ -25,6 +24,7 @@ namespace MonitorTest
         }
         public static double RequestTest()
         {
+            monitor.Record();
             DateTime timer = DateTime.Now;
             while (DateTime.Now.Subtract(timer).TotalSeconds <= monitor.sendRate * 4) ;
             timer = DateTime.Now;
@@ -45,13 +45,13 @@ namespace MonitorTest
         }
         public static int CPUMemTest()
         {
+            monitor.Record();
             DateTime timer = DateTime.Now;
             while (DateTime.Now.Subtract(timer).TotalMilliseconds <= monitor.sendRate * 4) ;
             timer = DateTime.Now;
             int max = 0;
             while (DateTime.Now.Subtract(timer).TotalMilliseconds <= monitor.sendRate)
             {
-                double time = DateTime.Now.Subtract(timer).TotalMilliseconds;
                 if (monitor.getCPUCount() > max)
                 {
                     max = monitor.getCPUCount();
@@ -61,6 +61,7 @@ namespace MonitorTest
         }
         public static void GCTest()
         {
+            monitor.Record();
             DateTime timer = DateTime.Now;
             while (true)
             {
@@ -74,6 +75,7 @@ namespace MonitorTest
         }
         public static void ExceptionTest()
         {
+            monitor.Record();
             DateTime timer = DateTime.Now;
             int i = 0;
             int j = 2;
@@ -94,6 +96,7 @@ namespace MonitorTest
         static object valueTypeLock = new object();
         public static void ContentionTest()
         {
+            monitor.Record();
             Thread t = new Thread(new ThreadStart(ThreadMethod));
             t.Start();
             DateTime timer = DateTime.Now;
