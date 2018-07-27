@@ -55,7 +55,7 @@ namespace WebApplication.Pages.Metrics
         }
         public async Task OnPostAsync(String app, String pro)
         {
-            message = "Currently showing top " + numOfExceptions + " exceptions.";
+            message = "Currently showing top " + Math.Min(numOfExceptions, exceptions.Count) + " exceptions.";
             await OnGet();
         }
     }
