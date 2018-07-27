@@ -24,8 +24,8 @@ namespace WebApplication.Pages.Metrics
 
         [Required]
         [BindProperty]
-        [Display(Name = "numOfExceptions")]
-        public int numOfExceptions { get; set; }
+        [Display(Name = "userReqNum")]
+        public int userReqNum { get; set; }
 
         public async Task OnGet()
         {

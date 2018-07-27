@@ -44,7 +44,7 @@
 
     @Model.message
     <form method="post">
-        <input type="text" placeholder="Number of Exceptions" asp-for="@Model.numOfExceptions" name="numOfExceptions" /> <br />
+        <input type="text" placeholder="Number of Exceptions" asp-for="@Model.userReqNum" name="userReqNum" /> <br />
         <button class="btn btn-default">Examine</button>
     </form>
 
@@ -59,12 +59,12 @@
         <tbody>
             @if (Model.exceptions != null)
             {
-                int num = 4;
-                if (Model.numOfExceptions != 0)
+                int numExceptions = 4;
+                if (Model.userReqNum != 0)
                 {
-                    num = Model.numOfExceptions - 1;
+                    numExceptions = Model.userReqNum - 1;
                 }
-                @for (int i = 0; i <= Math.Min(num, Model.exceptions.Count - 1); i++)
+                @for (int i = 0; i <= Math.Min(numExceptions, Model.exceptions.Count - 1); i++)
                 {
                     KeyValuePair<string, int> e = Model.exceptionSorted[i];
                     <tr>
