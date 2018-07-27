@@ -58,12 +58,12 @@
         <tbody>
             @if (Model.exceptions != null)
             {
-                int num = Math.Min(4, Model.exceptions.Count - 1); 
+                int num = 4;
                 if (Model.numOfExceptions != 0)
                 {
                     num = Model.numOfExceptions - 1;
                 }
-                @for (int i = 0; i <= num; i++)
+                @for (int i = 0; i <= Math.Min(num, Model.exceptions.Count - 1); i++)
                 {
                     KeyValuePair<string, int> e = Model.exceptionSorted[i];
                     <tr>
