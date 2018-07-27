@@ -12,7 +12,7 @@ namespace MonitorTest
             monitor.Record();
             //CPUMemTest();
             //GCTest();
-            //ExceptionTest();
+            ExceptionTest();
             //ContentionTest();
         }
         public static int getSampleRate()
