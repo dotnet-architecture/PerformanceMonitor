@@ -42,6 +42,7 @@
         </tbody>
     </table>
 
+    @Model.message
     <form method="post">
         <input type="text" placeholder="Number of Exceptions" asp-for="@Model.numOfExceptions" name="numOfExceptions" /> <br />
         <button class="btn btn-default">Examine</button>
