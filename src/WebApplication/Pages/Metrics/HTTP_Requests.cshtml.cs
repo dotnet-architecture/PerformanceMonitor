@@ -14,7 +14,8 @@ namespace WebApplication.Pages.Metrics
 
         // Contains http requests that do not yet have a endStamp
         public Dictionary<Guid, Client_Http_Request> httpTracker = new Dictionary<Guid, Client_Http_Request>(); 
-        public int totalHttpRequest = 0; 
+        public int totalHttpRequest = 0;
+        public double avgDuration = 0; 
 
         // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
         private DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime();
@@ -41,7 +42,7 @@ namespace WebApplication.Pages.Metrics
                 }
             }
 
-            http.OrderBy(h => h.startTimestamp).ToList(); // updating http so that is sorted by time
+            http.OrderBy(h => h.StartTimestamp).ToList(); // updating http so that is sorted by time
             http.Reverse(); // updating http so that the most current http requests are shown first
 
             // Reset timers
@@ -49,6 +50,24 @@ namespace WebApplication.Pages.Metrics
             this.newStamp = DateTime.Now.ToUniversalTime();
 
             totalHttpRequest = http.Count;
+            updateAvg(); 
+        }
+
+        public double updateAvg() 
+        {
+            double totalDuration = 0;
+            double totalEndedReq = 0;
+            foreach (Client_Http_Request c in http)
+            {
+                if (c.EndTimestamp != null)
+                {
+                    totalDuration += c.Duration;
+                    totalEndedReq++; 
+                }
+            }
+
+            avgDuration = totalDuration / totalEndedReq;
+            return avgDuration;
         }
     }
 }
