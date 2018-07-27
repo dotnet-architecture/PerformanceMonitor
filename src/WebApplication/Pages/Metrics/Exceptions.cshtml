@@ -58,7 +58,7 @@
         <tbody>
             @if (Model.exceptions != null)
             {
-                int num = 4; 
+                int num = Math.Min(4, Model.exceptions.Count - 1); 
                 if (Model.numOfExceptions != 0)
                 {
                     num = Model.numOfExceptions - 1;
