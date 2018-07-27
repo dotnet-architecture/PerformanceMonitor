@@ -15,16 +15,16 @@ namespace MonitorUnitTest
             int sample = Program.getSampleRate();
             int ratio = send / sample;
             int per = 2000 / sample;
-            int ans = Program.CPUMemTest();
+            int ans = Program.UnitTest1();
             Assert.True(ans >= (ratio - per) && ans <= (ratio - per + per/2));
         }
         
         [Fact]
         public void Test2()
         {
-            int sample = Program.getSampleRate();
-            double ans = Program.RequestTest();
-            Assert.True(ans >= sample - sample / 10 && ans <= sample + sample / 10);
+            int send = Program.getSendRate();
+            double ans = Program.UnitTest2();
+            Assert.True(ans >= send - send / 3 && ans <= send + send / 3);
         }
     }
 }
