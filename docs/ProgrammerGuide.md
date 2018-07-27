@@ -1,11 +1,10 @@
 # .NET Core Performance Monitor
 
-## Testing
-### Data Collection
+## Architecture Specifics
+### Data Storage
+The data collected is currently being hosted on a SQL database running through Docker. This allows for local testing of the application. In the future, the database will be moved to AzureSQL. This will allow the final product to run with minimal setup from the user. Startup.cs holds the location of the connection string for the server, and can be changed as necessary.
 
-The _MonitorTest_ project within the solution contains C# classes that are each used to test a particular type of metric collection. The project's executable file is Program.cs, which contains only a Main method. In order to run a test for a particular metric, uncomment the metric's test line within Main - for example, to test collection of GC events, uncomment the line reading "GCTest.Test();". Then run _MonitorTest_, and GC events will be triggered for debugging. As it stands, only one test file can be run at a time (if multiple lines are uncommented, only the first test to appear in the code will run).
-
-__IMPORTANT__: When running _MonitorTest_, a console window will pop up and display the program's output. In order to safely terminate the program, press Ctrl+C before closing the window. If Ctrl+C is not pressed, the session allowing TraceEvent to run and collect events will not terminate. The next run of _MonitorTest_ would attempt to recreate the same session, and an error would be triggered. If you forget to Ctrl+C and run into this error, open up your machine's terminal or command prompt and run the command "logman stop MySession -ets". This will close the session, and you will be able to run _MonitorTest_ again.
+Entity framework was used to manage the sending and fetching of data from the server. There are object-specific controllers for the fetching of data, and there is an all-purpose controller for sending the data in a single packet. Entity framework largely simplifies querying a SQL server, as no commands need to be written. The primary used POST request is POST/api/v1/General/ALL, which allows for pushing all the currently collected data to the server. The receiving of data is done by the specific page being used. Primarily, /api/v1/CPU/Daterange is being used to receive data from the server for CPU usage information. /api/v1/MEM/Daterange will be used to receive data for memory usage information. Data is sent and received in JSON form.
 
 ## Functionality Specifics
 ### Data Collection
@@ -114,3 +113,10 @@ The home page lists all current sessions (with the application name and process 
 For each metric that the Performance Monitor tracks, it has a separate Razor Page that makes individual Http requests to the server through the generic class FetchDataService. Based off of the type of metric, the FetchDataService constructs an HTTP request that then returns a list of data (only of the type that was requested) by utilizing the generic MetricService class, which deserializes the JSON objects (this is the response that is received when performing an HTTP request) to objects that correlate to a specific metric type. The data is fetched on the onGet() method of each Razor Page, meaning that the data is fetched and displayed when the page is refreshed.
  
 The design of the web application is specified in the .cshtml files of each Razor Page. There is a shared _Layout.cshtml page that dictates the design of the sidebar. The sidebar points towards all the different Razor pages metrics. The contents of the individual metric Razor pages then solely are responsible for the metric content portion of the web page. For each metric page, a log of data is presented in a table. A refresh button is also given so that the users can see the most current data.
+
+## Testing
+### Data Collection
+
+The _MonitorTest_ project within the solution contains C# classes that are each used to test a particular type of metric collection. The project's executable file is Program.cs, which contains only a Main method. In order to run a test for a particular metric, uncomment the metric's test line within Main - for example, to test collection of GC events, uncomment the line reading "GCTest.Test();". Then run _MonitorTest_, and GC events will be triggered for debugging. As it stands, only one test file can be run at a time (if multiple lines are uncommented, only the first test to appear in the code will run).
+
+__IMPORTANT__: When running _MonitorTest_, a console window will pop up and display the program's output. In order to safely terminate the program, press Ctrl+C before closing the window. If Ctrl+C is not pressed, the session allowing TraceEvent to run and collect events will not terminate. The next run of _MonitorTest_ would attempt to recreate the same session, and an error would be triggered. If you forget to Ctrl+C and run into this error, open up your machine's terminal or command prompt and run the command "logman stop MySession -ets". This will close the session, and you will be able to run _MonitorTest_ again.
