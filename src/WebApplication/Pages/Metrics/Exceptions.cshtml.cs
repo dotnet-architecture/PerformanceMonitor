@@ -54,7 +54,6 @@ namespace WebApplication.Pages.Metrics
             exceptionSorted = exceptionTracker.ToList();
             exceptionSorted.Sort((pair1, pair2) => pair1.Value.CompareTo(pair2.Value));
 
-            test = exceptionSorted.Count.ToString();
             totalExceptions = exceptions.Count;
         }
         public async Task OnPostAsync(String app, String pro)

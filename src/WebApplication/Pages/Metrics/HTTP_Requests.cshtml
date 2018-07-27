@@ -15,6 +15,7 @@
     <font size="50">HTTP Requests</font>
 
     <p>Total Http Requests: @Model.totalHttpRequest</p>
+    <p>Average Duration of Contentions: @Model.avgDuration</p>
 
     <p>Log of Http Requests</p>
     <table class="table table-hover table-bordered">
@@ -33,25 +34,25 @@
                 @for (int i = Model.http.Count - 1; i >= 0; i--)
                 {
                     Client_Http_Request h = Model.http.ElementAt<Client_Http_Request>(i);
-            <tr>
+                    <tr>
 
-                @if (h.EndTimestamp != null)
-                {
-                    <td>@h.Method</td>
-                    <td>@h.Path</td>
-                    <td>@h.StartTimestamp</td>
-                    <td>@h.EndTimestamp</td>
-                    <td>@h.Duration</td>
-                }
-                else
-                {
-                    <td>@h.Method</td>
-                    <td>@h.Path</td>
-                    <td>@h.StartTimestamp</td>
-                    <td></td>
-                    <td></td>
-                }
-            </tr>
+                        @if (h.EndTimestamp != null)
+                        {
+                            <td>@h.Method</td>
+                            <td>@h.Path</td>
+                            <td>@h.StartTimestamp</td>
+                            <td>@h.EndTimestamp</td>
+                            <td>@h.Duration</td>
+                        }
+                        else
+                        {
+                            <td>@h.Method</td>
+                            <td>@h.Path</td>
+                            <td>@h.StartTimestamp</td>
+                            <td></td>
+                            <td></td>
+                        }
+                    </tr>
 
                 }
             }
