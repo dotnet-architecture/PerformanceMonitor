@@ -11,6 +11,7 @@ namespace WebApplication.Pages.Metrics
     public class Garbage_CollectionModel : PageModel
     {
         public List<Client_GC> gc { get; set; } = new List<Client_GC>();
+        public List<DataTransfer.GC> gcTest { get; set; } = new List<DataTransfer.GC>();
 
         // Contains gc events that do not yet have a endStamp
         public Dictionary<int, Client_GC> gcTracker = new Dictionary<int, Client_GC>();
@@ -40,6 +41,11 @@ namespace WebApplication.Pages.Metrics
                     clientG.updateEndTimestamp(g.timestamp);
                     gc.Add(clientG);
                 }
+            }
+
+            foreach (DataTransfer.GC g in addOn)
+            {
+                gcTest.Add(g);
             }
 
             gc.OrderBy(c => c.StartTimestamp).ToList(); // updating http so that is sorted by time

@@ -10,18 +10,28 @@
     <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
             <li class="sidebar-brand"><a asp-page="/Index">.NET Performance and Reliability</a></li>
-            <li><a asp-page="/Metrics/CPU_Memory">CPU and Memory Usage</a></li>
-            <li><a asp-page="/Metrics/HTTP_Requests">HTTP Requests</a></li>
-            <li><a asp-page="/Metrics/Exceptions">Exceptions</a></li>
-            <li><a asp-page="/Metrics/Contentions">Contentions</a></li>
-            <li><a asp-page="/Metrics/Garbage_Collection">Garbage Collection</a></li>
-            <li><a asp-page="/Metrics/JIT">JIT</a></li>
+            @if (IndexModel.userSession != null)
+            {
+                <li><a asp-page="/Metrics/CPU_Memory">CPU and Memory Usage</a></li>
+                <li><a asp-page="/Metrics/HTTP_Requests">HTTP Requests</a></li>
+                <li><a asp-page="/Metrics/Exceptions">Exceptions</a></li>
+                <li><a asp-page="/Metrics/Contentions">Contentions</a></li>
+                <li><a asp-page="/Metrics/Garbage_Collection">Garbage Collection</a></li>
+                <li><a asp-page="/Metrics/JIT">JIT</a></li>
+                <li><font color="#CFCFCF">Currently viewing data for</font></li>
+                <li><font color="#CFCFCF">Application: @IndexModel.userSession.application</font></li>
+                <li><font color="#CFCFCF">Process: @IndexModel.userSession.process</font></li>
+            }
+            else
+            {
+                <li><a asp-page="/Index">CPU and Memory Usage</a></li>
+                <li><a asp-page="/Index">HTTP Requests</a></li>
+                <li><a asp-page="/Index">Exceptions</a></li>
+                <li><a asp-page="/Index">Contentions</a></li>
+                <li><a asp-page="/Index">Garbage Collection</a></li>
+                <li><a asp-page="/Index">JIT</a></li>
+            }
         </ul>
-        @if (IndexModel.userSession != null)
-        {
-            <p>Application: @IndexModel.userSession.application</p>
-            <p>Process: @IndexModel.userSession.process</p>
-        }
     </div>
 
     @RenderBody()
