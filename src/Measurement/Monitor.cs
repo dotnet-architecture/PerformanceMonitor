@@ -160,9 +160,7 @@ namespace DataTransfer
                             list.jit = JitVals;
 
                             hold = 1;
-                            DateTime now = DateTime.Now;
                             SendHTTP(list);
-                            Console.WriteLine(getCPUCount());
                             hold = 0;
 
                             CPUVals.Clear();
@@ -172,7 +170,6 @@ namespace DataTransfer
                             ContentionVals.Clear();
                             GCVals.Clear();
                             JitVals.Clear();
-                            Console.WriteLine(getCPUCount());
                         }
                     }
                 }

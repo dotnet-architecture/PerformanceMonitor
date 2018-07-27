@@ -73,4 +73,3 @@ namespace WebApplication.Pages.Metrics
         }
     }
 }
-}
