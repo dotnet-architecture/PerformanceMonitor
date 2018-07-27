@@ -27,10 +27,48 @@
             {
                 @for (int i = Model.exceptions.Count - 1; i >= 0; i--)
                 {
-                    Exceptions e = Model.exceptions.ElementAt<Exceptions>(i);
+                    Exceptions e = Model.exceptions[i];
                     <tr>
                         <td>@e.type</td>
                         <td>@e.timestamp</td>
+                    </tr>
+
+                }
+            }
+            else
+            {
+                <tr>Unable to retrieve data</tr>
+            }
+        </tbody>
+    </table>
+
+    <form method="post">
+        <input type="text" placeholder="Number of Exceptions" asp-for="@Model.numOfExceptions" name="numOfExceptions" /> <br />
+        <button class="btn btn-default">Examine</button>
+    </form>
+
+    <p>Log of Exceptions by Frequency</p>
+    <table class="table table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>Exception Type</th>
+                <th>Frequency</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.exceptions != null)
+            {
+                int num = 4; 
+                if (Model.numOfExceptions != 0)
+                {
+                    num = Model.numOfExceptions - 1;
+                }
+                @for (int i = 0; i <= num; i++)
+                {
+                    KeyValuePair<string, int> e = Model.exceptionSorted[i];
+                    <tr>
+                        <td>@e.Key</td>
+                        <td>@e.Value</td>
                     </tr>
 
                 }
