@@ -10,9 +10,9 @@ namespace MonitorTest
         static void Main(string[] args)
         {
             monitor.Record();
-            CPUMemTest();
+            //CPUMemTest();
             //GCTest();
-            //ExceptionTest();
+            ExceptionTest();
             //ContentionTest();
         }
         public static int getSampleRate()
