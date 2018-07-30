@@ -44,11 +44,13 @@
 
     <div id="cputest"></div>
     <script>
-        var test = @Model.cpu; 
-        var yy = [@Model.avgCPU, 2];
+        var testtest = @Model.cpuUsage.ToArray()[0];
+        var test = @Model.cpuUsage.ToArray(); 
+        var testtesttest = test[0];
+        var yy = @Model.avgCPU;
 
         var trace1 = {
-            y: yy,
+            y: test,
             type: 'scatter'
         };
 
@@ -114,11 +116,10 @@
 
         const url = `http://localhost:54022/api/v1/CPU/Daterange?start=${start1}&end=${end1}&id=${id1}`;
         const dateRangePromise = fetch(url, {
-            method: 'get',
+            method: 'GET',
             mode: 'cors',
             headers: {
-                "Accept" : "application/json",
-                "Content-Type": "application/json"
+                "Accept": "application/json",
             }
             //body: 'start=${start1}&end=${end1}&id=${id1}'
         })
@@ -127,6 +128,8 @@
                     case 500: console.error('Some server error');
                         break;
                     case 401: console.error('Unauthorized');
+                        break;
+                    case 200: console.log(response);
                         break;
                 }
 
