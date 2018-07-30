@@ -40,18 +40,19 @@
                 });
             }
         }, 5);
-    </script>
+    </script>*@
 
     <div id="cputest"></div>
     <script>
-            var yy = [@Model.avgCPU, 2];
+        var test = @Model.cpu; 
+        var yy = [@Model.avgCPU, 2];
 
-            var trace1 = {
-                y: yy,
-                type: 'scatter'
-            };
+        var trace1 = {
+            y: yy,
+            type: 'scatter'
+        };
 
-            var data = [trace1];
+        var data = [trace1];
 
         var layout = {
             yaxis: {
@@ -60,12 +61,12 @@
             }
         };
 
-            var graphOptions = {
-                layout: layout,
-            };
+        var graphOptions = {
+            layout: layout,
+        };
 
-            Plotly.plot('cputest', data, graphOptions);
-    </script>*@
+        Plotly.plot('cputest', data, graphOptions);
+    </script>
 
     @*<div id="cpu3"></div>
     <script>
@@ -112,41 +113,64 @@
         const id1 = `@Html.Encode(IndexModel.userSession.Id)`;
 
         const url = `http://localhost:54022/api/v1/CPU/Daterange?start=${start1}&end=${end1}&id=${id1}`;
-        const dateRangePromise = fetch(url)
-            .then(reponse => {
-                console.log(response);
+        const dateRangePromise = fetch(url, {
+            method: 'get',
+            mode: 'cors',
+            headers: {
+                "Accept" : "application/json",
+                "Content-Type": "application/json"
+            }
+            //body: 'start=${start1}&end=${end1}&id=${id1}'
+        })
+            .then(response => {
+                switch (response.status) {
+                    case 500: console.error('Some server error');
+                        break;
+                    case 401: console.error('Unauthorized');
+                        break;
+                }
+
                 if (response.ok) {
                     return response;
+                } else {
+                    return Promise.reject(response);
+                    throw Error(response.statusText);
                 }
-                return Promise.reject(Error('error'))
-            }).catch(error => {
-                return Promise.reject(Error(error.message))
             });
+//            .then(reponse => {
+//                console.log(response);
+//                if (response.ok) {
+//                    return response;
+//                }
+//                return Promise.reject(Error('error'))
+//            }).catch(error => {
+//                return Promise.reject(Error(error.message))
+//            });
 
-            //.then((response) => {
-            //    if (response.ok === false) {
-            //        return response
-            //            .text()
-            //            .then(text => {
-            //                throw new Error(`${response.statusText}\n${text}`);
-            //            });
-            //    }
-            //    return response;
-            //})
-            //.then(function (response) {
-            //    return response.json();
-            //});
+//            .then((response) => {
+//                if (response.ok === false) {
+//                    return response
+//                        .text()
+//                        .then(text => {
+//                            throw new Error(`${response.statusText}\n${text}`);
+//                        });
+//                }
+//                return response;
+//            })
+//            .then(function (response) {
+//                return response.json();
+//            });
 //\            .catch(err => {
 //                Do something for error here
 //            });
 
-        //let usage = [];
-        //const result = Promise.all([dateRangePromise])
-        //    .then(([dateRange]) => {
-        //        for (var i = 0; i < dateRange.length; i++) {
-        //            usage.push(result[i].usage);
-        //        }
-        //    });
+//        let usage = [];
+//        const result = Promise.all([dateRangePromise])
+//            .then(([dateRange]) => {
+//                for (var i = 0; i < dateRange.length; i++) {
+//                    usage.push(result[i].usage);
+//                }
+//            });
 
         //var trace1 = {
         //    y: usage,
