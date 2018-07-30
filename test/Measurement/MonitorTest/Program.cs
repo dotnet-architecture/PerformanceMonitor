@@ -79,22 +79,42 @@ namespace MonitorTest
         public static void ExceptionTest()
         {
             monitor.Record();
+            Random random = new Random();
             DateTime timer = DateTime.Now;
-            int i = 0;
-            int j = 2;
             while (true)
             {
                 if (DateTime.Now.Subtract(timer).TotalSeconds >= 1)
                 {
+                    int rand = random.Next(1, 6);
                     try
                     {
-                        int k = j / i;
+                        if (rand == 1)
+                        {
+                            throw new DivideByZeroException();
+                        }
+                        else if (rand == 2)
+                        {
+                            throw new IndexOutOfRangeException();
+                        }
+                        else if (rand == 3)
+                        {
+                            throw new AggregateException();
+                        }
+                        else if (rand == 4)
+                        {
+                            throw new ArgumentException();
+                        }
+                        else if (rand == 5)
+                        {
+                            throw new ArithmeticException();
+                        }
                     }
                     catch (Exception) { }
                     timer = DateTime.Now;
                 }
             }
         }
+
         static int valueType;
         static object valueTypeLock = new object();
         public static void ContentionTest()
