@@ -44,13 +44,10 @@
 
     <div id="cputest"></div>
     <script>
-        var testtest = @Model.cpuUsage.ToArray()[0];
-        var test = @Model.cpuUsage.ToArray(); 
-        var testtesttest = test[0];
-        var yy = @Model.avgCPU;
+        var cpuUsage = @Html.Raw(Json.Serialize(Model.cpuUsage));
 
         var trace1 = {
-            y: test,
+            y: cpuUsage,
             type: 'scatter'
         };
 
@@ -120,6 +117,8 @@
             mode: 'cors',
             headers: {
                 "Accept": "application/json",
+                'Access-Control-Allow-Origin': '*',
+                "Content-type": "applicaiton/json"
             }
             //body: 'start=${start1}&end=${end1}&id=${id1}'
         })
