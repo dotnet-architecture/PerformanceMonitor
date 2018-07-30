@@ -15,34 +15,7 @@
 <div class="main">
     <font size="50">CPU and Memory Usage</font>
 
-    @*<div id="chart"></div>
-    <script>
-        function getData() {
-            return Math.random();
-        }
-
-        var time = new Date();
-
-        Plotly.plot('chart', [{
-            y: [getData()],
-            type: 'line'
-        }])
-
-        var cnt = 0;
-        setInterval(function () {
-            Plotly.extendTraces('chart', { y: [[getData()]] }, [0]);
-            cnt++;
-            if (cnt > 100) {
-                Plotly.relayout('chart', {
-                    xaxis: {
-                        range: [cnt - 100, cnt]
-                    }
-                });
-            }
-        }, 5);
-    </script>*@
-
-    <div id="cputest"></div>
+    <div id="cpu"></div>
     <script>
         var cpuUsage = @Html.Raw(Json.Serialize(Model.cpuUsage));
 
@@ -64,28 +37,15 @@
             layout: layout,
         };
 
-        Plotly.plot('cputest', data, graphOptions);
+        Plotly.plot('cpu', data, graphOptions);
     </script>
 
-    @*<div id="cpu3"></div>
+    <div id="mem"></div>
     <script>
-        const start = `@Html.Encode(Model.oldStampString)`;
-        const end = `@Html.Encode(Model.newStampString)`;
-        const id = `@Html.Encode(IndexModel.userSession.Id)`;
-
-        const url = `http://localhost:54022/api/v1/CPU/Daterange?start=${start}&end=${end}&id=${id}`;
-        const dateRangePromise = fetch(url);
-
-        var usage = [];
-        var result = Promise.all([dateRangePromise])
-            .then(([dateRange]) => {
-                for (var i = 0; i < dateRange.length; i++) {
-                    usage.push(result[i].usage);
-                }
-            });
+        var cpuUsage = @Html.Raw(Json.Serialize(Model.memUsage));
 
         var trace1 = {
-            y: usage,
+            y: cpuUsage,
             type: 'scatter'
         };
 
@@ -94,132 +54,198 @@
         var layout = {
             yaxis: {
                 visible: true,
-                title: 'CPU Usage'
+                title: 'Mem Usage'
             }
         };
 
         var graphOptions = {
-            layout: layout
+            layout: layout,
         };
 
-        Plotly.plot('cpu3', data, graphOptions);
-    </script>*@
-
-    <div id="cpu"></div>
-    <script>
-        const start1 = `@Html.Encode(Model.oldStampString)`;
-        const end1 = `@Html.Encode(Model.newStampString)`;
-        const id1 = `@Html.Encode(IndexModel.userSession.Id)`;
-
-        const url = `http://localhost:54022/api/v1/CPU/Daterange?start=${start1}&end=${end1}&id=${id1}`;
-        const dateRangePromise = fetch(url, {
-            method: 'GET',
-            mode: 'cors',
-            headers: {
-                "Accept": "application/json",
-                'Access-Control-Allow-Origin': '*',
-                "Content-type": "applicaiton/json"
-            }
-            //body: 'start=${start1}&end=${end1}&id=${id1}'
-        })
-            .then(response => {
-                switch (response.status) {
-                    case 500: console.error('Some server error');
-                        break;
-                    case 401: console.error('Unauthorized');
-                        break;
-                    case 200: console.log(response);
-                        break;
-                }
-
-                if (response.ok) {
-                    return response;
-                } else {
-                    return Promise.reject(response);
-                    throw Error(response.statusText);
-                }
-            });
-//            .then(reponse => {
-//                console.log(response);
-//                if (response.ok) {
-//                    return response;
-//                }
-//                return Promise.reject(Error('error'))
-//            }).catch(error => {
-//                return Promise.reject(Error(error.message))
-//            });
-
-//            .then((response) => {
-//                if (response.ok === false) {
-//                    return response
-//                        .text()
-//                        .then(text => {
-//                            throw new Error(`${response.statusText}\n${text}`);
-//                        });
-//                }
-//                return response;
-//            })
-//            .then(function (response) {
-//                return response.json();
-//            });
-//\            .catch(err => {
-//                Do something for error here
-//            });
-
-//        let usage = [];
-//        const result = Promise.all([dateRangePromise])
-//            .then(([dateRange]) => {
-//                for (var i = 0; i < dateRange.length; i++) {
-//                    usage.push(result[i].usage);
-//                }
-//            });
-
-        //var trace1 = {
-        //    y: usage,
-        //    type: 'scatter'
-        //};
-
-        //var data = [trace1];
-
-        //var layout = {
-        //    yaxis: {
-        //        visible: true,
-        //        title: 'CPU Usage'
-        //    }
-        //};
-
-        //var graphOptions = {
-        //    layout: layout
-        //};
-
-        //Plotly.plot('cpu', data, graphOptions);
+        Plotly.plot('mem', data, graphOptions);
     </script>
 
+    @*<div id="chart"></div>
+        <script>
+            function getData() {
+                return Math.random();
+            }
+
+            var time = new Date();
+
+            Plotly.plot('chart', [{
+                y: [getData()],
+                type: 'line'
+            }])
+
+            var cnt = 0;
+            setInterval(function () {
+                Plotly.extendTraces('chart', { y: [[getData()]] }, [0]);
+                cnt++;
+                if (cnt > 100) {
+                    Plotly.relayout('chart', {
+                        xaxis: {
+                            range: [cnt - 100, cnt]
+                        }
+                    });
+                }
+            }, 5);
+        </script>*@
+
+    @*<div id="cpu3"></div>
+        <script>
+            const start = `@Html.Encode(Model.oldStampString)`;
+            const end = `@Html.Encode(Model.newStampString)`;
+            const id = `@Html.Encode(IndexModel.userSession.Id)`;
+
+            const url = `http://localhost:54022/api/v1/CPU/Daterange?start=${start}&end=${end}&id=${id}`;
+            const dateRangePromise = fetch(url);
+
+            var usage = [];
+            var result = Promise.all([dateRangePromise])
+                .then(([dateRange]) => {
+                    for (var i = 0; i < dateRange.length; i++) {
+                        usage.push(result[i].usage);
+                    }
+                });
+
+            var trace1 = {
+                y: usage,
+                type: 'scatter'
+            };
+
+            var data = [trace1];
+
+            var layout = {
+                yaxis: {
+                    visible: true,
+                    title: 'CPU Usage'
+                }
+            };
+
+            var graphOptions = {
+                layout: layout
+            };
+
+            Plotly.plot('cpu3', data, graphOptions);
+        </script>*@
+
+    @*<div id="cpu"></div>
+            <script>
+                const start1 = `@Html.Encode(Model.oldStampString)`;
+                const end1 = `@Html.Encode(Model.newStampString)`;
+                const id1 = `@Html.Encode(IndexModel.userSession.Id)`;
+
+                const url = `http://localhost:54022/api/v1/CPU/Daterange?start=${start1}&end=${end1}&id=${id1}`;
+                const dateRangePromise = fetch(url, {
+                    method: 'GET',
+                    mode: 'cors',
+                    headers: {
+                        "Accept": "application/json",
+                        'Access-Control-Allow-Origin': '*',
+                        "Content-type": "applicaiton/json"
+                    }
+                    //body: 'start=${start1}&end=${end1}&id=${id1}'
+                })
+                    .then(response => {
+                        switch (response.status) {
+                            case 500: console.error('Some server error');
+                                break;
+                            case 401: console.error('Unauthorized');
+                                break;
+                            case 200: console.log(response);
+                                break;
+                        }
+
+                        if (response.ok) {
+                            return response;
+                        } else {
+                            return Promise.reject(response);
+                            throw Error(response.statusText);
+                        }
+                    });
+                    .then(reponse => {
+                        console.log(response);
+                        if (response.ok) {
+                            return response;
+                        }
+                        return Promise.reject(Error('error'))
+                    }).catch(error => {
+                        return Promise.reject(Error(error.message))
+                    });
+
+                    .then((response) => {
+                        if (response.ok === false) {
+                            return response
+                                .text()
+                                .then(text => {
+                                    throw new Error(`${response.statusText}\n${text}`);
+                                });
+                        }
+                        return response;
+                    })
+                    .then(function (response) {
+                        return response.json();
+                    });
+        \            .catch(err => {
+                        Do something for error here
+                    });
+
+                let usage = [];
+                const result = Promise.all([dateRangePromise])
+                    .then(([dateRange]) => {
+                        for (var i = 0; i < dateRange.length; i++) {
+                            usage.push(result[i].usage);
+                        }
+                    });
+
+                var trace1 = {
+                    y: usage,
+                    type: 'scatter'
+                };
+
+                var data = [trace1];
+
+                var layout = {
+                    yaxis: {
+                        visible: true,
+                        title: 'CPU Usage'
+                    }
+                };
+
+                var graphOptions = {
+                    layout: layout
+                };
+
+                Plotly.plot('cpu', data, graphOptions);
+            </script>*@
+
     @*<div id="cpu2"></div>
-    <script>
-        const start = `@Html.Encode(Model.oldStampString)`;
-        const end = `@Html.Encode(Model.newStampString)`;
-        const id = `@Html.Encode(IndexModel.userSession.Id)`;
+        <script>
+            const start = `@Html.Encode(Model.oldStampString)`;
+            const end = `@Html.Encode(Model.newStampString)`;
+            const id = `@Html.Encode(IndexModel.userSession.Id)`;
 
-        var url = `http://localhost:54022/api/v1/CPU/Daterange?start=${start}&end=${end}&id=${id}`;
+            var url = `http://localhost:54022/api/v1/CPU/Daterange?start=${start}&end=${end}&id=${id}`;
 
-        d3.json(url, function (error, data) {
-            if (error) return console.warn(error);
-            var layout = { barmode: 'group' };
+            d3.json(url, function (error, data) {
+                if (error) return console.warn(error);
+                var layout = { barmode: 'group' };
 
-            Plotly.newPlot('cpu2', data.data, layout);
-          });
-    </script>*@
+                Plotly.newPlot('cpu2', data.data, layout);
+              });
+        </script>*@
 
-    <input type="button" value="Refresh Logs" onClick="window.location.reload()">
+    <button class="btn btn-default" onClick="window.location.reload()">Refresh Data</button>
 
     <p>Average CPU Usage: @Model.avgCPU</p>
 
-    <p>Log of CPU Usage</p>
+    <p>Log of CPU and Mem Usage</p>
     <table class="table table-hover table-bordered">
         <thead>
             <tr>
-                <th>CPU</th>
+                <th>CPU (Percentage)</th>
+                <th>Memory (MB)</th>
                 <th>Timestamp</th>
             </tr>
         </thead>
@@ -228,39 +254,13 @@
             {
                 @for (int i = Model.cpu.Count - 1; i >= 0; i--)
                 {
-                    CPU_Usage c = Model.cpu.ElementAt<CPU_Usage>(i);
+                    CPU_Usage c = Model.cpu[i];
+                    Mem_Usage m = Model.mem[i];
                     <tr>
                         <td>@c.usage</td>
+                        <td>@(m.usage/1000000.0)</td>
                         <td>@c.timestamp</td>
                     </tr>
-                }
-            }
-            else
-            {
-                <tr>Unable to retrieve data</tr>
-            }
-        </tbody>
-    </table>
-
-    <p>Log of Memory Usage</p>
-    <table class="table table-hover table-bordered">
-        <thead>
-            <tr>
-                <th>Memory</th>
-                <th>Timestamp</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.mem != null)
-            {
-                @for (int i = Model.mem.Count - 1; i >= 0; i--)
-                {
-                    Mem_Usage m = Model.mem.ElementAt<Mem_Usage>(i);
-                    <tr>
-                        <td>@m.usage</td>
-                        <td>@m.timestamp</td>
-                    </tr>
-
                 }
             }
             else
