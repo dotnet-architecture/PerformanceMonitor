@@ -27,11 +27,11 @@ The web application is built using ASP.NET CORE and Razor Pages to create a dyna
 Application health monitoring is performed by a C# class library function that simply needs to be included in the beginning of the user's application code. The function will trigger application performance reading on the user's machine, and periodically send packets of data to be presented on the web application. To utilize this service, include the PerfMonitor library and write the following at the start of the tracked application's Main method or equivalent:
 
 ```cs
-Monitor monitor = new Monitor(String application_name, int sampling_rate, int transmission_rate);
+Monitor monitor = new Monitor(String process_name, String application_name, int sampling_rate, int transmission_rate);
 monitor.Record();
 ```
 
-All arguments for _Monitor_ class instantiation are optional - the default sampling rate is one sample per second and the default transmission rate (rate at which data is sent to the server) is five seconds. If a rate is specified, the arguments should be provided in milliseconds between sample/transmission and the sampling rate value should be smaller than the transmission rate value for expected performance. 
+All arguments for _Monitor_ class instantiation are optional, but specifying a process name is strongly recommended so that processes can be differentated on the web application - the default sampling rate is one sample per second and the default transmission rate (rate at which data is sent to the server) is five seconds. If a rate is specified, the arguments should be provided in milliseconds between sample/transmission and the sampling rate value should be smaller than the transmission rate value for expected performance. 
 
 Providing an application name will allow an application with multiple processes to have its processes grouped within the performance monitor's tracking. To do so, simply run performance monitoring for each process simultaneously, with each Monitor instantiation specifying the same application name. Below is an example of having multiple tracked processes within the same application:
 
@@ -52,5 +52,11 @@ monitor.Record();
 Now when we view the web application, we'll be able to see the performance of both processes factor into performance of the overall application. Below is a diagram showing the structure of the system:
 
 ![Application Diagram](Application.png)
+
+If we were to additionally create two new processes - "Process3" and "Process4", respectively - with arbitrary sampling and transmission rates but no application name, the system would now look like this:
+
+![New Application Diagram](Applications.png)
+
+Each process can be viewed individually, but they can also be grouped under whatever application they belong to (as specified when the _Monitor_ class instance is initialized).
 
 ## View Application Performance
