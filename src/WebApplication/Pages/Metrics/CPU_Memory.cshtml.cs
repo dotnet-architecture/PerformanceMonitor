@@ -67,6 +67,7 @@ namespace WebApplication.Pages.Metrics
         // Returns cpu usage list as a double and reversed
         public void getCPUUsage()
         {
+
             for (int i = cpu.Count - 1; i >= 0; i--)
             {
                 cpuUsage.Add(cpu[i].usage);         
