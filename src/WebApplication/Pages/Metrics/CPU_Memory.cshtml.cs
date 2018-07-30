@@ -14,8 +14,10 @@ namespace WebApplication.Pages.Metrics
         public List<Mem_Usage> mem { get; set; } = new List<Mem_Usage>();
 
         public List<double> cpuUsage { get; set; } = new List<double>();
+        public List<double> memUsage { get; set; } = new List<double>();
 
         public double avgCPU;
+        public double avgMem; 
         public int timeAccounted; // Total time that is accounted for in the average CPU. Used to update to new avgCPU
 
         // Counter that detects when 5 seconds pass so HTTP get requests are sent every 5 seconds
@@ -35,6 +37,7 @@ namespace WebApplication.Pages.Metrics
             List<Mem_Usage> mem_addOn = await FetchDataService.getUpdatedData<Mem_Usage>(oldStamp, newStamp); 
 
             double totalCPU = avgCPU * timeAccounted; // Weighting previous avgCPU
+            double totalMem = avgMem * timeAccounted; // Weighting previous avgCPU
 
             // Updates CPU_Usage list and totalCPU to calculate new average
             foreach (CPU_Usage c in cpu_addOn)
@@ -49,10 +52,16 @@ namespace WebApplication.Pages.Metrics
 
             foreach (Mem_Usage m in mem_addOn)
             {
+                totalMem += m.usage;
                 mem.Add(m);
             }
 
+            // Calculating new avgMem
+            this.timeAccounted += mem_addOn.Count;
+            this.avgMem = totalMem / (double)timeAccounted;
+
             getCPUUsage();
+            getMemUsage();
 
             dateRange = FetchDataService.convertDateTime(oldStamp) + "&end=" + FetchDataService.convertDateTime(newStamp);
             oldStampString = FetchDataService.convertDateTime(oldStamp);
@@ -67,10 +76,17 @@ namespace WebApplication.Pages.Metrics
         // Returns cpu usage list as a double and reversed
         public void getCPUUsage()
         {
-
             for (int i = cpu.Count - 1; i >= 0; i--)
             {
                 cpuUsage.Add(cpu[i].usage);         
+            }
+        }
+
+        public void getMemUsage()
+        {
+            for (int i = mem.Count - 1; i >= 0; i--)
+            {
+                memUsage.Add(mem[i].usage/1000000.0);
             }
         }
 
