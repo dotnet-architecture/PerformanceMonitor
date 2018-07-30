@@ -9,8 +9,7 @@ namespace MonitorTest
         static DataTransfer.Monitor monitor = new DataTransfer.Monitor("App");
         static void Main(string[] args)
         {
-            monitor.Record();
-            CPUMemTest();
+            //CPUMemTest();
             //GCTest();
             //ExceptionTest();
             //ContentionTest();
@@ -23,56 +22,49 @@ namespace MonitorTest
         {
             return monitor.sendRate;
         }
-        public static double RequestTest()
+        public static void CPUMemTest()
         {
-            DateTime timer = DateTime.Now;
-            while (true)
-            {
-                if (DateTime.Now.Subtract(timer).TotalSeconds >= 20)
-                {
-                    timer = DateTime.Now;
-                    int count = 0;
-                    double avg = 0;
-                    DateTime newTimer = DateTime.Now;
-                    while (DateTime.Now.Subtract(newTimer).TotalMilliseconds <= monitor.sendRate * 4)
-                    {
-                        if (monitor.getHold() == 1)
-                        {
-                            avg = (DateTime.Now.Subtract(timer).TotalMilliseconds + avg * count) / (count + 1);
-                            count++;
-                            timer = DateTime.Now;
-                            while (monitor.getHold() == 1) ;
-                        }
-                    }
-                    return avg;
-                }
-            }
+            monitor.Record();
+            while (true) ;
         }
-        public static int CPUMemTest()
+        public static double UnitTest2()
         {
+            monitor.Record();
             DateTime timer = DateTime.Now;
-            while (true)
+            while (DateTime.Now.Subtract(timer).TotalMilliseconds <= monitor.sendRate * 4) ;
+            timer = DateTime.Now;
+            double total = 0.0;
+            DateTime newTimer = DateTime.Now;
+            while (DateTime.Now.Subtract(newTimer).TotalMilliseconds <= monitor.sendRate * 4)
             {
-                if (DateTime.Now.Subtract(timer).TotalSeconds >= 25)
+                if (monitor.getHold() == 1)
                 {
+                    total += DateTime.Now.Subtract(timer).TotalMilliseconds;
                     timer = DateTime.Now;
-                    while (true)
-                    {
-                        int max = 0;
-                        if (DateTime.Now.Subtract(timer).TotalMilliseconds <= monitor.sendRate)
-                        {
-                            if (monitor.getCPUCount() > max)
-                            {
-                                max = monitor.getCPUCount();
-                            }
-                        }
-                        return max;
-                    }
+                    while (monitor.getHold() == 1) ;
                 }
             }
+            double avg = total / 4;
+            return avg;
+        }
+        public static int UnitTest1()
+        {
+            DateTime timer = DateTime.Now;
+            while (DateTime.Now.Subtract(timer).TotalMilliseconds <= monitor.sendRate * 4) ;
+            timer = DateTime.Now;
+            int max = 0;
+            while (DateTime.Now.Subtract(timer).TotalMilliseconds <= monitor.sendRate)
+            {
+                if (monitor.getCPUCount() > max)
+                {
+                    max = monitor.getCPUCount();
+                }
+            }
+            return max;
         }
         public static void GCTest()
         {
+            monitor.Record();
             DateTime timer = DateTime.Now;
             while (true)
             {
@@ -86,6 +78,7 @@ namespace MonitorTest
         }
         public static void ExceptionTest()
         {
+            monitor.Record();
             DateTime timer = DateTime.Now;
             int i = 0;
             int j = 2;
@@ -104,8 +97,9 @@ namespace MonitorTest
         }
         static int valueType;
         static object valueTypeLock = new object();
-        public static void Test()
+        public static void ContentionTest()
         {
+            monitor.Record();
             Thread t = new Thread(new ThreadStart(ThreadMethod));
             t.Start();
             DateTime timer = DateTime.Now;

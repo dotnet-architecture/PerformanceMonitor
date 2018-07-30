@@ -37,7 +37,7 @@ namespace WebApplication
             }
             else if (typeof(T).ToString().Equals("DataTransfer.Exceptions"))
             {
-                type = "Exceptions";
+                type = "Exception";
             }
             else if (typeof(T).ToString().Equals("DataTransfer.Contention"))
             {
