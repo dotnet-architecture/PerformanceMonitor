@@ -11,7 +11,7 @@ namespace MonitorTest
         {
             //CPUMemTest();
             //GCTest();
-            //ExceptionTest();
+            ExceptionTest();
             //ContentionTest();
         }
         public static int getSampleRate()
