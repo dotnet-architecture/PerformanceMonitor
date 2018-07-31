@@ -20,9 +20,9 @@
     <table class="table table-hover table-bordered">
         <thead>
             <tr>
-                <th>GC Type</th>
-                <th>Id</th>
-                <th>Timestamp</th>
+                <th>Start Timestamp</th>
+                <th>End Timestamp</th>
+                <th>Duration</th>
             </tr>
         </thead>
         <tbody>
@@ -45,6 +45,36 @@
                             <td></td>
                             <td></td>
                         }
+                    </tr>
+
+                }
+            }
+            else
+            {
+                <tr>Unable to retrieve data</tr>
+            }
+        </tbody>
+    </table>
+
+    <p>Log of Garbage Collection</p>
+    <table class="table table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>GC Type</th>
+                <th>Id</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.gc != null)
+            {
+                @for (int i = Model.gcTest.Count - 1; i >= 0; i--)
+                {
+                    DataTransfer.GC g = Model.gcTest.ElementAt<DataTransfer.GC>(i);
+                    <tr>
+                        <td>@g.type</td>
+                        <td>@g.id</td>
+                        <td>@g.timestamp</td>
                     </tr>
 
                 }

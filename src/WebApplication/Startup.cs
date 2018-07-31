@@ -29,8 +29,9 @@ namespace WebApplication
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddSignalR();
+            //services.AddSignalR(); add SignalR for the future
             services.AddHttpClient();
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,13 +50,11 @@ namespace WebApplication
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-
-            app.UseSignalR(routes =>
-            {
-                routes.MapHub<MetricHub>("/metricHub");
-            });
-
             app.UseMvc();
+
+            app.UseCors(builder =>
+                builder.WithOrigins("http://localhost:54022"));
+
         }
     }
 }

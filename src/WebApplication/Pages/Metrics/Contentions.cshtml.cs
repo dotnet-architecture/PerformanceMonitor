@@ -12,6 +12,7 @@ namespace WebApplication.Pages.Metrics
     public class ContentionsModel : PageModel
     {
         public List<Client_Contention> contentions { get; set; } = new List<Client_Contention>();
+        public double avgDuration = 0;
 
         // Contains contentions that do not yet have a endStamp
         public Dictionary<Guid, Client_Contention> contentionTracker = new Dictionary<Guid, Client_Contention>();
@@ -52,6 +53,23 @@ namespace WebApplication.Pages.Metrics
             this.newStamp = DateTime.Now.ToUniversalTime();
 
             totalContentions = contentions.Count;
+            updateAvg();
+        }
+        public double updateAvg()
+        {
+            double totalDuration = 0;
+            double totalEndedReq = 0;
+            foreach (Client_Contention c in contentions)
+            {
+                if (c.EndTimestamp != null)
+                {
+                    totalDuration += c.Duration;
+                    totalEndedReq++;
+                }
+            }
+
+            avgDuration = totalDuration / totalEndedReq;
+            return avgDuration;
         }
     }
 }
