@@ -23,7 +23,7 @@ namespace DataTransfer.Controllers
         }
 
         [HttpGet]
-        [EnableCors("AllowSpecificOrigin")]
+        [EnableCors("AllowAllOrigins")]
         [Route("Daterange")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> getCPUDataByTimerange(DateTime start, DateTime end, int id )

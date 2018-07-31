@@ -20,13 +20,19 @@
     <div id="cpu"></div>
     <script>
         var cpuUsage = @Html.Raw(Json.Serialize(Model.cpuUsage));
+        var cpuTime = @Html.Raw(Json.Serialize(Model.cpuTime));
 
         var CPU = {
             y: cpuUsage,
             type: 'scatter'
         };
 
-        var data = [CPU];
+        var data = [
+            {
+                x: cpuTime,
+                y: cpuUsage,
+                type: 'scatter'
+        }];
 
         var layout = {
             title: 'CPU Usage Over Time',
@@ -185,7 +191,7 @@
             Plotly.plot('cpu3', data, graphOptions);
         </script>*@
 
-    @*<div id="cpu"></div>
+    <div id="cpu"></div>
         <script>
             const start1 = `@Html.Encode(Model.oldStampString)`;
             const end1 = `@Html.Encode(Model.newStampString)`;
@@ -218,33 +224,7 @@
                         return Promise.reject(response);
                         throw Error(response.statusText);
                     }
-                });
-                .then(reponse => {
-                    console.log(response);
-                    if (response.ok) {
-                        return response;
-                    }
-                    return Promise.reject(Error('error'))
-                }).catch(error => {
-                    return Promise.reject(Error(error.message))
-                });
-
-                .then((response) => {
-                    if (response.ok === false) {
-                        return response
-                            .text()
-                            .then(text => {
-                                throw new Error(`${response.statusText}\n${text}`);
-                            });
-                    }
-                    return response;
-                })
-                .then(function (response) {
-                    return response.json();
-                });
-                .catch(err => {
-                    Do something for error here
-                });
+                });               
 
             let usage = [];
             const result = Promise.all([dateRangePromise])
@@ -273,7 +253,7 @@
             };
 
             Plotly.plot('cpu', data, graphOptions);
-        </script>*@
+        </script>
 
     @*<div id="cpu2"></div>
         <script>
