@@ -26,6 +26,13 @@ namespace DataTransfer
             this.sendRate = sendRate;
         }
 
+        public Monitor(int sampleRate = 1000, int sendRate = 5000)
+        {
+            this.sampleRate = sampleRate;
+            this.sendRate = sendRate;
+        }
+
+
         /*
          * VARIABLE DECLARATION BLOCK
          */
