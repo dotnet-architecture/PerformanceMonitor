@@ -21,25 +21,36 @@
     <script>
         var cpuUsage = @Html.Raw(Json.Serialize(Model.cpuUsage));
 
-        var trace1 = {
+        var CPU = {
             y: cpuUsage,
             type: 'scatter'
         };
 
-        var data = [trace1];
+        var data = [CPU];
 
         var layout = {
+            title: 'CPU Usage Over Time',
             yaxis: {
+                title: 'Percentage of CPU Usage',
+                titlefont: {
+                    family: 'Arial, sans-serif',
+                    size: 18,
+                    color: 'lightgrey'
+                },
                 visible: true,
-                title: 'CPU Usage'
+                range: [0, 100]
+            },
+            xaxis: {
+                title: 'Time',
+                titlefont: {
+                    family: 'Arial, sans-serif',
+                    size: 18,
+                    color: 'lightgrey'
+                }
             }
         };
 
-        var graphOptions = {
-            layout: layout,
-        };
-
-        Plotly.plot('cpu', data, graphOptions);
+        Plotly.plot('cpu', data, layout);
     </script>
 
     <div id="mem"></div>
@@ -54,17 +65,27 @@
         var data = [trace1];
 
         var layout = {
+            title: 'Mem Usage Over Time',
             yaxis: {
+                title: 'Mem Usage (MB)',
+                titlefont: {
+                    family: 'Arial, sans-serif',
+                    size: 18,
+                    color: 'lightgrey'
+                },
                 visible: true,
-                title: 'Mem Usage'
+            },
+            xaxis: {
+                title: 'Time',
+                titlefont: {
+                    family: 'Arial, sans-serif',
+                    size: 18,
+                    color: 'lightgrey'
+                }
             }
         };
 
-        var graphOptions = {
-            layout: layout,
-        };
-
-        Plotly.plot('mem', data, graphOptions);
+        Plotly.plot('mem', data, layout);
     </script>
 
     <p>Average CPU Usage: @Model.avgCPU</p>
