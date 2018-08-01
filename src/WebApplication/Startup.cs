@@ -53,7 +53,7 @@ namespace WebApplication
             app.UseMvc();
 
             app.UseCors(builder =>
-                builder.WithOrigins("http://localhost:54022"));
+                builder.WithOrigins("http://localhost:54023"));
 
         }
     }
