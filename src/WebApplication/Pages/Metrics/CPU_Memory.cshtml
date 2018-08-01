@@ -21,16 +21,14 @@
         var cpuUsage = @Html.Raw(Json.Serialize(Model.cpuUsage));
         var cpuTime = @Html.Raw(Json.Serialize(Model.cpuTime));
 
-        var dateTest = ['@Html.Raw(string.Join("', '", @Model.cpuTime.Select(f => string.Format("{0:MM-dd-yyyy HH:mm:mm AM}", f)).ToArray()))'];
+        var dates = new Array();
+        for (var i = 0; i < @Model.cpuTime.Count; i++) {
+            dates[i] = new Date(cpuTime[i]);
+        }
 
-        var CPU = {
-            y: cpuUsage,
-            type: 'scatter'
-        };
-
-        var data = [
+        var CPU = [
             {
-                x: jsDate,
+                x: cpuTime,
                 y: cpuUsage,
                 type: 'scatter'
         }];
@@ -57,7 +55,7 @@
             }
         };
 
-        Plotly.plot('cpu', data, layout);
+        Plotly.plot('cpu', CPU, layout);
     </script>
 
     <div id="mem"></div>
@@ -130,68 +128,72 @@
         </tbody>
     </table>
 
-    <div id="cpu"></div>
+    <div id="cpu2"></div>
     <script>
-            const start1 = `@Html.Encode(Model.oldStampString)`;
-            const end1 = `@Html.Encode(Model.newStampString)`;
-            const id1 = `@Html.Encode(IndexModel.userSession.Id)`;
+        const start = `@Html.Encode(Model.oldStampString)`;
+        const end = `@Html.Encode(Model.newStampString)`;
+        const id = `@Html.Encode(IndexModel.userSession.Id)`;
 
-            const url = `http://localhost:54022/api/v1/CPU/Daterange?start=${start1}&end=${end1}&id=${id1}`;
-            const dateRangePromise = fetch(url, {
-                method: 'GET',
-                mode: 'cors',
-                headers: {
-                    "Accept": "application/json",
-                    'Access-Control-Allow-Origin': '*',
-                    "Content-type": "applicaiton/json"
+        const url = `http://localhost:54022/api/v1/CPU/Daterange?start=${start}&end=${end}&id=${id}`;
+        const dateRangePromise = fetch(url, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                "Accept": "application/json",
+                'Access-Control-Allow-Origin': '*',
+                "Content-type": "applicaiton/json"
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response;
+                } else {
+                    return Promise.reject(response);
+                    throw Error(response.statusText);
                 }
-                //body: 'start=${start1}&end=${end1}&id=${id1}'
             })
-                .then(response => {
-                    switch (response.status) {
-                        case 500: console.error('Some server error');
-                            break;
-                        case 401: console.error('Unauthorized');
-                            break;
-                        case 200: console.log(response);
-                            break;
-                    }
+            .then(response => response.json())
+            .then(function (data) {
+                var dataArray = JSON.parse(data);
 
-                    if (response.ok) {
-                        return response;
-                    } else {
-                        return Promise.reject(response);
-                        throw Error(response.statusText);
-                    }
-                });
+                var cpuUsage = new Array(); 
+                var cpuTime = new Array(); 
 
-            let usage = [];
-            const result = Promise.all([dateRangePromise])
-                .then(([dateRange]) => {
-                    for (var i = 0; i < dateRange.length; i++) {
-                        usage.push(result[i].usage);
-                    }
-                });
-
-            var trace1 = {
-                y: usage,
-                type: 'scatter'
-            };
-
-            var data = [trace1];
-
-            var layout = {
-                yaxis: {
-                    visible: true,
-                    title: 'CPU Usage'
+                for (var i = 0; i < @Model.cpu.Count; i++) {
+                    cpuUsage[i] = dataArray[i].usage;
+                    cpuTime[i] = dataArray[i].timestamp;
                 }
-            };
 
-            var graphOptions = {
-                layout: layout
-            };
+                var CPU2 = [{
+                    x: cpuTime,
+                    y: cpuUsage,
+                    type: 'scatter'
+                }];
 
-            Plotly.plot('cpu', data, graphOptions);
+                var layout = {
+                    title: 'CPU Usage Over Time',
+                    yaxis: {
+                        title: 'Percentage of CPU Usage',
+                        titlefont: {
+                            family: 'Arial, sans-serif',
+                            size: 18,
+                            color: 'lightgrey'
+                        },
+                        visible: true,
+                        range: [0, 100]
+                    },
+                    xaxis: {
+                        title: 'Time',
+                        titlefont: {
+                            family: 'Arial, sans-serif',
+                            size: 18,
+                            color: 'lightgrey'
+                        }
+                    }
+                };
+
+                Plotly.plot('cpu2', CPU2, layout);
+            });                                       
     </script>
 
     @*  Plotly graph that updates continuously and scrolls

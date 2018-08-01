@@ -32,7 +32,7 @@ namespace DataTransfer
                 options.AddPolicy("AllowAllOrigins",
                     builder =>
                     {
-                        builder.AllowAnyOrigin().AllowAnyMethod();
+                        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
                     });
             }); 
         }

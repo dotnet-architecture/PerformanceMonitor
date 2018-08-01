@@ -45,7 +45,7 @@ namespace WebApplication.Pages
                 {
                     List<Session> sess = sessionsByApp.GetValueOrDefault(s.application);
                     sess.Add(s);
-                    sessionsByApp.Add(s.application, sess); 
+                    sessionsByApp[s.application] = sess; 
                 } else
                 {
                     List<Session> newSessList = new List<Session>();

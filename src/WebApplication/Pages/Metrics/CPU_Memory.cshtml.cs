@@ -14,7 +14,7 @@ namespace WebApplication.Pages.Metrics
         public List<Mem_Usage> mem { get; set; } = new List<Mem_Usage>();
 
         public List<double> cpuUsage { get; set; } = new List<double>();
-        public List<long> cpuTime { get; set; } = new List<long>();
+        public List<double> cpuTime { get; set; } = new List<double>();
         public List<double> memUsage { get; set; } = new List<double>();
 
         public double avgCPU;
@@ -97,7 +97,9 @@ namespace WebApplication.Pages.Metrics
         {
             for (int i = 0; i < cpu.Count; i++)
             {
-                cpuTime.Add(cpu[i].timestamp.ToBinary());
+                DateTime origin = DateTime.UnixEpoch;
+                Double m = cpu[i].timestamp.Subtract(origin).TotalMilliseconds; 
+                cpuTime.Add(m);
             }
 
         }
