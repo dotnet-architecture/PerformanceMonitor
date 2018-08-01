@@ -6,7 +6,7 @@ namespace MonitorTest
 {
     public class Program
     {
-        static DataTransfer.Monitor monitor = new DataTransfer.Monitor("App");
+        static DataTransfer.Monitor monitor = new DataTransfer.Monitor("Process", "App");
         static void Main(string[] args)
         {
             //CPUMemTest();
