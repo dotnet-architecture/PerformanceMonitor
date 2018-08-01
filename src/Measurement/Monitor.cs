@@ -32,6 +32,15 @@ namespace DataTransfer
             this.sendRate = sendRate;
         }
 
+        public Monitor(String process = "MyProcess", int sampleRate = 1000, int sendRate = 5000)
+        {
+            this.process = process;
+            this.app = null;
+            this.sampleRate = sampleRate;
+            this.sendRate = sendRate;
+        }
+
+
 
         /*
          * VARIABLE DECLARATION BLOCK
