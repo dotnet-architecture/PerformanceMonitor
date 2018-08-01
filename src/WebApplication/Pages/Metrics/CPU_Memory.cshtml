@@ -22,6 +22,8 @@
         var cpuUsage = @Html.Raw(Json.Serialize(Model.cpuUsage));
         var cpuTime = @Html.Raw(Json.Serialize(Model.cpuTime));
 
+        var dateTest = ['@Html.Raw(string.Join("', '", @Model.cpuTime.Select(f => string.Format("{0:MM-dd-yyyy HH:mm:mm AM}", f)).ToArray()))'];
+
         var CPU = {
             y: cpuUsage,
             type: 'scatter'
@@ -29,7 +31,7 @@
 
         var data = [
             {
-                x: cpuTime,
+                x: jsDate,
                 y: cpuUsage,
                 type: 'scatter'
         }];

@@ -32,7 +32,7 @@ namespace DataTransfer
                 options.AddPolicy("AllowAllOrigins",
                     builder =>
                     {
-                        builder.AllowAnyOrigin();
+                        builder.AllowAnyOrigin().AllowAnyMethod();
                     });
             }); 
         }
@@ -56,6 +56,8 @@ namespace DataTransfer
 
             app.UseHttpsRedirection();
             app.UseMvc();   
+
+            app.UseCors("AllowAllOrigins");
         }
     }
 }
