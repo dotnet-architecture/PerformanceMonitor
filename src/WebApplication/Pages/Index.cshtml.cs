@@ -13,7 +13,7 @@ namespace WebApplication.Pages
     public class IndexModel : PageModel
     {
         public List<Session> sessions = new List<Session>();
-        public Dictionary<String, List<Session>> sessionsByApp = new Dictionary<String, List<Session>>(); 
+        public Dictionary<String, List<String>> sessionsByApp = new Dictionary<String, List<String>>(); 
         public Session selectedSession { get; set; } = new Session();
         public static Session userSession { get; set; }
 
@@ -43,13 +43,13 @@ namespace WebApplication.Pages
             {
                 if (sessionsByApp.ContainsKey(s.application))
                 {
-                    List<Session> sess = sessionsByApp.GetValueOrDefault(s.application);
-                    sess.Add(s);
+                    List<String> sess = sessionsByApp.GetValueOrDefault(s.application);
+                    sess.Add(s.process);
                     sessionsByApp[s.application] = sess; 
                 } else
                 {
-                    List<Session> newSessList = new List<Session>();
-                    newSessList.Add(s);
+                    List<String> newSessList = new List<String>();
+                    newSessList.Add(s.process);
                     sessionsByApp.Add(s.application, newSessList); 
                 }
             }
