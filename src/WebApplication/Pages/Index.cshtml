@@ -1,6 +1,6 @@
 ﻿@page
 @model IndexModel
-@using DataTransfer; 
+@using DataTransfer;
 @{
     ViewData["Title"] = "Home page";
 }
@@ -8,6 +8,9 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <meta charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <div class="main">
     <font size="50">.NET Performance Monitor</font>
@@ -43,8 +46,43 @@
 
     @Model.message
     <form method="post">
-        <input type="text" placeholder="Application" asp-for="@Model.app" name="app"/> <br />
-        <input type="text" placeholder="Process" asp-for="@Model.pro" name="pro"/> <br />
+        <input type="text" placeholder="Application" asp-for="@Model.app" name="app" /> <br />
+        <input type="text" placeholder="Process" asp-for="@Model.pro" name="pro" /> <br />
         <button class="btn btn-default">Examine</button>
     </form>
+
+    <form name="classic">
+        <button type="button" class="btn btn-primary btn-md" onClick="updateAPplication()">Update Apps</button>
+        <select name="Application" size="4" onChange="updateProcess(this.selectedIndex)" style="width: 150px"></select>
+        <select name="Process" size="4" style="width: 150px" onClick="alert(this.options[this.options.selectedIndex].value)"></select>
+    </form>
+
+    <script type="text/javascript">
+
+        var countrieslist = document.classic.countries
+        var citieslist = document.classic.cities
+
+        var cities = new Array()
+        cities[0] = ["Process1", "Process2", "Process3"]
+        cities[1] = ["Process4", "Process5", "Process6"]
+        cities[2] = ["Process7", "Process8", "Process9"]
+
+        var apps = new Array()
+        apps[0] = "App1"
+        apps[1] = "App2"
+        apps[2] = "App3"
+
+        function updateApplication() {
+            countrieslist.options.length = 0
+            for (i = 0; i < apps.length; i++)
+                countrieslist.options[countrieslist.options.length] = new Option(apps[i], apps[i])
+        }
+
+        function updateProcess(selectedcitygroup) {
+            citieslist.options.length = 0
+            for (i = 0; i < cities[selectedcitygroup].length; i++)
+                citieslist.options[citieslist.options.length] = new Option(cities[selectedcitygroup][i], cities[selectedcitygroup][i])
+        }
+
+    </script>
 </div>
