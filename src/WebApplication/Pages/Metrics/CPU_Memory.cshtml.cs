@@ -14,6 +14,7 @@ namespace WebApplication.Pages.Metrics
         public List<Mem_Usage> mem { get; set; } = new List<Mem_Usage>();
 
         public List<double> cpuUsage { get; set; } = new List<double>();
+        public List<long> cpuTime { get; set; } = new List<long>();
         public List<double> memUsage { get; set; } = new List<double>();
 
         public double avgCPU;
@@ -61,6 +62,7 @@ namespace WebApplication.Pages.Metrics
             this.avgMem = totalMem / (double)timeAccounted;
 
             getCPUUsage();
+            getCPUTimeStamps(); 
             getMemUsage();
 
             dateRange = FetchDataService.convertDateTime(oldStamp) + "&end=" + FetchDataService.convertDateTime(newStamp);
@@ -93,7 +95,6 @@ namespace WebApplication.Pages.Metrics
         // Returns cpu time stamp list as increasing integers for now
         public void getCPUTimeStamps()
         {
-            List<long> cpuTime = new List<long>();
             for (int i = 0; i < cpu.Count; i++)
             {
                 cpuTime.Add(cpu[i].timestamp.ToBinary());
