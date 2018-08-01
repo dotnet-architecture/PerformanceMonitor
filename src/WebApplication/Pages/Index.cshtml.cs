@@ -13,6 +13,7 @@ namespace WebApplication.Pages
     public class IndexModel : PageModel
     {
         public List<Session> sessions = new List<Session>();
+        public Dictionary<String, List<Session>> sessionsByApp = new Dictionary<String, List<Session>>(); 
         public Session selectedSession { get; set; } = new Session();
         public static Session userSession { get; set; }
 
@@ -33,7 +34,26 @@ namespace WebApplication.Pages
         public async Task OnGet()
         {
             sessions = await FetchDataService.getSessionData();
+            sortSessionsByApp();
         }
+
+        public void sortSessionsByApp()
+        {
+            foreach (Session s in sessions)
+            {
+                if (sessionsByApp.ContainsKey(s.application))
+                {
+                    List<Session> sess = sessionsByApp.GetValueOrDefault(s.application);
+                    sess.Add(s);
+                    sessionsByApp[s.application] = sess; 
+                } else
+                {
+                    List<Session> newSessList = new List<Session>();
+                    newSessList.Add(s);
+                    sessionsByApp.Add(s.application, newSessList); 
+                }
+            }
+        } 
 
         public async Task OnPostAsync(String app, String pro)
         {

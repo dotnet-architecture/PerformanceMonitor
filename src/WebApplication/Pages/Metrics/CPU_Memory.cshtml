@@ -14,86 +14,141 @@
 
 <div class="main">
     <font size="50">CPU and Memory Usage</font>
-
     <button class="btn btn-default" onClick="window.location.reload()">Refresh Data</button>
 
     <div id="cpu"></div>
     <script>
-        var cpuUsage = @Html.Raw(Json.Serialize(Model.cpuUsage));
-        var cpuTime = @Html.Raw(Json.Serialize(Model.cpuTime));
+        const startCPU = `@Html.Encode(Model.oldStampString)`;
+        const endCPU = `@Html.Encode(Model.newStampString)`;
+        const idCPU = `@Html.Encode(IndexModel.userSession.Id)`;
 
-        var dateTest = ['@Html.Raw(string.Join("', '", @Model.cpuTime.Select(f => string.Format("{0:MM-dd-yyyy HH:mm:mm AM}", f)).ToArray()))'];
-
-        var CPU = {
-            y: cpuUsage,
-            type: 'scatter'
-        };
-
-        var data = [
-            {
-                x: jsDate,
-                y: cpuUsage,
-                type: 'scatter'
-        }];
-
-        var layout = {
-            title: 'CPU Usage Over Time',
-            yaxis: {
-                title: 'Percentage of CPU Usage',
-                titlefont: {
-                    family: 'Arial, sans-serif',
-                    size: 18,
-                    color: 'lightgrey'
-                },
-                visible: true,
-                range: [0, 100]
-            },
-            xaxis: {
-                title: 'Time',
-                titlefont: {
-                    family: 'Arial, sans-serif',
-                    size: 18,
-                    color: 'lightgrey'
-                }
+        const urlCPU = `http://localhost:54022/api/v1/CPU/Daterange?start=${startCPU}&end=${endCPU}&id=${idCPU}`;
+        fetch(urlCPU, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                "Accept": "application/json",
+                'Access-Control-Allow-Origin': '*',
+                "Content-type": "applicaiton/json"
             }
-        };
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response;
+                } else {
+                    return Promise.reject(response);
+                    throw Error(response.statusText);
+                }
+            })
+            .then(response => response.json())
+            .then(function (data) {
+                var dataArray = JSON.parse(data);
 
-        Plotly.plot('cpu', data, layout);
+                var cpuUsage = new Array();
+                var cpuTime = new Array();
+
+                for (var i = 0; i < @Model.cpu.Count; i++) {
+                    cpuUsage[i] = dataArray[i].usage;
+                    cpuTime[i] = dataArray[i].timestamp;
+                }
+
+                var CPU = [{
+                    x: cpuTime,
+                    y: cpuUsage,
+                    type: 'scatter'
+                }];
+
+                var layout = {
+                    title: 'CPU Usage Over Time',
+                    yaxis: {
+                        title: 'Percentage of CPU Usage',
+                        titlefont: {
+                            family: 'Arial, sans-serif',
+                            size: 18,
+                            color: 'lightgrey'
+                        },
+                        visible: true,
+                        range: [0, 100]
+                    },
+                    xaxis: {
+                        title: 'Time',
+                        titlefont: {
+                            family: 'Arial, sans-serif',
+                            size: 18,
+                            color: 'lightgrey'
+                        }
+                    }
+                };
+
+                Plotly.plot('cpu', CPU, layout);
+            });
     </script>
 
     <div id="mem"></div>
     <script>
-        var cpuUsage = @Html.Raw(Json.Serialize(Model.memUsage));
+        const startMem = `@Html.Encode(Model.oldStampString)`;
+        const endMem = `@Html.Encode(Model.newStampString)`;
+        const idMem = `@Html.Encode(IndexModel.userSession.Id)`;
 
-        var trace1 = {
-            y: cpuUsage,
-            type: 'scatter'
-        };
-
-        var data = [trace1];
-
-        var layout = {
-            title: 'Mem Usage Over Time',
-            yaxis: {
-                title: 'Mem Usage (MB)',
-                titlefont: {
-                    family: 'Arial, sans-serif',
-                    size: 18,
-                    color: 'lightgrey'
-                },
-                visible: true,
-            },
-            xaxis: {
-                title: 'Time',
-                titlefont: {
-                    family: 'Arial, sans-serif',
-                    size: 18,
-                    color: 'lightgrey'
-                }
+        const urlMem = `http://localhost:54022/api/v1/Memory/Daterange?start=${startMem}&end=${endMem}&id=${idMem}`;
+        fetch(urlMem, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                "Accept": "application/json",
+                'Access-Control-Allow-Origin': '*',
+                "Content-type": "applicaiton/json"
             }
-        };
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response;
+                } else {
+                    return Promise.reject(response);
+                    throw Error(response.statusText);
+                }
+            })
+            .then(response => response.json())
+            .then(function (data) {
+                var dataArray = JSON.parse(data);
 
-        Plotly.plot('mem', data, layout);
+                var memUsage = new Array();
+                var memTime = new Array();
+
+                for (var i = 0; i < @Model.cpu.Count; i++) {
+                    memUsage[i] = dataArray[i].usage;
+                    memTime[i] = dataArray[i].timestamp;
+                }
+
+                var Mem = [{
+                    x: memTime,
+                    y: memUsage,
+                    type: 'scatter'
+                }];
+
+                var layout = {
+                    title: 'Mem Usage Over Time',
+                    yaxis: {
+                        title: 'Mem Usage (MB)',
+                        titlefont: {
+                            family: 'Arial, sans-serif',
+                            size: 18,
+                            color: 'lightgrey'
+                        },
+                        visible: true,
+                    },
+                    xaxis: {
+                        title: 'Time',
+                        titlefont: {
+                            family: 'Arial, sans-serif',
+                            size: 18,
+                            color: 'lightgrey'
+                        }
+                    }
+                };
+
+                Plotly.plot('mem', Mem, layout);
+            });
     </script>
 
     <p>Average CPU Usage: @Model.avgCPU</p>
@@ -124,74 +179,89 @@
             }
             else
             {
-                <tr>Unable to retrieve data</tr>
+                <tr>
+                    Unable to retrieve data
+                </tr>
             }
         </tbody>
     </table>
 
-    <div id="cpu"></div>
-    <script>
-            const start1 = `@Html.Encode(Model.oldStampString)`;
-            const end1 = `@Html.Encode(Model.newStampString)`;
-            const id1 = `@Html.Encode(IndexModel.userSession.Id)`;
+    @*<div id="cpu"></div>
+        <script>
+            var cpuUsage = @Html.Raw(Json.Serialize(Model.cpuUsage));
+            var cpuTime = @Html.Raw(Json.Serialize(Model.cpuTime));
 
-            const url = `http://localhost:54022/api/v1/CPU/Daterange?start=${start1}&end=${end1}&id=${id1}`;
-            const dateRangePromise = fetch(url, {
-                method: 'GET',
-                mode: 'cors',
-                headers: {
-                    "Accept": "application/json",
-                    'Access-Control-Allow-Origin': '*',
-                    "Content-type": "applicaiton/json"
+            var dates = new Array();
+            for (var i = 0; i < @Model.cpuTime.Count; i++) {
+                dates[i] = new Date(cpuTime[i]);
+            }
+
+            var CPU = [
+                {
+                    x: cpuTime,
+                    y: cpuUsage,
+                    type: 'scatter'
+            }];
+
+            var layout = {
+                title: 'CPU Usage Over Time',
+                yaxis: {
+                    title: 'Percentage of CPU Usage',
+                    titlefont: {
+                        family: 'Arial, sans-serif',
+                        size: 18,
+                        color: 'lightgrey'
+                    },
+                    visible: true,
+                    range: [0, 100]
+                },
+                xaxis: {
+                    title: 'Time',
+                    titlefont: {
+                        family: 'Arial, sans-serif',
+                        size: 18,
+                        color: 'lightgrey'
+                    }
                 }
-                //body: 'start=${start1}&end=${end1}&id=${id1}'
-            })
-                .then(response => {
-                    switch (response.status) {
-                        case 500: console.error('Some server error');
-                            break;
-                        case 401: console.error('Unauthorized');
-                            break;
-                        case 200: console.log(response);
-                            break;
-                    }
+            };
 
-                    if (response.ok) {
-                        return response;
-                    } else {
-                        return Promise.reject(response);
-                        throw Error(response.statusText);
-                    }
-                });
+            Plotly.plot('cpu', CPU, layout);
+        </script>
 
-            let usage = [];
-            const result = Promise.all([dateRangePromise])
-                .then(([dateRange]) => {
-                    for (var i = 0; i < dateRange.length; i++) {
-                        usage.push(result[i].usage);
-                    }
-                });
+        <div id="mem"></div>
+        <script>
+            var cpuUsage = @Html.Raw(Json.Serialize(Model.memUsage));
 
             var trace1 = {
-                y: usage,
+                y: cpuUsage,
                 type: 'scatter'
             };
 
             var data = [trace1];
 
             var layout = {
+                title: 'Mem Usage Over Time',
                 yaxis: {
+                    title: 'Mem Usage (MB)',
+                    titlefont: {
+                        family: 'Arial, sans-serif',
+                        size: 18,
+                        color: 'lightgrey'
+                    },
                     visible: true,
-                    title: 'CPU Usage'
+                },
+                xaxis: {
+                    title: 'Time',
+                    titlefont: {
+                        family: 'Arial, sans-serif',
+                        size: 18,
+                        color: 'lightgrey'
+                    }
                 }
             };
 
-            var graphOptions = {
-                layout: layout
-            };
-
-            Plotly.plot('cpu', data, graphOptions);
-    </script>
+            Plotly.plot('mem', data, layout);
+        </script>*@
 
     @*  Plotly graph that updates continuously and scrolls
         <div id="chart"></div>
