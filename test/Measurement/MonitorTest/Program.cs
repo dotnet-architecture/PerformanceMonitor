@@ -6,12 +6,12 @@ namespace MonitorTest
 {
     public class Program
     {
-        static DataTransfer.Monitor monitor = new DataTransfer.Monitor("Process", "App");
+        static DataTransfer.Monitor monitor = new DataTransfer.Monitor("Process", "App", 1000, 20000);
         static void Main(string[] args)
         {
-            //CPUMemTest();
+            CPUMemTest();
             //GCTest();
-            ExceptionTest();
+            //ExceptionTest();
             //ContentionTest();
         }
         public static int getSampleRate()
