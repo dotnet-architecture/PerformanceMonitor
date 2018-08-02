@@ -402,24 +402,27 @@ namespace DataTransfer
 
         private void SendHTTP(Metric_List metricList)  // sends collected data to API
         {
-            if (metricList.cpu.Count != 0)
+            Task.Factory.StartNew(() =>
             {
-                // converts list of metric measurements into a JSON object string
-                String output = JsonConvert.SerializeObject(metricList);
-                //Console.WriteLine(output);
-
-                // escapes string so that JSON object is interpreted as a single string
-                output = JsonConvert.ToString(output);
-
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "api/v1/General");
-                request.Content = new StringContent(output, System.Text.Encoding.UTF8, "application/json");
-                // sends POST request to server, containing JSON representation of events
-                try
+                if (metricList.cpu.Count != 0)
                 {
-                    HttpResponseMessage response = client.SendAsync(request).Result;
+                    // converts list of metric measurements into a JSON object string
+                    String output = JsonConvert.SerializeObject(metricList);
+                    //Console.WriteLine(output);
+
+                    // escapes string so that JSON object is interpreted as a single string
+                    output = JsonConvert.ToString(output);
+
+                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "api/v1/General");
+                    request.Content = new StringContent(output, System.Text.Encoding.UTF8, "application/json");
+                    // sends POST request to server, containing JSON representation of events
+                    try
+                    {
+                        HttpResponseMessage response = client.SendAsync(request).Result;
+                    }
+                    catch { }
                 }
-                catch { }
-            }
+            });
         }
 
         private void FetchCPU()  // calculates CPU usage
