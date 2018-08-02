@@ -16,45 +16,11 @@
     <font size="50">.NET Performance Monitor</font>
     <p>Check your app's performance by navigating the sidebar.</p>
 
-    <p>Log of Current Sessions</p>
-    <table class="table table-hover table-bordered">
-        <thead>
-            <tr>
-                <th>Application</th>
-                <th>Process</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.sessions != null)
-            {
-                @for (int i = Model.sessions.Count - 1; i >= 0; i--)
-                {
-                    Session s = Model.sessions.ElementAt<Session>(i);
-                    <tr>
-                        <td>@s.application</td>
-                        <td>@s.process</td>
-                    </tr>
-
-                }
-            }
-            else
-            {
-                <tr>Unable to retrieve data</tr>
-            }
-        </tbody>
-    </table>
-
     @Model.message
-    <form method="post">
-        <input type="text" placeholder="Application" asp-for="@Model.app" name="app11" /> <br />
-        <input type="text" placeholder="Process" asp-for="@Model.pro" name="pro11" /> <br />
-        <button class="btn btn-default">Examine</button>
-    </form>
-
     <form name="classic" method="post">
-        <button type="button" class="btn btn-primary btn-md" onClick="updateApp()">Update Apps</button>
-        <select name="app" size="4" onChange="updatePro(this.selectedIndex)" style="width: 150px" asp-for="@Model.app"></select>
-        <select name="pro" size="4" style="width: 150px" asp-for="@Model.pro"></select>
+        <button type="button" class="btn btn-default" onClick="updateApp()">Update Apps</button>
+        <select name="app" size="10" onChange="updatePro(this.selectedIndex)" style="width: 200px" asp-for="@Model.app"></select>
+        <select name="pro" size="10" style="width: 150px" asp-for="@Model.pro"></select>
         <button class="btn btn-default">Examine</button>
     </form>
 
@@ -63,15 +29,15 @@
         var appList = document.classic.app
         var proList = document.classic.pro
 
-        var pro = new Array()      
+        var pro = new Array()
         var app = new Array()
 
         var i = 0;
         var collection = @Html.Raw(Json.Serialize(Model.sessionsByApp));
         $.each(collection, function (key, value) {
-            app[i] = key; 
-            pro[i] = value;  
-            i++; 
+            app[i] = key;
+            pro[i] = value;
+            i++;
         });
 
         function updateApp() {
@@ -85,6 +51,40 @@
             for (i = 0; i < pro[selectedApp].length; i++)
                 proList.options[proList.options.length] = new Option(pro[selectedApp][i], pro[selectedApp][i])
         }
-
     </script>
+
+    @*<p>Log of Current Sessions</p>
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th>Application</th>
+                        <th>Process</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.sessions != null)
+                    {
+                        @for (int i = Model.sessions.Count - 1; i >= 0; i--)
+                        {
+                            Session s = Model.sessions.ElementAt<Session>(i);
+                            <tr>
+                                <td>@s.application</td>
+                                <td>@s.process</td>
+                            </tr>
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>Unable to retrieve data</tr>
+                    }
+                </tbody>
+            </table>
+
+        @Model.message
+        <form method="post">
+            <input type="text" placeholder="Application" asp-for="@Model.app" name="app11" /> <br />
+            <input type="text" placeholder="Process" asp-for="@Model.pro" name="pro11" /> <br />
+            <button class="btn btn-default">Examine</button>
+        </form>*@
 </div>
