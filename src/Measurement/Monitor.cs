@@ -5,6 +5,7 @@ using Microsoft.Diagnostics.Tracing.Session;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Collections.Generic;
 using System.Net.Http;
 using Newtonsoft.Json;
@@ -50,6 +51,8 @@ namespace DataTransfer
         private static String myOS = Environment.OSVersion.ToString();
         private static Session instance = new Session();
 
+        private static Timer timer;
+
         // "hold" describes a lock on data used for transmission - used to avoid serialization issues
         public static int hold = 0;
         public int getHold()
@@ -58,7 +61,7 @@ namespace DataTransfer
         }
         
         // creates an HTTP client so that server requests can be made
-        HttpClient client = new HttpClient();
+        private static HttpClient client = new HttpClient();
         // time object used to check if data should be transmitted (would be done every five seconds)
         private static DateTime httpTime = DateTime.Now;
 
@@ -71,8 +74,6 @@ namespace DataTransfer
         private static DateTime newStamp = DateTime.Now;
         private static double change = 0;
         private static double period = 0;
-        // time object used to check if data should be collected
-        private static DateTime metricTime = DateTime.Now;
         // list containing instances of CPU readings
         public static List<CPU_Usage> CPUVals = new List<CPU_Usage>();
         public int getCPUCount()
@@ -140,59 +141,72 @@ namespace DataTransfer
             instance.processorCount = processorTotal;
             instance.os = myOS;
             instance.application = app;
+            timer = new Timer(sampleRate);
+            timer.Elapsed += collect;
+            timer.AutoReset = true;
+            timer.Enabled = true;
 
             // starts event collection via TraceEvent in separate task
             Task.Factory.StartNew(() =>
             {
                 TraceEvents();
             });
+        }
 
+        private void collect(Object source, ElapsedEventArgs e)
+        {
             Task.Factory.StartNew(() =>
             {
-                while (true)
+                FetchCPU();
+                FetchMem();
+             
+                // if five seconds have passed since HTTP request was made
+                if (DateTime.Now.Subtract(httpTime).TotalMilliseconds >= sendRate)
                 {
-                    // if a second has passed since data collection
-                    if (DateTime.Now.Subtract(metricTime).TotalMilliseconds >= sampleRate)
+                    httpTime = DateTime.Now;
+                    // creates object that will store all event instances
+                    Metric_List list = new Metric_List();
+             
+                    list.session = instance;
+                    list.cpu = CPUVals;
+                    list.mem = MemVals;
+                    list.exceptions = ExceptionVals;
+                    list.requests = RequestVals;
+                    list.contentions = ContentionVals;
+                    list.gc = GCVals;
+                    list.jit = JitVals;
+
+                    hold = 1;
+
+                    String output = JsonConvert.SerializeObject(list);
+                    Console.WriteLine(output);
+
+                    // escapes string so that JSON object is interpreted as a single string
+                    output = JsonConvert.ToString(output);
+
+                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "api/v1/General");
+                    request.Content = new StringContent(output, System.Text.Encoding.UTF8, "application/json");
+                    // sends POST request to server, containing JSON representation of events
+                    try
                     {
-                        // reset timer and fetch metrics
-                        metricTime = DateTime.Now;
-                        FetchCPU();
-                        FetchMem();
-
-                        // if five seconds have passed since HTTP request was made
-                        if (DateTime.Now.Subtract(httpTime).TotalMilliseconds >= sendRate)
-                        {
-                            httpTime = DateTime.Now;
-                            // creates object that will store all event instances
-                            Metric_List list = new Metric_List();
-
-                            list.session = instance;
-                            list.cpu = CPUVals;
-                            list.mem = MemVals;
-                            list.exceptions = ExceptionVals;
-                            list.requests = RequestVals;
-                            list.contentions = ContentionVals;
-                            list.gc = GCVals;
-                            list.jit = JitVals;
-
-                            hold = 1;
-                            SendHTTP(list);
-                            hold = 0;
-
-                            CPUVals.Clear();
-                            MemVals.Clear();
-                            ExceptionVals.Clear();
-                            RequestVals.Clear();
-                            ContentionVals.Clear();
-                            GCVals.Clear();
-                            JitVals.Clear();
-                        }
+                        HttpResponseMessage response = client.SendAsync(request).Result;
                     }
+                    catch { }
+
+                    hold = 0;
+
+                    CPUVals.Clear();
+                    MemVals.Clear();
+                    ExceptionVals.Clear();
+                    RequestVals.Clear();
+                    ContentionVals.Clear();
+                    GCVals.Clear();
+                    JitVals.Clear();
                 }
             });
         }
 
-        private void TraceEvents()
+        private static void TraceEvents()
         {
             using (var session = new TraceEventSession("MySession"))
             {
@@ -400,29 +414,7 @@ namespace DataTransfer
             }
         }
 
-        private void SendHTTP(Metric_List metricList)  // sends collected data to API
-        {
-            if (metricList.cpu.Count != 0)
-            {
-                // converts list of metric measurements into a JSON object string
-                String output = JsonConvert.SerializeObject(metricList);
-                //Console.WriteLine(output);
-
-                // escapes string so that JSON object is interpreted as a single string
-                output = JsonConvert.ToString(output);
-
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "api/v1/General");
-                request.Content = new StringContent(output, System.Text.Encoding.UTF8, "application/json");
-                // sends POST request to server, containing JSON representation of events
-                try
-                {
-                    HttpResponseMessage response = client.SendAsync(request).Result;
-                }
-                catch { }
-            }
-        }
-
-        private void FetchCPU()  // calculates CPU usage
+        private static void FetchCPU()  // calculates CPU usage
         {
             // clear the process' cached information
             myProcess.Refresh();
@@ -442,7 +434,7 @@ namespace DataTransfer
             CPUVals.Add(cpu);
         }
 
-        private void FetchMem()  // fetches Memory usage
+        private static void FetchMem()  // fetches Memory usage
         {
             Mem_Usage mem = new Mem_Usage();
             mem.usage = myProcess.WorkingSet64;
@@ -468,6 +460,8 @@ namespace DataTransfer
                         s_bCtrlCExecuted = true;    // ensure non-reentrant
 
                         Console.WriteLine("Stopping monitor");
+                        timer.Stop();
+                        timer.Dispose();
 
                         action();                   // execute custom action
 

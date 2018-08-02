@@ -9,9 +9,9 @@ namespace MonitorTest
         static DataTransfer.Monitor monitor = new DataTransfer.Monitor("Process", "App");
         static void Main(string[] args)
         {
-            //CPUMemTest();
+            CPUMemTest();
             //GCTest();
-            ExceptionTest();
+            //ExceptionTest();
             //ContentionTest();
         }
         public static int getSampleRate()
