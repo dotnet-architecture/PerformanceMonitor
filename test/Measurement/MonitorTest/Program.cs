@@ -6,7 +6,7 @@ namespace MonitorTest
 {
     public class Program
     {
-        static DataTransfer.Monitor monitor = new DataTransfer.Monitor("Process", "App");
+        static DataTransfer.Monitor monitor = new DataTransfer.Monitor("Process2", "App2");
         static void Main(string[] args)
         {
             CPUMemTest();
@@ -49,11 +49,12 @@ namespace MonitorTest
         }
         public static int UnitTest1()
         {
+            //monitor.Record();
             DateTime timer = DateTime.Now;
             while (DateTime.Now.Subtract(timer).TotalMilliseconds <= monitor.sendRate * 4) ;
             timer = DateTime.Now;
             int max = 0;
-            while (DateTime.Now.Subtract(timer).TotalMilliseconds <= monitor.sendRate)
+            while (DateTime.Now.Subtract(timer).TotalMilliseconds <= monitor.sendRate * 2)
             {
                 if (monitor.getCPUCount() > max)
                 {
