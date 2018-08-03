@@ -89,5 +89,14 @@ namespace DataTransfer.Controllers
             await _MetricContext.SaveChangesAsync();
             return Ok(j);
         }
+        [HttpGet]
+        [Route("DELETE")]
+        public async Task<IActionResult> DeleteAllDatapoints()
+        {
+            _MetricContext.Session.RemoveRange(_MetricContext.Session);
+            await _MetricContext.SaveChangesAsync();
+            return Ok();
+        }
     }
+
 }
