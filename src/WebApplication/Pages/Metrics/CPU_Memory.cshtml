@@ -170,7 +170,39 @@
                 Plotly.plot('mem', Mem, layout);
                 return;
             })
-            .then(setInterval(function () {    
+            .then(function () {
+                startMem = endMem; 
+                var now = new Date();
+                endMem = now.getFullYear() + "-" +
+                    ("0" + (now.getMonth() + 1)).slice(-2) + "-" +
+                    ("0" + now.getDate()).slice(-2) + "T" +
+                    ("0" + now.getHours()).slice(-2) + "%3A" +
+                    ("0" + now.getMinutes()).slice(-2) + "%3A" +
+                    ("0" + now.getSeconds()).slice(-2) + "." +
+                    ("0" + now.getMilliseconds()).slice(-3);
+
+                Promise.all([getData(startMem, endMem)])
+                    .then(function (values) {
+                        var xaxis = values[0][1]; 
+                        var yaxis = values[0][0]; 
+                        Plotly.extendTraces('mem', {
+                            x: xaxis,
+                            y: yaxis
+                        }, [0]);
+
+                        @*cnt++;
+                        if (cnt > @(IndexModel.userSession.sendRate/100)) {
+                            Plotly.relayout('mem', {
+                                xaxis: {
+                                    range: [cnt - @(IndexModel.userSession.sendRate/100), cnt]
+                                }
+                            });
+                        }*@
+                    });
+            }
+            );
+           
+            @*.then(setInterval(function () {    
                 // Updating time stamps
                 startMem = endMem;
                 var now = new Date();
@@ -198,7 +230,7 @@
                             });
                         }
                     });
-            }, 10));
+            }, 10));*@
     </script>
 
     <p>Average CPU Usage: @Model.avgCPU.ToString("0.00")</p>
