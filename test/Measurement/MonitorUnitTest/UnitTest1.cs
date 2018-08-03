@@ -12,15 +12,15 @@ namespace MonitorUnitTest
             int sample = Program.getSampleRate();
             int ratio = send / sample;
             int per;
-            if (ratio - 2000 / sample < 0)
+            if (ratio - 2100 / sample < 0)
             {
                 per = ratio;
             } else
             {
-                per = 2000 / sample;
+                per = 2100 / sample;
             }
             int ans = Program.UnitTest1();
-            Assert.True(ans >= (ratio - per) && ans <= (ratio - per + per/2));
+            Assert.True(ans >= (ratio - per - per/2) && ans <= (ratio - per + per/2));
         }
         
         [Fact]
@@ -28,7 +28,7 @@ namespace MonitorUnitTest
         {
             int send = Program.getSendRate();
             double ans = Program.UnitTest2();
-            Assert.True(ans >= send - send / 3 && ans <= send + send / 3);
+            Assert.True(ans >= send - send / 5 && ans <= send + send / 5);
         }
     }
 }

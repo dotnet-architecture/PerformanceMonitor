@@ -60,8 +60,8 @@ namespace DataTransfer
         
         // creates an HTTP client so that server requests can be made
         private static HttpClient client = new HttpClient();
-        // time object used to check if data should be transmitted (would be done every five seconds)
-        private static DateTime httpTime = DateTime.Now;
+        // time object used to check if data should be transmitted
+        Stopwatch timer = new Stopwatch();
 
         // CPU block:
         // fetches the processor count for the machine for total CPU calculation
@@ -124,15 +124,17 @@ namespace DataTransfer
 
             Task.Factory.StartNew(async () =>
             {
+                timer.Start();
                 while (true)
                 {
                     FetchCPU();
                     FetchMem();
 
                     // if five seconds have passed since HTTP request was made
-                    if (DateTime.Now.Subtract(httpTime).TotalMilliseconds >= sendRate)
+                    if (timer.ElapsedMilliseconds >= sendRate)
                     {
-                        httpTime = DateTime.Now;
+                        timer.Restart();
+
                         // creates object that will store all event instances
                         Metric_List list = new Metric_List();
 
@@ -144,12 +146,12 @@ namespace DataTransfer
                         list.contentions = ContentionVals;
                         list.gc = GCVals;
                         list.jit = JitVals;
-
+                        
                         hold = 1;
 
                         String output;
                         output = JsonConvert.SerializeObject(list);
-                        Console.WriteLine(output);
+                        //Console.WriteLine(output);
 
                         // escapes string so that JSON object is interpreted as a single string
                         output = JsonConvert.ToString(output);
@@ -173,12 +175,12 @@ namespace DataTransfer
                         GCVals.Clear();
                         JitVals.Clear();
 
-                        if (sampleRate < 2000)
+                        if (sampleRate < 2100)
                         {
                             continue;
                         } else
                         {
-                            await Task.Delay(sampleRate - 2000);
+                            await Task.Delay(sampleRate - 2100);
                         }
                     } else
                     {
