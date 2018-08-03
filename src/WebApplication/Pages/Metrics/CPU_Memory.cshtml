@@ -101,8 +101,8 @@
         var endMem = `@Html.Encode(Model.newStampString)`;
         const idMem = `@Html.Encode(IndexModel.userSession.Id)`;
 
-        function getData() {
-            const url = `http://localhost:54022/api/v1/Memory/Daterange?start=${startMem}&end=${endMem}&id=${idMem}`;
+        function getData(start, end) {
+            const url = `http://localhost:54022/api/v1/Memory/Daterange?start=${start}&end=${end}&id=${idMem}`;
             return fetch(url, {
                 method: 'GET',
                 mode: 'cors',
@@ -138,7 +138,7 @@
                 });
         }
 
-        Promise.all([getData()])
+        Promise.all([getData(startMem, endMem)])
             // Plotting initial graph
             .then(function (value) {
                 var Mem = [{
@@ -182,7 +182,7 @@
                     ("0" + now.getSeconds()).slice(-2) + "." +
                     ("0" + now.getMilliseconds()).slice(-3);
 
-                Promise.all([getData()])
+                Promise.all([getData(startMem, endMem)])
                     .then(function (values) {
                         Plotly.extendTraces('mem', {
                             x: value[0][1],
