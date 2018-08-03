@@ -1,8 +1,5 @@
-using System;
 using Xunit;
 using MonitorTest;
-using System.Diagnostics;
-//[assembly: CollectionBehavior(DisableTestParallelization = true)]
 
 namespace MonitorUnitTest
 {
@@ -14,7 +11,14 @@ namespace MonitorUnitTest
             int send = Program.getSendRate();
             int sample = Program.getSampleRate();
             int ratio = send / sample;
-            int per = 2000 / sample;
+            int per;
+            if (ratio - 2000 / sample < 0)
+            {
+                per = ratio;
+            } else
+            {
+                per = 2000 / sample;
+            }
             int ans = Program.UnitTest1();
             Assert.True(ans >= (ratio - per) && ans <= (ratio - per + per/2));
         }
