@@ -5,6 +5,7 @@ using Microsoft.Diagnostics.Tracing.Session;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Collections.Generic;
 using System.Net.Http;
 using Newtonsoft.Json;
@@ -58,7 +59,7 @@ namespace DataTransfer
         }
         
         // creates an HTTP client so that server requests can be made
-        HttpClient client = new HttpClient();
+        private static HttpClient client = new HttpClient();
         // time object used to check if data should be transmitted (would be done every five seconds)
         private static DateTime httpTime = DateTime.Now;
 
@@ -71,8 +72,6 @@ namespace DataTransfer
         private static DateTime newStamp = DateTime.Now;
         private static double change = 0;
         private static double period = 0;
-        // time object used to check if data should be collected
-        private static DateTime metricTime = DateTime.Now;
         // list containing instances of CPU readings
         public static List<CPU_Usage> CPUVals = new List<CPU_Usage>();
         public int getCPUCount()
@@ -83,45 +82,21 @@ namespace DataTransfer
         // Mem block:
         // list containing instances of Memory readings
         public static List<Mem_Usage> MemVals = new List<Mem_Usage>();
-        public int getMemCount()
-        {
-            return MemVals.Count;
-        }
 
         // Exception block:
         public static List<Exceptions> ExceptionVals = new List<Exceptions>();
-        public int getExceptionCount()
-        {
-            return ExceptionVals.Count;
-        }
 
         // HTTP Request block:
         public static List<Http_Request> RequestVals = new List<Http_Request>();
-        public int getHTTPCount()
-        {
-            return RequestVals.Count;
-        }
 
         // Contention block:
         public static List<Contention> ContentionVals = new List<Contention>();
-        public int getContentionCount()
-        {
-            return ContentionVals.Count;
-        }
 
         // Garbage Collection block:
         public static List<GC> GCVals = new List<GC>();
-        public int getGCCount()
-        {
-            return GCVals.Count;
-        }
 
         // Jit block:
         public static List<Jit> JitVals = new List<Jit>();
-        public int getJitCount()
-        {
-            return JitVals.Count;
-        }
 
 
 
@@ -147,52 +122,73 @@ namespace DataTransfer
                 TraceEvents();
             });
 
-            Task.Factory.StartNew(() =>
+            Task.Factory.StartNew(async () =>
             {
                 while (true)
                 {
-                    // if a second has passed since data collection
-                    if (DateTime.Now.Subtract(metricTime).TotalMilliseconds >= sampleRate)
+                    FetchCPU();
+                    FetchMem();
+
+                    // if five seconds have passed since HTTP request was made
+                    if (DateTime.Now.Subtract(httpTime).TotalMilliseconds >= sendRate)
                     {
-                        // reset timer and fetch metrics
-                        metricTime = DateTime.Now;
-                        FetchCPU();
-                        FetchMem();
+                        httpTime = DateTime.Now;
+                        // creates object that will store all event instances
+                        Metric_List list = new Metric_List();
 
-                        // if five seconds have passed since HTTP request was made
-                        if (DateTime.Now.Subtract(httpTime).TotalMilliseconds >= sendRate)
+                        list.session = instance;
+                        list.cpu = CPUVals;
+                        list.mem = MemVals;
+                        list.exceptions = ExceptionVals;
+                        list.requests = RequestVals;
+                        list.contentions = ContentionVals;
+                        list.gc = GCVals;
+                        list.jit = JitVals;
+
+                        hold = 1;
+
+                        String output;
+                        output = JsonConvert.SerializeObject(list);
+                        Console.WriteLine(output);
+
+                        // escapes string so that JSON object is interpreted as a single string
+                        output = JsonConvert.ToString(output);
+
+                        HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "api/v1/General");
+                        request.Content = new StringContent(output, System.Text.Encoding.UTF8, "application/json");
+                        // sends POST request to server, containing JSON representation of events
+                        try
                         {
-                            httpTime = DateTime.Now;
-                            // creates object that will store all event instances
-                            Metric_List list = new Metric_List();
-
-                            list.session = instance;
-                            list.cpu = CPUVals;
-                            list.mem = MemVals;
-                            list.exceptions = ExceptionVals;
-                            list.requests = RequestVals;
-                            list.contentions = ContentionVals;
-                            list.gc = GCVals;
-                            list.jit = JitVals;
-
-                            hold = 1;
-                            SendHTTP(list);
-                            hold = 0;
-
-                            CPUVals.Clear();
-                            MemVals.Clear();
-                            ExceptionVals.Clear();
-                            RequestVals.Clear();
-                            ContentionVals.Clear();
-                            GCVals.Clear();
-                            JitVals.Clear();
+                            HttpResponseMessage response = client.SendAsync(request).Result;
                         }
+                        catch { }
+
+                        hold = 0;
+
+                        CPUVals.Clear();
+                        MemVals.Clear();
+                        ExceptionVals.Clear();
+                        RequestVals.Clear();
+                        ContentionVals.Clear();
+                        GCVals.Clear();
+                        JitVals.Clear();
+
+                        if (sampleRate < 2000)
+                        {
+                            continue;
+                        } else
+                        {
+                            await Task.Delay(sampleRate - 2000);
+                        }
+                    } else
+                    {
+                        await Task.Delay(sampleRate);
                     }
                 }
             });
         }
 
-        private void TraceEvents()
+        private static void TraceEvents()
         {
             using (var session = new TraceEventSession("MySession"))
             {
@@ -400,54 +396,38 @@ namespace DataTransfer
             }
         }
 
-        private void SendHTTP(Metric_List metricList)  // sends collected data to API
+        private static void FetchCPU()  // calculates CPU usage
         {
-            if (metricList.cpu.Count != 0)
+            if (hold == 0)
             {
-                // converts list of metric measurements into a JSON object string
-                String output = JsonConvert.SerializeObject(metricList);
-                //Console.WriteLine(output);
+                // clear the process' cached information
+                myProcess.Refresh();
+                CPU_Usage cpu = new CPU_Usage();
+                newTime = myProcess.TotalProcessorTime.TotalMilliseconds;
+                newStamp = DateTime.Now;
+                // calculates CPU usage since last measurement
+                change = newTime - oldTime;
+                // calculates time between CPU measurements
+                period = newStamp.Subtract(oldStamp).TotalMilliseconds;
+                oldTime = newTime;
+                oldStamp = newStamp;
 
-                // escapes string so that JSON object is interpreted as a single string
-                output = JsonConvert.ToString(output);
-
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "api/v1/General");
-                request.Content = new StringContent(output, System.Text.Encoding.UTF8, "application/json");
-                // sends POST request to server, containing JSON representation of events
-                try
-                {
-                    HttpResponseMessage response = client.SendAsync(request).Result;
-                }
-                catch { }
+                // finds CPU usage for process as a percentage of total CPU time across the machine
+                cpu.usage = (change / (period * processorTotal) * 100.0);
+                cpu.timestamp = newStamp;
+                CPUVals.Add(cpu);
             }
         }
 
-        private void FetchCPU()  // calculates CPU usage
+        private static void FetchMem()  // fetches Memory usage
         {
-            // clear the process' cached information
-            myProcess.Refresh();
-            CPU_Usage cpu = new CPU_Usage();
-            newTime = myProcess.TotalProcessorTime.TotalMilliseconds;
-            newStamp = DateTime.Now;
-            // calculates CPU usage since last measurement
-            change = newTime - oldTime;
-            // calculates time between CPU measurements
-            period = newStamp.Subtract(oldStamp).TotalMilliseconds;
-            oldTime = newTime;
-            oldStamp = newStamp;
-
-            // finds CPU usage for process as a percentage of total CPU time across the machine
-            cpu.usage = (change / (period * processorTotal) * 100.0);
-            cpu.timestamp = newStamp;
-            CPUVals.Add(cpu);
-        }
-
-        private void FetchMem()  // fetches Memory usage
-        {
-            Mem_Usage mem = new Mem_Usage();
-            mem.usage = myProcess.WorkingSet64;
-            mem.timestamp = DateTime.Now;
-            MemVals.Add(mem);
+            if (hold == 0)
+            {
+                Mem_Usage mem = new Mem_Usage();
+                mem.usage = myProcess.WorkingSet64;
+                mem.timestamp = DateTime.Now;
+                MemVals.Add(mem);
+            }
         }
 
         // setup to stop TraceEvent session upon application termination

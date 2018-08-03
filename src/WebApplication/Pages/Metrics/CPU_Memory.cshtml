@@ -16,6 +16,107 @@
     <font size="50">CPU and Memory Usage</font>
     <button class="btn btn-default" onClick="window.location.reload()">Refresh Data</button>
 
+    @*<div id="cputest"></div>
+    <script>
+        const start = `@Html.Encode(Model.oldStampString)`;
+        const end = `@Html.Encode(Model.newStampString)`;
+        const id = `@Html.Encode(IndexModel.userSession.Id)`;
+
+        function getUsage() {
+            const url = `http://localhost:54022/api/v1/CPU/Daterange?start=${start}&end=${end}&id=${id}`;
+            return fetch(url, {
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    "Accept": "application/json",
+                    'Access-Control-Allow-Origin': '*',
+                    "Content-type": "applicaiton/json"
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response;
+                    } else {
+                        return Promise.reject(response);
+                        throw Error(response.statusText);
+                    }
+                })
+                .then(response => response.json())
+                .then(function (data) { 
+                    var dataArray = JSON.parse(data);
+                    var cpuUsage = new Array();
+
+                    for (var i = 0; i < @Model.cpu.Count; i++) {
+                        cpuUsage[i] = dataArray[i].usage;
+                    }
+                    return cpuUsage; 
+                });
+        }
+
+        function getTime() {
+            const url = `http://localhost:54022/api/v1/CPU/Daterange?start=${start}&end=${end}&id=${id}`;
+            return fetch(url, {
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    "Accept": "application/json",
+                    'Access-Control-Allow-Origin': '*',
+                    "Content-type": "applicaiton/json"
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response;
+                    } else {
+                        return Promise.reject(response);
+                        throw Error(response.statusText);
+                    }
+                })
+                .then(response => response.json())
+                .then(function (data) { 
+                    var dataArray = JSON.parse(data);
+                    var cpuTime = new Array();
+
+                    for (var i = 0; i < @Model.cpu.Count; i++) {
+                        cpuTime[i] = dataArray[i].timestamp;
+                    }
+                    return cpuTime; 
+                });
+        }
+
+        function getUsage() {
+            var data = Promise.all([getData()]);
+            var cpuUsage = new Array();
+
+            for (var i = 0; i < @Model.cpu.Count; i++) {
+                cpuUsage[i] = data[i].timestamp;
+            }
+        }
+
+        Promise.all([getUsage(), getTime()])
+            .then(function (value) {
+                Plotly.plot('cputest', [{
+                    y: [value[0]],
+                    x: [value[1]],
+                    type: 'scatter'
+                }]);
+            })
+
+        var cnt = 0;
+        setInterval(function () {
+            Plotly.extendTraces('chart', { y: [[getUsage()]] }, [0]);
+            cnt++;
+            if (cnt > 100) {
+                Plotly.relayout('chart', {
+                    xaxis: {
+                        range: [cnt - 100, cnt]
+                    }
+                });
+            }
+        }, 10);
+
+    </script>*@
+
     <div id="cpu"></div>
     <script>
         var startCPU = `@Html.Encode(Model.oldStampString)`;

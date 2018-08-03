@@ -35,6 +35,20 @@ Monitor monitor = new Monitor(String process_name, String application_name, int 
 monitor.Record();
 ```
 
+or:
+
+```cs
+Monitor monitor = new Monitor(String process_name, int sampling_rate, int transmission_rate);
+monitor.Record();
+```
+
+or:
+
+```cs
+Monitor monitor = new Monitor(int sampling_rate, int transmission_rate);
+monitor.Record();
+```
+
 All arguments for _Monitor_ class instantiation are optional and a monitor can be created with only sampling and transmission rates specified, but specifying a process name is strongly recommended so that processes can be differentated on the web application. The default sampling rate is one sample per second and the default transmission rate (rate at which data is sent to the server) is five seconds. If a rate is specified, the arguments should be provided in milliseconds between sample/transmission and the sampling rate value should be smaller than the transmission rate value for expected performance.
 
 Providing an application name will allow an application with multiple processes to have its processes grouped within the performance monitor's tracking. To do so, simply run performance monitoring for each process simultaneously, with each Monitor instantiation specifying the same application name. Below is an example of having multiple tracked processes within the same application:
@@ -61,7 +75,7 @@ If we were to additionally create two new processes - "Process3" and "Process4",
 
 ![New Application Diagram](Applications.png)
 
-Each process can be viewed individually, but they can also be grouped under whatever application they belong to (as specified when the _Monitor_ class instance is initialized).
+Each process can be viewed individually, but they will be organized under whatever application they belong to. This allows an application with multiple, distinct processes to be easily tracked as a cohesive unit.
 
 
 

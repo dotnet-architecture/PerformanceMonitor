@@ -6,5 +6,5 @@ CREATE TABLE Contention (
 "timestamp" DATETIME PRIMARY KEY,
 "appId" int,
 "id" uniqueidentifier,
-CONSTRAINT [FK_Session_ID] FOREIGN KEY ("appID") REFERENCES Session(id)
+CONSTRAINT [FK_Session_ID] FOREIGN KEY ("appID") REFERENCES Session(id) ON DELETE CASCADE
 )
