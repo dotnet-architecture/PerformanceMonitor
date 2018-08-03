@@ -18,8 +18,8 @@
 
     <div id="cpu"></div>
     <script>
-        const startCPU = `@Html.Encode(Model.oldStampString)`;
-        const endCPU = `@Html.Encode(Model.newStampString)`;
+        var startCPU = `@Html.Encode(Model.oldStampString)`;
+        var endCPU = `@Html.Encode(Model.newStampString)`;
         const idCPU = `@Html.Encode(IndexModel.userSession.Id)`;
 
         function getData() {
@@ -110,12 +110,12 @@
 
     <div id="mem"></div>
     <script>
-        const startMem = `@Html.Encode(Model.oldStampString)`;
-        const endMem = `@Html.Encode(Model.newStampString)`;
+        var startMem = `@Html.Encode(Model.oldStampString)`;
+        var endMem = `@Html.Encode(Model.newStampString)`;
         const idMem = `@Html.Encode(IndexModel.userSession.Id)`;
 
         function getData() {
-            const url = `http://localhost:54022/api/v1/Memory/Daterange?start=${startCPU}&end=${endCPU}&id=${idCPU}`;
+            const url = `http://localhost:54022/api/v1/Memory/Daterange?start=${startMem}&end=${endMem}&id=${idMem}`;
             return fetch(url, {
                 method: 'GET',
                 mode: 'cors',
@@ -139,7 +139,7 @@
                     var memUsage = new Array();
                     var memTime = new Array();
 
-                    for (var i = 0; i < @Model.cpu.Count; i++) {
+                    for (var i = 0; i < dataArray.length; i++) {
                         memUsage[i] = dataArray[i].usage;
                         memTime[i] = dataArray[i].timestamp;
                     }
@@ -147,12 +147,12 @@
                     var dataReturn = new Array();
                     dataReturn[0] = memUsage;
                     dataReturn[1] = memTime;
-
                     return dataReturn;
                 });
         }
 
         Promise.all([getData()])
+            // Plotting initial graph
             .then(function (value) {
                 var Mem = [{
                     x: value[0][1],
@@ -181,46 +181,63 @@
                 };
 
                 Plotly.plot('mem', Mem, layout);
+                return;
+            })
+            .then(setInterval(function () {    
+                // Updating time stamps
+                startMem = endMem;
+                var now = new Date();
+                endMem = now.getFullYear() + "-" +
+                    ("0" + (now.getMonth() + 1)).slice(-2) + "-" +
+                    ("0" + now.getDate()).slice(-2) + "T" +
+                    ("0" + now.getHours()).slice(-2) + "%3A" +
+                    ("0" + now.getMinutes()).slice(-2) + "%3A" +
+                    ("0" + now.getSeconds()).slice(-2) + "." +
+                    ("0" + now.getMilliseconds()).slice(-3);
 
-                var cnt = 0;
-                setInterval(function () {
-                    Plotly.extendTraces('mem', { y: [[getData()[0]]] }, [0]);
-                    cnt++;
-                    if (cnt > @IndexModel.userSession.sendRate/100) {
-                        Plotly.relayout('mem', {
-                            xaxis: {
-                                range: [cnt - @IndexModel.userSession.sendRate/100, cnt]
-                            }
-                        });
-                    }
-                }, 5);
+                Promise.all([getData()])
+                    .then(function (values) {
+                        Plotly.extendTraces('mem', {
+                            x: value[0][1],
+                            y: value[0][0]
+                        }, [0]);
 
-                @*var cnt = 0;
-                var interval = setInterval(function () {
-                    cnt++;
-                    if (cnt > @IndexModel.userSession.sendRate* 100) {
-                        Plotly.relayout('mem',
-                        {
-                            'xaxis.range': [cnt - @IndexModel.userSession.sendRate* 100, cnt]
+                        cnt++;
+                        if (cnt > @(IndexModel.userSession.sendRate/100)) {
+                            Plotly.relayout('mem', {
+                                xaxis: {
+                                    range: [cnt - @(IndexModel.userSession.sendRate/100), cnt]
+                                }
+                            });
+                        }
+                    });
+            }, 5));
+
+        @*var cnt = 0;
+        var interval = setInterval(function () {
+            cnt++;
+            if (cnt > @IndexModel.userSession.sendRate* 100) {
+                Plotly.relayout('mem',
+                    {
+                        'xaxis.range': [cnt - @IndexModel.userSession.sendRate* 100, cnt]
                         })
                     }
 
-                    var Mem = [{
-                    x: value[0][1],
-                    y: value[0][0],
-                    type: 'scatter'
-                }];
+        var Mem = [{
+            x: value[0][1],
+            y: value[0][0],
+            type: 'scatter'
+        }];
 
-                    Plotly.extendTraces('mem', {
-                        x: value[0][1],
-                        y: value[0][0]
-                    }, [0])
+        Plotly.extendTraces('mem', {
+            x: value[0][1],
+            y: value[0][0]
+        }, [0])
                 }, 500);*@
-            })
     </script>
 
     <p>Average CPU Usage: @Model.avgCPU.ToString("0.00")</p>
-    <p>Average Memory Usage: @Model.avgMem.ToString("0.00")</p>
+    <p>Average Memory Usage: @((Model.avgMem / 1000000).ToString("0.00")) MB</p>
 
     <p>Log of CPU and Mem Usage</p>
     <table class="table table-hover table-bordered">
@@ -234,14 +251,14 @@
         <tbody>
             @if (Model.cpu != null)
             {
-                @for (int i = Model.cpu.Count - 1; i >= 0; i--)
+                @for (int i = Math.Min(Model.cpu.Count - 1, Model.mem.Count - 1); i >= 0; i--)
                 {
                     CPU_Usage c = Model.cpu[i];
                     Mem_Usage m = Model.mem[i];
                     <tr>
-                        <td>@c.usage</td>
+                        <td>@c.usage.ToString("0.0000")</td>
                         <td>@(m.usage / 1000000.0)</td>
-                        <td>@c.timestamp</td>
+                        <td>@c.timestamp.ToShortTimeString() @c.timestamp.ToShortDateString()</td>
                     </tr>
                 }
             }
