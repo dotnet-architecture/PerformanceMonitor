@@ -100,6 +100,7 @@
         var startMem = `@Html.Encode(Model.oldStampString)`;
         var endMem = `@Html.Encode(Model.newStampString)`;
         const idMem = `@Html.Encode(IndexModel.userSession.Id)`;
+        var cnt = 0;
 
         function getData(start, end) {
             const url = `http://localhost:54022/api/v1/Memory/Daterange?start=${start}&end=${end}&id=${idMem}`;
@@ -170,39 +171,7 @@
                 Plotly.plot('mem', Mem, layout);
                 return;
             })
-            .then(function () {
-                startMem = endMem; 
-                var now = new Date();
-                endMem = now.getFullYear() + "-" +
-                    ("0" + (now.getMonth() + 1)).slice(-2) + "-" +
-                    ("0" + now.getDate()).slice(-2) + "T" +
-                    ("0" + now.getHours()).slice(-2) + "%3A" +
-                    ("0" + now.getMinutes()).slice(-2) + "%3A" +
-                    ("0" + now.getSeconds()).slice(-2) + "." +
-                    ("0" + now.getMilliseconds()).slice(-3);
-
-                Promise.all([getData(startMem, endMem)])
-                    .then(function (values) {
-                        var xaxis = values[0][1]; 
-                        var yaxis = values[0][0]; 
-                        Plotly.extendTraces('mem', {
-                            x: xaxis,
-                            y: yaxis
-                        }, [0]);
-
-                        @*cnt++;
-                        if (cnt > @(IndexModel.userSession.sendRate/100)) {
-                            Plotly.relayout('mem', {
-                                xaxis: {
-                                    range: [cnt - @(IndexModel.userSession.sendRate/100), cnt]
-                                }
-                            });
-                        }*@
-                    });
-            }
-            );
-           
-            @*.then(setInterval(function () {    
+            .then(setInterval(function () {    
                 // Updating time stamps
                 startMem = endMem;
                 var now = new Date();
@@ -216,21 +185,23 @@
 
                 Promise.all([getData(startMem, endMem)])
                     .then(function (values) {
+                        var xaxis = values[0][1];
+                        var yaxis = values[0][0];
                         Plotly.extendTraces('mem', {
-                            x: value[0][1],
-                            y: value[0][0]
+                            x: [xaxis],
+                            y: [yaxis]
                         }, [0]);
 
                         cnt++;
-                        if (cnt > @(IndexModel.userSession.sendRate/100)) {
+                        if (cnt > @(IndexModel.userSession.sendRate/50)) {
                             Plotly.relayout('mem', {
                                 xaxis: {
-                                    range: [cnt - @(IndexModel.userSession.sendRate/100), cnt]
+                                    range: [cnt - @(IndexModel.userSession.sendRate/50), cnt]
                                 }
                             });
                         }
                     });
-            }, 10));*@
+            }, 500));             
     </script>
 
     <p>Average CPU Usage: @Model.avgCPU.ToString("0.00")</p>

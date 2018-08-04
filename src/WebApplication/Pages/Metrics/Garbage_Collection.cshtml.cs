@@ -12,8 +12,6 @@ namespace WebApplication.Pages.Metrics
     {
         public List<DataTransfer.GC> gc { get; set; } = new List<DataTransfer.GC>();
 
-        // Contains gc events that do not yet have a endStamp
-        public Dictionary<int, Client_GC> gcTracker = new Dictionary<int, Client_GC>();
         public int totalGC = 0;
 
         // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
