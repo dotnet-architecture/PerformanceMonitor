@@ -15,7 +15,7 @@
     <font size="50">HTTP Requests</font>
 
     <p>Total Http Requests: @Model.totalHttpRequest</p>
-    <p>Average Duration of Contentions: @Model.avgDuration</p>
+    <p>Average Duration of Contentions: @((Model.avgDuration/1000).ToString("0.0000")</p>
 
     <p>Log of Http Requests</p>
     <table class="table table-hover table-bordered">
