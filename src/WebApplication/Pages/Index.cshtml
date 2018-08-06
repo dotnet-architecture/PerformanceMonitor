@@ -52,39 +52,4 @@
                 proList.options[proList.options.length] = new Option(pro[selectedApp][i], pro[selectedApp][i])
         }
     </script>
-
-    @*<p>Log of Current Sessions</p>
-            <table class="table table-hover table-bordered">
-                <thead>
-                    <tr>
-                        <th>Application</th>
-                        <th>Process</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model.sessions != null)
-                    {
-                        @for (int i = Model.sessions.Count - 1; i >= 0; i--)
-                        {
-                            Session s = Model.sessions.ElementAt<Session>(i);
-                            <tr>
-                                <td>@s.application</td>
-                                <td>@s.process</td>
-                            </tr>
-
-                        }
-                    }
-                    else
-                    {
-                        <tr>Unable to retrieve data</tr>
-                    }
-                </tbody>
-            </table>
-
-        @Model.message
-        <form method="post">
-            <input type="text" placeholder="Application" asp-for="@Model.app" name="app11" /> <br />
-            <input type="text" placeholder="Process" asp-for="@Model.pro" name="pro11" /> <br />
-            <button class="btn btn-default">Examine</button>
-        </form>*@
 </div>
