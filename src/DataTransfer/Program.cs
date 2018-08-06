@@ -16,8 +16,8 @@ namespace DataTransfer
         public static void Main(string[] args)
         {
             // uncomment below two lines to perform monitoring
-            //Monitor monitor = new Monitor();
-            //monitor.Record();
+            Monitor monitor = new Monitor("TestHttp", "req", 1000, 5000);
+            monitor.Record();
             CreateWebHostBuilder(args).Build().Run();
         }
 

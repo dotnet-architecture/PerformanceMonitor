@@ -35,10 +35,17 @@ namespace WebApplication.Pages.Metrics
                     http.Add(clientH);
                 } else if (h.type.Equals("Stop"))
                 {
-                    Client_Http_Request clientH = httpTracker[h.id];
-                    http.Remove(clientH);
-                    clientH.updateEndTimestamp(h.timestamp);
-                    http.Add(clientH);
+                    if (httpTracker.ContainsKey(h.id))
+                    {
+                        Client_Http_Request clientH = httpTracker[h.id];
+                        http.Remove(clientH);
+                        clientH.updateEndTimestamp(h.timestamp);
+                        http.Add(clientH);
+                    } else
+                    {
+                        Client_Http_Request clientH = new Client_Http_Request(h);
+                        http.Add(clientH);
+                    }
                 }
             }
 
