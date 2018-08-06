@@ -22,8 +22,8 @@
         var endCPU = `@Html.Encode(Model.newStampString)`;
         const idCPU = `@Html.Encode(IndexModel.userSession.Id)`;
 
-        function getData() {
-            const url = `http://localhost:54022/api/v1/CPU/Daterange?start=${startCPU}&end=${endCPU}&id=${idCPU}`;
+        function getData(start, end) {
+            const url = `http://localhost:54022/api/v1/CPU/Daterange?start=${start}&end=${end}&id=${idCPU}`;
             return fetch(url, {
                 method: 'GET',
                 mode: 'cors',
@@ -60,7 +60,8 @@
                 });
         }
 
-        Promise.all([getData()])
+        Promise.all([getData(startCPU, endCPU)])
+            // Plotting initial graph
             .then(function (value) {
                 var CPU = [{
                     x: value[0][1],
@@ -77,8 +78,7 @@
                             size: 18,
                             color: 'lightgrey'
                         },
-                        visible: true,
-                        range: [0, 100]
+                        xrange: [0, 100]
                     },
                     xaxis: {
                         title: 'Time',
@@ -91,7 +91,39 @@
                 };
 
                 Plotly.plot('cpu', CPU, layout);
+                return;
             })
+            .then(setInterval(function () {    
+                // Updating time stamps
+                startCPU = endCPU;
+                var now = new Date();
+                endCPU = now.getFullYear() + "-" +
+                    ("0" + (now.getMonth() + 1)).slice(-2) + "-" +
+                    ("0" + now.getDate()).slice(-2) + "T" +
+                    ("0" + now.getHours()).slice(-2) + "%3A" +
+                    ("0" + now.getMinutes()).slice(-2) + "%3A" +
+                    ("0" + now.getSeconds()).slice(-2) + "." +
+                    ("0" + now.getMilliseconds()).slice(-3);
+
+                Promise.all([getData(startCPU, endCPU)])
+                    .then(function (values) {
+                        var xaxis = values[0][1];
+                        var yaxis = values[0][0];
+                        Plotly.extendTraces('cpu', {
+                            x: [xaxis],
+                            y: [yaxis]
+                        }, [0]);
+
+                        cnt++;
+                        if (cnt > @(IndexModel.userSession.sendRate/50)) {
+                            Plotly.relayout('cpu', {
+                                xaxis: {
+                                    range: [cnt - @(IndexModel.userSession.sendRate/50), cnt]
+                                }
+                            });
+                        }
+                    });
+            }, 500));  
 
     </script>
 
@@ -225,7 +257,7 @@
                     Mem_Usage m = Model.mem[i];
                     <tr>
                         <td>@c.usage.ToString("0.0000")</td>
-                        <td>@(m.usage / 1000000.0)</td>
+                        <td>@(m.usage / 1000000.0).toString("0.0000")</td>
                         <td>@c.timestamp.ToShortTimeString() @c.timestamp.ToShortDateString()</td>
                     </tr>
                 }
