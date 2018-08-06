@@ -198,7 +198,7 @@ namespace DataTransfer
                         try
                         {
                             output = JsonConvert.SerializeObject(list);
-                            //Console.WriteLine(output);
+                            Console.WriteLine(output);
 
                             // escapes string so that JSON object is interpreted as a single string
                             output = JsonConvert.ToString(output);

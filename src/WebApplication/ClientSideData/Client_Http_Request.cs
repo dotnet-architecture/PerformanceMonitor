@@ -17,7 +17,14 @@ namespace WebApplication.ClientSideData
         {
             this.Method = h.method;
             this.Path = h.path; 
-            this.StartTimestamp = h.timestamp; //will always be the start time when using this constructor
+
+            if (h.type.Equals("Start"))
+            {
+                this.StartTimestamp = h.timestamp; 
+            } else
+            {
+                this.StartTimestamp = h.timestamp; 
+            }
         }
     }
 }
