@@ -25,7 +25,7 @@
                 <th>Path</th>
                 <th>Start Timestamp</th>
                 <th>End TimeStamp</th>
-                <th>Duration</th>
+                <th>Duration (seconds)</th>
             </tr>
         </thead>
         <tbody>
@@ -36,13 +36,13 @@
                     Client_Http_Request h = Model.http.ElementAt<Client_Http_Request>(i);
             <tr>
 
-                @if (h.EndTimestamp != null)
+                @if (h.EndTimestamp.Year != 1)
                 {
                     <td>@h.Method</td>
                     <td>@h.Path</td>
                     <td>@h.StartTimestamp.ToLongTimeString() @h.StartTimestamp.ToShortDateString()</td>
                     <td>@h.EndTimestamp.ToLongTimeString() @h.EndTimestamp.ToShortDateString()</td>
-                    <td>@h.Duration</td>
+                    <td>@(h.Duration/1000)</td>
                 }
                 else
                 {
