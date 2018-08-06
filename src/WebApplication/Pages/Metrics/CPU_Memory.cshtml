@@ -108,6 +108,11 @@
                     .then(function (values) {
                         var xaxis = values[0][1];
                         var yaxis = values[0][0];
+
+                        if (xaxis == null || yaxis == null) {
+                            return;
+                        }
+
                         Plotly.extendTraces('cpu', {
                             x: [xaxis],
                             y: [yaxis]
@@ -122,7 +127,7 @@
                             });
                         }
                     });
-            }, 500));
+            }, @IndexModel.userSession.sendRate*1000));
 
     </script>
 
@@ -218,6 +223,11 @@
                     .then(function (values) {
                         var xaxis = values[0][1];
                         var yaxis = values[0][0];
+
+                        if (xaxis == null || yaxis == null) {
+                            return;
+                        }
+
                         Plotly.extendTraces('mem', {
                             x: [xaxis],
                             y: [yaxis]
@@ -232,7 +242,7 @@
                             });
                         }
                     });
-            }, 500));
+            }, @IndexModel.userSession.sendRate*1000));
     </script>
 
     <p>Average CPU Usage: @Model.avgCPU.ToString("0.00")</p>
