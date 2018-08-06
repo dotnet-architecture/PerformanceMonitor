@@ -16,14 +16,14 @@
     <font size="50">CPU and Memory Usage</font>
     <button class="btn btn-default" onClick="window.location.reload()">Refresh Data</button>
 
-    @*<div id="cputest"></div>
+    <div id="cpu"></div>
     <script>
-        const start = `@Html.Encode(Model.oldStampString)`;
-        const end = `@Html.Encode(Model.newStampString)`;
-        const id = `@Html.Encode(IndexModel.userSession.Id)`;
+        var startCPU = `@Html.Encode(Model.oldStampString)`;
+        var endCPU = `@Html.Encode(Model.newStampString)`;
+        const idCPU = `@Html.Encode(IndexModel.userSession.Id)`;
 
-        function getUsage() {
-            const url = `http://localhost:54022/api/v1/CPU/Daterange?start=${start}&end=${end}&id=${id}`;
+        function getData() {
+            const url = `http://localhost:54022/api/v1/CPU/Daterange?start=${startCPU}&end=${endCPU}&id=${idCPU}`;
             return fetch(url, {
                 method: 'GET',
                 mode: 'cors',
@@ -42,120 +42,29 @@
                     }
                 })
                 .then(response => response.json())
-                .then(function (data) { 
+                .then(function (data) {
                     var dataArray = JSON.parse(data);
                     var cpuUsage = new Array();
-
-                    for (var i = 0; i < @Model.cpu.Count; i++) {
-                        cpuUsage[i] = dataArray[i].usage;
-                    }
-                    return cpuUsage; 
-                });
-        }
-
-        function getTime() {
-            const url = `http://localhost:54022/api/v1/CPU/Daterange?start=${start}&end=${end}&id=${id}`;
-            return fetch(url, {
-                method: 'GET',
-                mode: 'cors',
-                headers: {
-                    "Accept": "application/json",
-                    'Access-Control-Allow-Origin': '*',
-                    "Content-type": "applicaiton/json"
-                }
-            })
-                .then(response => {
-                    if (response.ok) {
-                        return response;
-                    } else {
-                        return Promise.reject(response);
-                        throw Error(response.statusText);
-                    }
-                })
-                .then(response => response.json())
-                .then(function (data) { 
-                    var dataArray = JSON.parse(data);
                     var cpuTime = new Array();
 
                     for (var i = 0; i < @Model.cpu.Count; i++) {
+                        cpuUsage[i] = dataArray[i].usage;
                         cpuTime[i] = dataArray[i].timestamp;
                     }
-                    return cpuTime; 
+
+                    var dataReturn = new Array();
+                    dataReturn[0] = cpuUsage;
+                    dataReturn[1] = cpuTime;
+
+                    return dataReturn;
                 });
         }
 
-        function getUsage() {
-            var data = Promise.all([getData()]);
-            var cpuUsage = new Array();
-
-            for (var i = 0; i < @Model.cpu.Count; i++) {
-                cpuUsage[i] = data[i].timestamp;
-            }
-        }
-
-        Promise.all([getUsage(), getTime()])
+        Promise.all([getData()])
             .then(function (value) {
-                Plotly.plot('cputest', [{
-                    y: [value[0]],
-                    x: [value[1]],
-                    type: 'scatter'
-                }]);
-            })
-
-        var cnt = 0;
-        setInterval(function () {
-            Plotly.extendTraces('chart', { y: [[getUsage()]] }, [0]);
-            cnt++;
-            if (cnt > 100) {
-                Plotly.relayout('chart', {
-                    xaxis: {
-                        range: [cnt - 100, cnt]
-                    }
-                });
-            }
-        }, 10);
-
-    </script>*@
-
-    <div id="cpu"></div>
-    <script>
-        const startCPU = `@Html.Encode(Model.oldStampString)`;
-        const endCPU = `@Html.Encode(Model.newStampString)`;
-        const idCPU = `@Html.Encode(IndexModel.userSession.Id)`;
-
-        const urlCPU = `http://localhost:54022/api/v1/CPU/Daterange?start=${startCPU}&end=${endCPU}&id=${idCPU}`;
-        fetch(urlCPU, {
-            method: 'GET',
-            mode: 'cors',
-            headers: {
-                "Accept": "application/json",
-                'Access-Control-Allow-Origin': '*',
-                "Content-type": "applicaiton/json"
-            }
-        })
-            .then(response => {
-                if (response.ok) {
-                    return response;
-                } else {
-                    return Promise.reject(response);
-                    throw Error(response.statusText);
-                }
-            })
-            .then(response => response.json())
-            .then(function (data) {
-                var dataArray = JSON.parse(data);
-
-                var cpuUsage = new Array();
-                var cpuTime = new Array();
-
-                for (var i = 0; i < @Model.cpu.Count; i++) {
-                    cpuUsage[i] = dataArray[i].usage;
-                    cpuTime[i] = dataArray[i].timestamp;
-                }
-
                 var CPU = [{
-                    x: cpuTime,
-                    y: cpuUsage,
+                    x: value[0][1],
+                    y: value[0][0],
                     type: 'scatter'
                 }];
 
@@ -182,61 +91,72 @@
                 };
 
                 Plotly.plot('cpu', CPU, layout);
-            });
+            })
+
     </script>
 
     <div id="mem"></div>
     <script>
-        const startMem = `@Html.Encode(Model.oldStampString)`;
-        const endMem = `@Html.Encode(Model.newStampString)`;
+        var startMem = `@Html.Encode(Model.oldStampString)`;
+        var endMem = `@Html.Encode(Model.newStampString)`;
         const idMem = `@Html.Encode(IndexModel.userSession.Id)`;
+        var cnt = 0;
 
-        const urlMem = `http://localhost:54022/api/v1/Memory/Daterange?start=${startMem}&end=${endMem}&id=${idMem}`;
-        fetch(urlMem, {
-            method: 'GET',
-            mode: 'cors',
-            headers: {
-                "Accept": "application/json",
-                'Access-Control-Allow-Origin': '*',
-                "Content-type": "applicaiton/json"
-            }
-        })
-            .then(response => {
-                if (response.ok) {
-                    return response;
-                } else {
-                    return Promise.reject(response);
-                    throw Error(response.statusText);
+        function getData(start, end) {
+            const url = `http://localhost:54022/api/v1/Memory/Daterange?start=${start}&end=${end}&id=${idMem}`;
+            return fetch(url, {
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    "Accept": "application/json",
+                    'Access-Control-Allow-Origin': '*',
+                    "Content-type": "applicaiton/json"
                 }
             })
-            .then(response => response.json())
-            .then(function (data) {
-                var dataArray = JSON.parse(data);
+                .then(response => {
+                    if (response.ok) {
+                        return response;
+                    } else {
+                        return Promise.reject(response);
+                        throw Error(response.statusText);
+                    }
+                })
+                .then(response => response.json())
+                .then(function (data) {
+                    var dataArray = JSON.parse(data);
+                    var memUsage = new Array();
+                    var memTime = new Array();
 
-                var memUsage = new Array();
-                var memTime = new Array();
+                    for (var i = 0; i < dataArray.length; i++) {
+                        memUsage[i] = dataArray[i].usage;
+                        memTime[i] = dataArray[i].timestamp;
+                    }
 
-                for (var i = 0; i < @Model.mem.Count; i++) {
-                    memUsage[i] = dataArray[i].usage;
-                    memTime[i] = dataArray[i].timestamp;
-                }
+                    var dataReturn = new Array();
+                    dataReturn[0] = memUsage;
+                    dataReturn[1] = memTime;
+                    return dataReturn;
+                });
+        }
 
+        Promise.all([getData(startMem, endMem)])
+            // Plotting initial graph
+            .then(function (value) {
                 var Mem = [{
-                    x: memTime,
-                    y: memUsage,
+                    x: value[0][1],
+                    y: value[0][0],
                     type: 'scatter'
                 }];
 
                 var layout = {
-                    title: 'Mem Usage Over Time',
+                    title: 'Memory Usage Over Time',
                     yaxis: {
-                        title: 'Mem Usage (MB)',
+                        title: 'Memory Usage (MB)',
                         titlefont: {
                             family: 'Arial, sans-serif',
                             size: 18,
                             color: 'lightgrey'
                         },
-                        visible: true,
                     },
                     xaxis: {
                         title: 'Time',
@@ -249,28 +169,43 @@
                 };
 
                 Plotly.plot('mem', Mem, layout);
+                return;
+            })
+            .then(setInterval(function () {    
+                // Updating time stamps
+                startMem = endMem;
+                var now = new Date();
+                endMem = now.getFullYear() + "-" +
+                    ("0" + (now.getMonth() + 1)).slice(-2) + "-" +
+                    ("0" + now.getDate()).slice(-2) + "T" +
+                    ("0" + now.getHours()).slice(-2) + "%3A" +
+                    ("0" + now.getMinutes()).slice(-2) + "%3A" +
+                    ("0" + now.getSeconds()).slice(-2) + "." +
+                    ("0" + now.getMilliseconds()).slice(-3);
 
-                @*var cnt = 0;
-                var interval = setInterval(function () {
-                    cnt++;
-                    if (cnt > @IndexModel.userSession.sendRate*100) {
-                        Plotly.relayout('mem',
-                            {
-                                'xaxis.range': [cnt - @IndexModel.userSession.sendRate*100, cnt]
-                            })
-                    }
+                Promise.all([getData(startMem, endMem)])
+                    .then(function (values) {
+                        var xaxis = values[0][1];
+                        var yaxis = values[0][0];
+                        Plotly.extendTraces('mem', {
+                            x: [xaxis],
+                            y: [yaxis]
+                        }, [0]);
 
-                    Plotly.extendTraces('mem',
-                        {
-                            x: memTime,
-                            y: memUsage
-                        }, [0])
-                }, 500);*@
-            });
+                        cnt++;
+                        if (cnt > @(IndexModel.userSession.sendRate/50)) {
+                            Plotly.relayout('mem', {
+                                xaxis: {
+                                    range: [cnt - @(IndexModel.userSession.sendRate/50), cnt]
+                                }
+                            });
+                        }
+                    });
+            }, 500));             
     </script>
 
-    <p>Average CPU Usage: @Model.avgCPU</p>
-    <p>Average Memory Usage: @Model.avgMem</p>
+    <p>Average CPU Usage: @Model.avgCPU.ToString("0.00")</p>
+    <p>Average Memory Usage: @((Model.avgMem / 1000000).ToString("0.00")) MB</p>
 
     <p>Log of CPU and Mem Usage</p>
     <table class="table table-hover table-bordered">
@@ -289,9 +224,9 @@
                     CPU_Usage c = Model.cpu[i];
                     Mem_Usage m = Model.mem[i];
                     <tr>
-                        <td>@c.usage</td>
+                        <td>@c.usage.ToString("0.0000")</td>
                         <td>@(m.usage / 1000000.0)</td>
-                        <td>@c.timestamp</td>
+                        <td>@c.timestamp.ToShortTimeString() @c.timestamp.ToShortDateString()</td>
                     </tr>
                 }
             }
@@ -302,84 +237,7 @@
                 </tr>
             }
         </tbody>
-    </table>
-
-    @*<div id="cpu"></div>
-        <script>
-            var cpuUsage = @Html.Raw(Json.Serialize(Model.cpuUsage));
-            var cpuTime = @Html.Raw(Json.Serialize(Model.cpuTime));
-
-            var dates = new Array();
-            for (var i = 0; i < @Model.cpuTime.Count; i++) {
-                dates[i] = new Date(cpuTime[i]);
-            }
-
-            var CPU = [
-                {
-                    x: cpuTime,
-                    y: cpuUsage,
-                    type: 'scatter'
-            }];
-
-            var layout = {
-                title: 'CPU Usage Over Time',
-                yaxis: {
-                    title: 'Percentage of CPU Usage',
-                    titlefont: {
-                        family: 'Arial, sans-serif',
-                        size: 18,
-                        color: 'lightgrey'
-                    },
-                    visible: true,
-                    range: [0, 100]
-                },
-                xaxis: {
-                    title: 'Time',
-                    titlefont: {
-                        family: 'Arial, sans-serif',
-                        size: 18,
-                        color: 'lightgrey'
-                    }
-                }
-            };
-
-            Plotly.plot('cpu', CPU, layout);
-        </script>
-
-        <div id="mem"></div>
-        <script>
-            var cpuUsage = @Html.Raw(Json.Serialize(Model.memUsage));
-
-            var trace1 = {
-                y: cpuUsage,
-                type: 'scatter'
-            };
-
-            var data = [trace1];
-
-            var layout = {
-                title: 'Mem Usage Over Time',
-                yaxis: {
-                    title: 'Mem Usage (MB)',
-                    titlefont: {
-                        family: 'Arial, sans-serif',
-                        size: 18,
-                        color: 'lightgrey'
-                    },
-                    visible: true,
-                },
-                xaxis: {
-                    title: 'Time',
-                    titlefont: {
-                        family: 'Arial, sans-serif',
-                        size: 18,
-                        color: 'lightgrey'
-                    }
-                }
-            };
-
-            Plotly.plot('mem', data, layout);
-        </script>*@
+    </table>  
 
     @*  Plotly graph that updates continuously and scrolls
         <div id="chart"></div>
