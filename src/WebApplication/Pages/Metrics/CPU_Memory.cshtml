@@ -46,7 +46,7 @@
                     var cpuUsage = new Array();
                     var cpuTime = new Array();
 
-                    for (var i = 0; i < @Model.cpu.Count; i++) {
+                    for (var i = 0; i < dataArray.length; i++) {
                         cpuUsage[i] = dataArray[i].usage;
                         cpuTime[i] = new Date(dataArray[i].timestamp);
                     }
@@ -119,15 +119,15 @@
                         }, [0]);
 
                         cnt++;
-                        if (cnt > @IndexModel.userSession.sendRate*1000) {
+                        if (cnt > 500) {
                             Plotly.relayout('cpu', {
                                 xaxis: {
-                                    range: [cnt - @IndexModel.userSession.sendRate*1000, cnt]
+                                    range: [cnt - 500, cnt]
                                 }
                             });
                         }
                     });
-            }, @IndexModel.userSession.sendRate*1000));
+            }, @IndexModel.userSession.sendRate*3));
 
     </script>
 
@@ -234,15 +234,15 @@
                         }, [0]);
 
                         cnt++;
-                        if (cnt > @IndexModel.userSession.sendRate*1000) {
+                        if (cnt > 500) {
                             Plotly.relayout('mem', {
                                 xaxis: {
-                                    range: [cnt - @IndexModel.userSession.sendRate*1000, cnt]
+                                    range: [cnt - 500, cnt]
                                 }
                             });
                         }
                     });
-            }, @IndexModel.userSession.sendRate*1000));
+            }, @IndexModel.userSession.sendRate*3));
     </script>
 
     <p>Average CPU Usage: @Model.avgCPU.ToString("0.00")</p>
