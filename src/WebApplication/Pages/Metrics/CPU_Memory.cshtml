@@ -14,7 +14,6 @@
 
 <div class="main">
     <font size="50">CPU and Memory Usage</font>
-    <button class="btn btn-default" onClick="window.location.reload()">Refresh Data</button>
 
     <div id="cpu"></div>
     <script>
@@ -49,7 +48,7 @@
 
                     for (var i = 0; i < @Model.cpu.Count; i++) {
                         cpuUsage[i] = dataArray[i].usage;
-                        cpuTime[i] = dataArray[i].timestamp;
+                        cpuTime[i] = new Date(dataArray[i].timestamp);
                     }
 
                     var dataReturn = new Array();
@@ -78,7 +77,7 @@
                             size: 18,
                             color: 'lightgrey'
                         },
-                        xrange: [0, 100]
+                        range: [0, 100]
                     },
                     xaxis: {
                         title: 'Time',
@@ -93,7 +92,7 @@
                 Plotly.plot('cpu', CPU, layout);
                 return;
             })
-            .then(setInterval(function () {    
+            .then(setInterval(function () {
                 // Updating time stamps
                 startCPU = endCPU;
                 var now = new Date();
@@ -123,7 +122,7 @@
                             });
                         }
                     });
-            }, 500));  
+            }, 500));
 
     </script>
 
@@ -161,7 +160,7 @@
 
                     for (var i = 0; i < dataArray.length; i++) {
                         memUsage[i] = dataArray[i].usage;
-                        memTime[i] = dataArray[i].timestamp;
+                        memTime[i] = new Date(dataArray[i].timestamp);
                     }
 
                     var dataReturn = new Array();
@@ -203,7 +202,7 @@
                 Plotly.plot('mem', Mem, layout);
                 return;
             })
-            .then(setInterval(function () {    
+            .then(setInterval(function () {
                 // Updating time stamps
                 startMem = endMem;
                 var now = new Date();
@@ -233,14 +232,16 @@
                             });
                         }
                     });
-            }, 500));             
+            }, 500));
     </script>
 
     <p>Average CPU Usage: @Model.avgCPU.ToString("0.00")</p>
     <p>Average Memory Usage: @((Model.avgMem / 1000000).ToString("0.00")) MB</p>
 
+    <button class="btn btn-default" onClick="window.cpuMemTable.reload()">Refresh Data</button>
+
     <p>Log of CPU and Mem Usage</p>
-    <table class="table table-hover table-bordered">
+    <table class="table table-hover table-bordered" id="cpuMemTable">
         <thead>
             <tr>
                 <th>CPU (Percentage)</th>
@@ -269,5 +270,5 @@
                 </tr>
             }
         </tbody>
-    </table>  
+    </table>
 </div>
