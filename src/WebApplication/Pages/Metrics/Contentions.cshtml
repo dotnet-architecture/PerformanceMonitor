@@ -36,13 +36,13 @@
 
                         @if (c.EndTimestamp != null)
                         {
-                            <td>@c.StartTimestamp</td>
-                            <td>@c.EndTimestamp</td>
+                            <td>@c.StartTimestamp.ToLongTimeString() @c.StartTimestamp.ToShortDateString()</td>
+                            <td>@c.EndTimestamp.ToLongTimeString() @c.EndTimestamp.ToShortDateString()</td>
                             <td>@c.Duration</td>
                         }
                         else
                         {
-                            <td>@c.StartTimestamp</td>
+                            <td>@c.StartTimestamp.ToLongTimeString() @c.StartTimestamp.ToShortDateString()</td>
                             <td></td>
                             <td></td>
                         }

@@ -258,7 +258,7 @@
                     <tr>
                         <td>@c.usage.ToString("0.0000")</td>
                         <td>@(m.usage / 1000000.0).toString("0.0000")</td>
-                        <td>@c.timestamp.ToShortTimeString() @c.timestamp.ToShortDateString()</td>
+                        <td>@c.timestamp.ToLongTimeString() @c.timestamp.ToShortDateString()</td>
                     </tr>
                 }
             }
