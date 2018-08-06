@@ -7,7 +7,7 @@ namespace MonitorTest
 {
     public class Program
     {
-        static DataTransfer.Monitor monitor = new DataTransfer.Monitor("Process2", "App2", 100);
+        static DataTransfer.Monitor monitor = new DataTransfer.Monitor("New Process", "App");
         static void Main(string[] args)
         {
             CPUMemTest();
@@ -25,7 +25,7 @@ namespace MonitorTest
         }
         public static void CPUMemTest()
         {
-            monitor.Record();
+            //monitor.Record();
             while (true) ;
         }
         public static double UnitTest2() // makes sure requests are being sent as often as specified
@@ -81,7 +81,7 @@ namespace MonitorTest
             DateTime timer = DateTime.Now;
             while (true)
             {
-                if (DateTime.Now.Subtract(timer).TotalSeconds >= 1)
+                if (DateTime.Now.Subtract(timer).TotalMilliseconds >= 500)
                 {
                     System.GC.Collect();
                     System.GC.WaitForPendingFinalizers();

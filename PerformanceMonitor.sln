@@ -22,7 +22,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonitorTest", "test\Measure
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestDataTransfer", "test\TestDataTransfer\TestDataTransfer.csproj", "{D04C5BC5-9052-4A22-AB1B-8E202B5AFFD9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonitorUnitTest", "test\Measurement\MonitorUnitTest\MonitorUnitTest.csproj", "{256F4936-080D-494E-A2FF-54E2101278DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonitorUnitTest", "test\Measurement\MonitorUnitTest\MonitorUnitTest.csproj", "{256F4936-080D-494E-A2FF-54E2101278DF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B2F3B16C-36AA-4499-B7B0-6AEE14F6C614}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
