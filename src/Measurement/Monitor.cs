@@ -18,6 +18,13 @@ namespace DataTransfer
         public int sampleRate;
         public int sendRate;
 
+        public Monitor()
+        {
+            this.process = "MyProcess";
+            this.app = null;
+            this.sampleRate = 1000;
+            this.sendRate = 5000;
+        }
         public Monitor(String process = "MyProcess", String app = null, int sampleRate = 1000, int sendRate = 5000)
         {
             this.process = process;
@@ -431,14 +438,8 @@ namespace DataTransfer
                             request.timestamp = DateTime.Now;
                             request.id = data.ActivityID;
                             request.App = instance;
-                            // event message parsing to fetch method and path of request
-                            String datas = data.ToString();
-                            int index = datas.IndexOf("method");
-                            int index2 = datas.IndexOf("\"", index);
-                            request.method = datas.Substring(index2 + 1, datas.IndexOf("\"", index2 + 1) - index2);
-                            index = datas.IndexOf("path");
-                            index2 = datas.IndexOf("\"", index);
-                            request.path = datas.Substring(index2 + 1, datas.IndexOf("\"", index2 + 1) - index2);
+                            request.method = data.PayloadString(0);
+                            request.path = data.PayloadString(1);
                             RequestVals.Add(request);
                         }
                         else if (data.ProcessID == myProcess.Id && data.EventName == "Request/Stop" && hold == 0)
