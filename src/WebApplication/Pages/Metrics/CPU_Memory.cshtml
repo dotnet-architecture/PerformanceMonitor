@@ -14,7 +14,6 @@
 
 <div class="main">
     <font size="50">CPU and Memory Usage</font>
-    <button class="btn btn-default" onClick="window.location.reload()">Refresh Data</button>
 
     <div id="cpu"></div>
     <script>
@@ -22,7 +21,7 @@
         var endCPU = `@Html.Encode(Model.newStampString)`;
         const idCPU = `@Html.Encode(IndexModel.userSession.Id)`;
 
-        function getData(start, end) {
+        function getCPUData(start, end) {
             const url = `http://localhost:54022/api/v1/CPU/Daterange?start=${start}&end=${end}&id=${idCPU}`;
             return fetch(url, {
                 method: 'GET',
@@ -47,9 +46,9 @@
                     var cpuUsage = new Array();
                     var cpuTime = new Array();
 
-                    for (var i = 0; i < @Model.cpu.Count; i++) {
+                    for (var i = 0; i < dataArray.length; i++) {
                         cpuUsage[i] = dataArray[i].usage;
-                        cpuTime[i] = dataArray[i].timestamp;
+                        cpuTime[i] = new Date(dataArray[i].timestamp);
                     }
 
                     var dataReturn = new Array();
@@ -60,7 +59,7 @@
                 });
         }
 
-        Promise.all([getData(startCPU, endCPU)])
+        Promise.all([getCPUData(startCPU, endCPU)])
             // Plotting initial graph
             .then(function (value) {
                 var CPU = [{
@@ -78,7 +77,7 @@
                             size: 18,
                             color: 'lightgrey'
                         },
-                        xrange: [0, 100]
+                        range: [0, 100]
                     },
                     xaxis: {
                         title: 'Time',
@@ -93,7 +92,7 @@
                 Plotly.plot('cpu', CPU, layout);
                 return;
             })
-            .then(setInterval(function () {    
+            .then(setInterval(function () {
                 // Updating time stamps
                 startCPU = endCPU;
                 var now = new Date();
@@ -105,25 +104,30 @@
                     ("0" + now.getSeconds()).slice(-2) + "." +
                     ("0" + now.getMilliseconds()).slice(-3);
 
-                Promise.all([getData(startCPU, endCPU)])
+                Promise.all([getCPUData(startCPU, endCPU)])
                     .then(function (values) {
                         var xaxis = values[0][1];
                         var yaxis = values[0][0];
+
+                        //if (xaxis == null || yaxis == null) {
+                        //    return;
+                        //}
+
                         Plotly.extendTraces('cpu', {
                             x: [xaxis],
                             y: [yaxis]
                         }, [0]);
 
                         cnt++;
-                        if (cnt > @(IndexModel.userSession.sendRate/50)) {
+                        if (cnt > 500) {
                             Plotly.relayout('cpu', {
                                 xaxis: {
-                                    range: [cnt - @(IndexModel.userSession.sendRate/50), cnt]
+                                    range: [cnt - 500, cnt]
                                 }
                             });
                         }
                     });
-            }, 500));  
+            }, @IndexModel.userSession.sendRate*1.5));
 
     </script>
 
@@ -134,7 +138,7 @@
         const idMem = `@Html.Encode(IndexModel.userSession.Id)`;
         var cnt = 0;
 
-        function getData(start, end) {
+        function getMemData(start, end) {
             const url = `http://localhost:54022/api/v1/Memory/Daterange?start=${start}&end=${end}&id=${idMem}`;
             return fetch(url, {
                 method: 'GET',
@@ -161,7 +165,7 @@
 
                     for (var i = 0; i < dataArray.length; i++) {
                         memUsage[i] = dataArray[i].usage;
-                        memTime[i] = dataArray[i].timestamp;
+                        memTime[i] = new Date(dataArray[i].timestamp);
                     }
 
                     var dataReturn = new Array();
@@ -171,7 +175,7 @@
                 });
         }
 
-        Promise.all([getData(startMem, endMem)])
+        Promise.all([getMemData(startMem, endMem)])
             // Plotting initial graph
             .then(function (value) {
                 var Mem = [{
@@ -203,7 +207,7 @@
                 Plotly.plot('mem', Mem, layout);
                 return;
             })
-            .then(setInterval(function () {    
+            .then(setInterval(function () {
                 // Updating time stamps
                 startMem = endMem;
                 var now = new Date();
@@ -215,32 +219,39 @@
                     ("0" + now.getSeconds()).slice(-2) + "." +
                     ("0" + now.getMilliseconds()).slice(-3);
 
-                Promise.all([getData(startMem, endMem)])
+                Promise.all([getMemData(startMem, endMem)])
                     .then(function (values) {
                         var xaxis = values[0][1];
                         var yaxis = values[0][0];
+
+                        //if (xaxis == null || yaxis == null) {
+                        //    return;
+                        //}
+
                         Plotly.extendTraces('mem', {
                             x: [xaxis],
                             y: [yaxis]
                         }, [0]);
 
                         cnt++;
-                        if (cnt > @(IndexModel.userSession.sendRate/50)) {
+                        if (cnt > 500) {
                             Plotly.relayout('mem', {
                                 xaxis: {
-                                    range: [cnt - @(IndexModel.userSession.sendRate/50), cnt]
+                                    range: [cnt - 500, cnt]
                                 }
                             });
                         }
                     });
-            }, 500));             
+            }, @IndexModel.userSession.sendRate*1.5));
     </script>
 
     <p>Average CPU Usage: @Model.avgCPU.ToString("0.00")</p>
     <p>Average Memory Usage: @((Model.avgMem / 1000000).ToString("0.00")) MB</p>
 
+    <button class="btn btn-default" onClick="window.location.reload()">Refresh Data</button>
+
     <p>Log of CPU and Mem Usage</p>
-    <table class="table table-hover table-bordered">
+    <table class="table table-hover table-bordered" id="cpuMemTable">
         <thead>
             <tr>
                 <th>CPU (Percentage)</th>
@@ -257,7 +268,11 @@
                     Mem_Usage m = Model.mem[i];
                     <tr>
                         <td>@c.usage.ToString("0.0000")</td>
+<<<<<<< HEAD
                         <td>@(m.usage / 1000000.0).toString("0.0000")</td>
+=======
+                        <td>@((m.usage/1000000.0).ToString("0.0000"))</td>
+>>>>>>> upstream/master
                         <td>@c.timestamp.ToLongTimeString() @c.timestamp.ToShortDateString()</td>
                     </tr>
                 }
@@ -269,5 +284,5 @@
                 </tr>
             }
         </tbody>
-    </table>  
+    </table>
 </div>

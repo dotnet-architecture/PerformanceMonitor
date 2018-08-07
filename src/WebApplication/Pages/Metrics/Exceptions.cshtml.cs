@@ -58,7 +58,7 @@ namespace WebApplication.Pages.Metrics
         }
         public async Task OnPostAsync(String app, String pro)
         {
-            if (userReqNum <= exceptionSorted.Count)
+            if (userReqNum - 1 <= exceptionSorted.Count)
             {
                 message = "Currently showing top " + userReqNum + " exceptions.";
             } else
