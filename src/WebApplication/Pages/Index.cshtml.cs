@@ -19,18 +19,6 @@ namespace WebApplication.Pages
 
         public String message = "Please select the name of the application and process you would like to examine.";
 
-        //[Required]
-        //[BindProperty]
-        //[DataType(DataType.Text)]
-        //[Display(Name = "app")]
-        //public String app { get; set; } = "";
-        
-        //[Required]
-        //[BindProperty]
-        //[DataType(DataType.Text)]
-        //[Display(Name = "pro")]
-        //public String pro { get; set; } = "";
-
         public async Task OnGet()
         {
             sessions = await FetchDataService.getSessionData();
