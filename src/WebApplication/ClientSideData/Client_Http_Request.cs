@@ -16,15 +16,9 @@ namespace WebApplication.ClientSideData
         public Client_Http_Request(Http_Request h)
         {
             this.Method = h.method;
-            this.Path = h.path; 
+            this.Path = h.path;
 
-            if (h.type.Equals("Start"))
-            {
-                this.StartTimestamp = h.timestamp; 
-            } else
-            {
-                this.EndTimestamp = h.timestamp; 
-            }
+            this.StartTimestamp = h.timestamp; 
         }
     }
 }

@@ -41,10 +41,6 @@ namespace WebApplication.Pages.Metrics
                         http.Remove(clientH);
                         clientH.updateEndTimestamp(h.timestamp);
                         http.Add(clientH);
-                    } else
-                    {
-                        Client_Http_Request clientH = new Client_Http_Request(h);
-                        http.Add(clientH);
                     }
                 }
             }
