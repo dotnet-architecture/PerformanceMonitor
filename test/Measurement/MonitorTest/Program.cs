@@ -7,7 +7,7 @@ namespace MonitorTest
 {
     public class Program
     {
-        static DataTransfer.Monitor monitor = new DataTransfer.Monitor("New Process", "App");
+        static DataTransfer.Monitor monitor = new DataTransfer.Monitor("New Process", "App10");
         static void Main(string[] args)
         {
             CPUMemTest();
@@ -25,7 +25,7 @@ namespace MonitorTest
         }
         public static void CPUMemTest()
         {
-            //monitor.Record();
+            monitor.Record();
             while (true) ;
         }
         public static double UnitTest2() // makes sure requests are being sent as often as specified

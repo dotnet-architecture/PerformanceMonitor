@@ -2,7 +2,7 @@
 
 ## Architecture Specifics
 
-![Architecture Diagram](Architecture.png)
+![Tools Diagram](Tools.png)
 
 ### Data Storage
 The data collected is currently being hosted on a SQL database running through Docker. This allows for local testing of the application. In the future, the database will be moved to AzureSQL. This will allow the final product to run with minimal setup from the user. Startup.cs holds the location of the connection string for the server, and can be changed as necessary.

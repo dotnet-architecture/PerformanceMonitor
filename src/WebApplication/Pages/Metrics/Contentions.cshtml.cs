@@ -68,8 +68,15 @@ namespace WebApplication.Pages.Metrics
                 }
             }
 
-            avgDuration = totalDuration / totalEndedReq;
-            return avgDuration;
+            if (totalEndedReq == 0)
+            {
+                return avgDuration;
+            }
+            else
+            {
+                avgDuration = totalDuration / totalEndedReq;
+                return avgDuration;
+            }
         }
     }
 }
