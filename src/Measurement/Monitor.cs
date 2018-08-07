@@ -21,11 +21,11 @@ namespace DataTransfer
         public Monitor()
         {
             this.process = "MyProcess";
-            this.app = null;
+            this.app = "UnnamedApp";
             this.sampleRate = 1000;
             this.sendRate = 5000;
         }
-        public Monitor(String process = "MyProcess", String app = null, int sampleRate = 1000, int sendRate = 5000)
+        public Monitor(String process = "MyProcess", String app = "UnnamedApp", int sampleRate = 1000, int sendRate = 5000)
         {
             this.process = process;
             this.app = app;
@@ -35,6 +35,8 @@ namespace DataTransfer
 
         public Monitor(int sampleRate = 1000, int sendRate = 5000)
         {
+            this.process = "MyProcess";
+            this.app = "UnnamedApp";
             this.sampleRate = sampleRate;
             this.sendRate = sendRate;
         }
@@ -42,7 +44,7 @@ namespace DataTransfer
         public Monitor(String process = "MyProcess", int sampleRate = 1000, int sendRate = 5000)
         {
             this.process = process;
-            this.app = null;
+            this.app = "UnnamedApp";
             this.sampleRate = sampleRate;
             this.sendRate = sendRate;
         }
@@ -97,7 +99,7 @@ namespace DataTransfer
         private static String myOS = Environment.OSVersion.ToString();
         private static Session instance = new Session();
 
-        // "hold" describes a lock on data used for transmission - used to avoid serialization issues
+        // variable used to detect data sending for testing purposes
         public static int hold = 0;
         public int getHold()
         {
