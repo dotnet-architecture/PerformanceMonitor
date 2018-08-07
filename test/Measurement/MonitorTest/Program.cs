@@ -1,12 +1,13 @@
 ﻿using System;
 using DataTransfer;
 using System.Threading;
+using System.Diagnostics;
 
 namespace MonitorTest
 {
     public class Program
     {
-        static DataTransfer.Monitor monitor = new DataTransfer.Monitor("Process2", "App2");
+        static DataTransfer.Monitor monitor = new DataTransfer.Monitor("New Process", "App");
         static void Main(string[] args)
         {
             CPUMemTest();
@@ -24,30 +25,41 @@ namespace MonitorTest
         }
         public static void CPUMemTest()
         {
-            monitor.Record();
+            //monitor.Record();
             while (true) ;
         }
-        public static double UnitTest2()
+        public static double UnitTest2() // makes sure requests are being sent as often as specified
         {
             monitor.Record();
             DateTime timer = DateTime.Now;
-            while (DateTime.Now.Subtract(timer).TotalMilliseconds <= monitor.sendRate * 4) ;
+            while (DateTime.Now.Subtract(timer).TotalSeconds <= 20) ;
             timer = DateTime.Now;
             double total = 0.0;
+            while (DateTime.Now.Subtract(timer).TotalMilliseconds <= monitor.sendRate * 2)
+            {
+                if (monitor.getHold() == 1)
+                {
+                    while (monitor.getHold() == 1) ;
+                    break;
+                }
+            }
             DateTime newTimer = DateTime.Now;
+            int holdCount = 0;
+            Stopwatch timer2 = Stopwatch.StartNew();
             while (DateTime.Now.Subtract(newTimer).TotalMilliseconds <= monitor.sendRate * 4)
             {
                 if (monitor.getHold() == 1)
                 {
-                    total += DateTime.Now.Subtract(timer).TotalMilliseconds;
-                    timer = DateTime.Now;
+                    total += timer2.ElapsedMilliseconds;
+                    holdCount++;
+                    timer2.Restart();
                     while (monitor.getHold() == 1) ;
                 }
             }
-            double avg = total / 4;
+            double avg = total / holdCount;
             return avg;
         }
-        public static int UnitTest1()
+        public static int UnitTest1() // makes sure expected number of samples are taken
         {
             //monitor.Record();
             DateTime timer = DateTime.Now;
@@ -69,7 +81,7 @@ namespace MonitorTest
             DateTime timer = DateTime.Now;
             while (true)
             {
-                if (DateTime.Now.Subtract(timer).TotalSeconds >= 1)
+                if (DateTime.Now.Subtract(timer).TotalMilliseconds >= 500)
                 {
                     System.GC.Collect();
                     System.GC.WaitForPendingFinalizers();

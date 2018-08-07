@@ -17,7 +17,7 @@ namespace WebApplication.Pages
         public Session selectedSession { get; set; } = new Session();
         public static Session userSession { get; set; }
 
-        public String message = "Please enter the name of the application and process you would like to examine.";
+        public String message = "Please select the name of the application and process you would like to examine.";
 
         [Required]
         [BindProperty]
@@ -57,6 +57,7 @@ namespace WebApplication.Pages
 
         public async Task OnPostAsync(String app, String pro)
         {
+            await OnGet(); 
             HttpClient client = new HttpClient();
 
             client.BaseAddress = new Uri("http://localhost:54022/");
@@ -79,8 +80,6 @@ namespace WebApplication.Pages
                 message = "Showing information of " + selectedSession.application + " application and " + selectedSession.process + " process.";
                 userSession = selectedSession;
             }
-
-            await OnGet();
         }  
     }
 }

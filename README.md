@@ -10,7 +10,7 @@ The Performance Monitor application allows .NET Core 2.1 developers to track app
 
 ## Architecture Overview
 
-![Architecture Diagram](Architecture.png)
+![Architecture Diagram](Architecture.PNG)
 
 ### Data Collection
 Data collection is performed via a class library that can be utilized in the user's executable code for the application they want to monitor. All that is required to perform this tracking is to include the library, create a class instance, and call the class' Record() function.
@@ -32,6 +32,7 @@ Application health monitoring is performed by a C# class library function that s
 
 ```cs
 Monitor monitor = new Monitor(String process_name, String application_name, int sampling_rate, int transmission_rate);
+// specify desired metrics
 monitor.Record();
 ```
 
@@ -39,6 +40,7 @@ or:
 
 ```cs
 Monitor monitor = new Monitor(String process_name, int sampling_rate, int transmission_rate);
+// specify desired metrics
 monitor.Record();
 ```
 
@@ -46,8 +48,17 @@ or:
 
 ```cs
 Monitor monitor = new Monitor(int sampling_rate, int transmission_rate);
+// specify desired metrics
 monitor.Record();
 ```
+
+By default, only CPU and memory usage are recorded. To enable monitoring of any of the other available events (exceptions, GC, contention, JIT, HTTP requests), simply fill in the commented section above with _monitor.Enable____. For example:
+
+```cs
+monitor.EnableGC();  // will enable monitoring of GC events
+```
+
+If you would like to disable monitoring of CPU or memory usage, the methods _DisableCPU()_ and _DisableMem()_ are available.
 
 All arguments for _Monitor_ class instantiation are optional and a monitor can be created with only sampling and transmission rates specified, but specifying a process name is strongly recommended so that processes can be differentated on the web application. The default sampling rate is one sample per second and the default transmission rate (rate at which data is sent to the server) is five seconds. If a rate is specified, the arguments should be provided in milliseconds between sample/transmission and the sampling rate value should be smaller than the transmission rate value for expected performance.
 

@@ -20,9 +20,8 @@
     <table class="table table-hover table-bordered">
         <thead>
             <tr>
-                <th>Start Timestamp</th>
-                <th>End Timestamp</th>
-                <th>Duration</th>
+                <th>GC Type</th>
+                <th>Timestamp</th>
             </tr>
         </thead>
         <tbody>
@@ -30,51 +29,10 @@
             {
                 @for (int i = Model.gc.Count - 1; i >= 0; i--)
                 {
-                    Client_GC g = Model.gc.ElementAt<Client_GC>(i);
-                    <tr>
-
-                        @if (g.EndTimestamp != null)
-                        {
-                            <td>@g.StartTimestamp</td>
-                            <td>@g.EndTimestamp</td>
-                            <td>@g.Duration</td>
-                        }
-                        else
-                        {
-                            <td>@g.StartTimestamp</td>
-                            <td></td>
-                            <td></td>
-                        }
-                    </tr>
-
-                }
-            }
-            else
-            {
-                <tr>Unable to retrieve data</tr>
-            }
-        </tbody>
-    </table>
-
-    <p>Log of Garbage Collection</p>
-    <table class="table table-hover table-bordered">
-        <thead>
-            <tr>
-                <th>GC Type</th>
-                <th>Id</th>
-                <th>Timestamp</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.gc != null)
-            {
-                @for (int i = Model.gcTest.Count - 1; i >= 0; i--)
-                {
-                    DataTransfer.GC g = Model.gcTest.ElementAt<DataTransfer.GC>(i);
+                    DataTransfer.GC g = Model.gc.ElementAt<DataTransfer.GC>(i);
                     <tr>
                         <td>@g.type</td>
-                        <td>@g.id</td>
-                        <td>@g.timestamp</td>
+                        <td>@g.timestamp.ToLongTimeString() @g.timestamp.ToShortDateString()</td>
                     </tr>
 
                 }

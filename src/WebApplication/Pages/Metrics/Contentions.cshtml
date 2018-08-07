@@ -14,10 +14,10 @@
 <div class="main">
     <font size="50">Contentions</font>
 
-    <p>Total Http Requests: @Model.totalContentions</p>
+    <p>Total Contentions: @Model.totalContentions</p>
     <p>Average Duration of Contentions: @Model.avgDuration</p>
 
-    <p>Log of HTTP Requests</p>
+    <p>Log of Contentions</p>
     <table class="table table-hover table-bordered">
         <thead>
             <tr>
@@ -36,13 +36,13 @@
 
                         @if (c.EndTimestamp != null)
                         {
-                            <td>@c.StartTimestamp</td>
-                            <td>@c.EndTimestamp</td>
+                            <td>@c.StartTimestamp.ToLongTimeString() @c.StartTimestamp.ToShortDateString()</td>
+                            <td>@c.EndTimestamp.ToLongTimeString() @c.EndTimestamp.ToShortDateString()</td>
                             <td>@c.Duration</td>
                         }
                         else
                         {
-                            <td>@c.StartTimestamp</td>
+                            <td>@c.StartTimestamp.ToLongTimeString() @c.StartTimestamp.ToShortDateString()</td>
                             <td></td>
                             <td></td>
                         }
