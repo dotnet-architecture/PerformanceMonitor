@@ -21,7 +21,9 @@ The other channel for data collection is the TraceEvent library (repo found here
 Data is stored in a SQL database running on Docker, and data is moved throughout the system via HTTP requests that are handled using Entity Framework. More information about data storage and handling can be found in the programmer's guide within the repository.
 
 ### Data Presentation
-The web application is built using ASP.NET CORE and Razor Pages to create a dynamic application. To start accessing the data, users must first specify the application and process name that they want to examine (collectively, the application and process are called sessions) on the homepage. The homepage also lists all the sessions that the database has data of. Once the user enters the information, the user is given feedback on whether or not a session with the entered information exists. If that session does not exist, an error is thrown and the user is prompted to re-enter the information. If the session does exist, the user can then use the sidebar to view data gathered from their session.
+The web application is built using ASP.NET CORE and Razor Pages to create a dynamic application. To start accessing the data, users must first specify the application and process name that they want to examine (collectively, the application and process are called sessions) on the homepage. The homepage automatically lists all applications that the database has data of. Once the user selects one one of the applications, all the assoicated processes of that application will show. Once the user enters all this information, the user is given feedback on whether or not a session with the entered information exists. If that session does not exist, an error is thrown and the user is prompted to re-enter the information. If the session does exist, the user can then use the sidebar to view data gathered from their session.
+
+The metric pages are largely self-explanatory. The CPU and Memory graphs continuously update without refreshing the page. All other tables require refreshing the page or clicking the refresh button. 
 
 
 
