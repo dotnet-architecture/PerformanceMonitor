@@ -10,7 +10,7 @@ The Performance Monitor application allows .NET Core 2.1 developers to track app
 
 ## Architecture Overview
 
-![Architecture Diagram](Architecture.png)
+![Architecture Diagram](Architecture.PNG)
 
 ### Data Collection
 Data collection is performed via a class library that can be utilized in the user's executable code for the application they want to monitor. All that is required to perform this tracking is to include the library, create a class instance, and call the class' Record() function.
