@@ -44,7 +44,7 @@
                     <td>@h.EndTimestamp.ToLongTimeString() @h.EndTimestamp.ToShortDateString()</td>
                     <td>@(h.Duration / 1000)</td>
                 }
-                else if (h.EndTimestamp.Year != 1)
+                else if (h.StartTimestamp.Year != 1)
                 {
                     <td>@h.Method</td>
                     <td>@h.Path</td>

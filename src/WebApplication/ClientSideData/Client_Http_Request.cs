@@ -23,7 +23,7 @@ namespace WebApplication.ClientSideData
                 this.StartTimestamp = h.timestamp; 
             } else
             {
-                this.StartTimestamp = h.timestamp; 
+                this.EndTimestamp = h.timestamp; 
             }
         }
     }

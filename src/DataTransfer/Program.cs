@@ -17,7 +17,10 @@ namespace DataTransfer
         {
             // uncomment below two lines to perform monitoring
             Monitor monitor = new Monitor("TestHttp", "req", 1000, 5000);
-            monitor.EnableHttp();
+            monitor.EnableException();
+            monitor.EnableContention();
+            monitor.EnableGC();
+            monitor.EnableJit();
             monitor.Record();
             CreateWebHostBuilder(args).Build().Run();
         }

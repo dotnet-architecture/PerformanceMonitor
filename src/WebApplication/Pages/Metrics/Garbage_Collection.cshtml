@@ -21,7 +21,6 @@
         <thead>
             <tr>
                 <th>GC Type</th>
-                <th>Id</th>
                 <th>Timestamp</th>
             </tr>
         </thead>
@@ -33,7 +32,6 @@
                     DataTransfer.GC g = Model.gc.ElementAt<DataTransfer.GC>(i);
                     <tr>
                         <td>@g.type</td>
-                        <td>@g.id</td>
                         <td>@g.timestamp.ToLongTimeString() @g.timestamp.ToShortDateString()</td>
                     </tr>
 

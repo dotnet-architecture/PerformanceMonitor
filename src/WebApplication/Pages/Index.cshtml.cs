@@ -57,6 +57,7 @@ namespace WebApplication.Pages
 
         public async Task OnPostAsync(String app, String pro)
         {
+            await OnGet(); 
             HttpClient client = new HttpClient();
 
             client.BaseAddress = new Uri("http://localhost:54022/");
