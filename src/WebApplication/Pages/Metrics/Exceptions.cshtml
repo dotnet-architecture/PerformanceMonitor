@@ -37,7 +37,7 @@
                     Exceptions e = Model.exceptions[i];
                     <tr>
                         <td>@e.type</td>
-                        <td>@e.timestamp</td>
+                        <td>@e.timestamp.ToLongTimeString() @e.timestamp.ToShortDateString()</td>
                     </tr>
 
                 }
