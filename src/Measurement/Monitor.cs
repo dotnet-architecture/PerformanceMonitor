@@ -108,6 +108,8 @@ namespace DataTransfer
         private static HttpClient client = new HttpClient();
         // time object used to check if data should be transmitted
         Stopwatch timer = new Stopwatch();
+        // tracks duration of HTTP requests to adjust for delays
+        Stopwatch duration = new Stopwatch();
 
         // CPU block:
         // fetches the processor count for the machine for total CPU calculation
@@ -143,6 +145,9 @@ namespace DataTransfer
 
         // Jit block:
         public static List<Jit> JitVals = new List<Jit>();
+
+        // lock object to keep things thread-safe
+        Object lockObject = new object();
 
 
 
@@ -186,26 +191,39 @@ namespace DataTransfer
                     if (timer.ElapsedMilliseconds >= sendRate)
                     {
                         timer.Restart();
-
                         // creates object that will store all event instances
                         Metric_List list = new Metric_List();
 
-                        list.session = instance;
-                        list.cpu = CPUVals;
-                        list.mem = MemVals;
-                        list.exceptions = ExceptionVals;
-                        list.requests = RequestVals;
-                        list.contentions = ContentionVals;
-                        list.gc = GCVals;
-                        list.jit = JitVals;
-                        
+                        lock (lockObject)
+                        {
+                            list.session = instance;
+                            list.cpu = CPUVals;
+                            list.mem = MemVals;
+                            list.exceptions = ExceptionVals;
+                            list.requests = RequestVals;
+                            list.contentions = ContentionVals;
+                            list.gc = GCVals;
+                            list.jit = JitVals;
+
+                            CPUVals = new List<CPU_Usage>();
+                            MemVals = new List<Mem_Usage>();
+                            ExceptionVals = new List<Exceptions>();
+                            RequestVals = new List<Http_Request>();
+                            ContentionVals = new List<Contention>();
+                            GCVals = new List<GC>();
+                            JitVals = new List<Jit>();
+                        }
+
+                        duration.Start();
                         hold = 1;
 
                         String output;
                         try
                         {
                             output = JsonConvert.SerializeObject(list);
-                            //Console.WriteLine(output);
+                            Console.WriteLine(output);
+
+                            hold = 0;
 
                             // escapes string so that JSON object is interpreted as a single string
                             output = JsonConvert.ToString(output);
@@ -218,25 +236,16 @@ namespace DataTransfer
                                 HttpResponseMessage response = client.SendAsync(request).Result;
                             }
                             catch { }
-
-                            hold = 0;
-
-                            CPUVals.Clear();
-                            MemVals.Clear();
-                            ExceptionVals.Clear();
-                            RequestVals.Clear();
-                            ContentionVals.Clear();
-                            GCVals.Clear();
-                            JitVals.Clear();
                         }
                         catch { }
 
-                        if (sampleRate < 2100)
+                        if (sampleRate < duration.ElapsedMilliseconds)
                         {
-                            continue;
+                            duration.Reset();
                         } else
                         {
-                            await Task.Delay(sampleRate - 2100);
+                            await Task.Delay(sampleRate - (int)duration.ElapsedMilliseconds);
+                            duration.Reset();
                         }
                     } else
                     {
@@ -246,7 +255,7 @@ namespace DataTransfer
             });
         }
 
-        private static void TraceEvents()
+        private void TraceEvents()
         {
             using (var session = new TraceEventSession("MySession"))
             {
@@ -262,13 +271,16 @@ namespace DataTransfer
                     clrParser.ExceptionStart += delegate (ExceptionTraceData data)
                     {
                         // if exception was in user process, add it to list of exceptions
-                        if (data.ProcessID == myProcess.Id && hold == 0)
+                        if (data.ProcessID == myProcess.Id)
                         {
                             Exceptions e = new Exceptions();
                             e.type = data.ExceptionType;
                             e.timestamp = DateTime.Now;
                             e.App = instance;
-                            ExceptionVals.Add(e);
+                            lock (lockObject)
+                            {
+                                ExceptionVals.Add(e);
+                            }
                         }
                     };
                 }
@@ -278,27 +290,33 @@ namespace DataTransfer
                     // subscribe to all contention start events
                     clrParser.ContentionStart += delegate (ContentionTraceData data)
                     {
-                        if (data.ProcessID == myProcess.Id && hold == 0)
+                        if (data.ProcessID == myProcess.Id)
                         {
                             Contention c = new Contention();
                             c.type = "Start";
                             c.id = data.ActivityID;
                             c.timestamp = DateTime.Now;
                             c.App = instance;
-                            ContentionVals.Add(c);
+                            lock (lockObject)
+                            {
+                                ContentionVals.Add(c);
+                            }
                         }
                     };
                     // subscribe to all contention stop events
                     clrParser.ContentionStop += delegate (ContentionTraceData data)
                     {
-                        if (data.ProcessID == myProcess.Id && hold == 0)
+                        if (data.ProcessID == myProcess.Id)
                         {
                             Contention c = new Contention();
                             c.type = "Stop";
                             c.id = data.ActivityID;
                             c.timestamp = DateTime.Now;
                             c.App = instance;
-                            ContentionVals.Add(c);
+                            lock (lockObject)
+                            {
+                                ContentionVals.Add(c);
+                            }
                         }
                     };
                 }
@@ -308,105 +326,129 @@ namespace DataTransfer
                     // subscribe to all GC start events
                     clrParser.GCStart += delegate (GCStartTraceData data)
                     {
-                        if (data.ProcessID == myProcess.Id && hold == 0)
+                        if (data.ProcessID == myProcess.Id)
                         {
                             GC gc = new GC();
                             gc.type = "Start";
                             gc.timestamp = DateTime.Now;
                             gc.id = data.ThreadID;
                             gc.App = instance;
-                            GCVals.Add(gc);
+                            lock (lockObject)
+                            {
+                                GCVals.Add(gc);
+                            }
                         }
                     };
                     // subscribe to all GC stop events
                     clrParser.GCStop += delegate (GCEndTraceData data)
                     {
-                        if (data.ProcessID == myProcess.Id && hold == 0)
+                        if (data.ProcessID == myProcess.Id)
                         {
                             GC gc = new GC();
                             gc.type = "Stop";
                             gc.timestamp = DateTime.Now;
                             gc.id = data.ThreadID;
                             gc.App = instance;
-                            GCVals.Add(gc);
+                            lock (lockObject)
+                            {
+                                GCVals.Add(gc);
+                            }
                         }
                     };
                     // subscribe to all GC memory allocation ticks
                     clrParser.GCAllocationTick += delegate (GCAllocationTickTraceData data)
                     {
-                        if (data.ProcessID == myProcess.Id && hold == 0)
+                        if (data.ProcessID == myProcess.Id)
                         {
                             GC gc = new GC();
                             gc.type = "Allocation Tick";
                             gc.timestamp = DateTime.Now;
                             gc.id = data.ThreadID;
                             gc.App = instance;
-                            GCVals.Add(gc);
+                            lock (lockObject)
+                            {
+                                GCVals.Add(gc);
+                            }
                         }
                     };
                     // subscribe to all creations of concurrent threads for GC
                     clrParser.GCCreateConcurrentThread += delegate (GCCreateConcurrentThreadTraceData data)
                     {
-                        if (data.ProcessID == myProcess.Id && hold == 0)
+                        if (data.ProcessID == myProcess.Id)
                         {
                             GC gc = new GC();
                             gc.type = "Create Concurrent Thread";
                             gc.timestamp = DateTime.Now;
                             gc.id = data.ThreadID;
                             gc.App = instance;
-                            GCVals.Add(gc);
+                            lock (lockObject)
+                            {
+                                GCVals.Add(gc);
+                            }
                         }
                     };
                     // subscribe to all restart stops
                     clrParser.GCRestartEEStop += delegate (GCNoUserDataTraceData data)
                     {
-                        if (data.ProcessID == myProcess.Id && hold == 0)
+                        if (data.ProcessID == myProcess.Id)
                         {
                             GC gc = new GC();
                             gc.type = "Restart EE Stop";
                             gc.timestamp = DateTime.Now;
                             gc.id = data.ThreadID;
                             gc.App = instance;
-                            GCVals.Add(gc);
+                            lock (lockObject)
+                            {
+                                GCVals.Add(gc);
+                            }
                         }
                     };
                     // subscribe to all suspension starts
                     clrParser.GCSuspendEEStart += delegate (GCSuspendEETraceData data)
                     {
-                        if (data.ProcessID == myProcess.Id && hold == 0)
+                        if (data.ProcessID == myProcess.Id)
                         {
                             GC gc = new GC();
                             gc.type = "Suspend EE Start";
                             gc.timestamp = DateTime.Now;
                             gc.id = data.ThreadID;
                             gc.App = instance;
-                            GCVals.Add(gc);
+                            lock (lockObject)
+                            {
+                                GCVals.Add(gc);
+                            }
                         }
                     };
                     // subscribe to all concurrent thread terminations
                     clrParser.GCTerminateConcurrentThread += delegate (GCTerminateConcurrentThreadTraceData data)
                     {
-                        if (data.ProcessID == myProcess.Id && hold == 0)
+                        if (data.ProcessID == myProcess.Id)
                         {
                             GC gc = new GC();
                             gc.type = "Concurrent Thread Termination";
                             gc.timestamp = DateTime.Now;
                             gc.id = data.ThreadID;
                             gc.App = instance;
-                            GCVals.Add(gc);
+                            lock (lockObject)
+                            {
+                                GCVals.Add(gc);
+                            }
                         }
                     };
                     // subscribe to all GC triggers
                     clrParser.GCTriggered += delegate (GCTriggeredTraceData data)
                     {
-                        if (data.ProcessID == myProcess.Id && hold == 0)
+                        if (data.ProcessID == myProcess.Id)
                         {
                             GC gc = new GC();
                             gc.type = "Triggered";
                             gc.timestamp = DateTime.Now;
                             gc.id = data.ThreadID;
                             gc.App = instance;
-                            GCVals.Add(gc);
+                            lock (lockObject)
+                            {
+                                GCVals.Add(gc);
+                            }
                         }
                     };
                 }
@@ -416,13 +458,16 @@ namespace DataTransfer
                     // subscribe to all Jit start events
                     clrParser.MethodJittingStarted += delegate (MethodJittingStartedTraceData data)
                     {
-                        if (data.ProcessID == myProcess.Id && hold == 0)
+                        if (data.ProcessID == myProcess.Id)
                         {
                             Jit j = new Jit();
                             j.method = data.MethodName;
                             j.timestamp = DateTime.Now;
                             j.App = instance;
-                            JitVals.Add(j);
+                            lock (lockObject)
+                            {
+                                JitVals.Add(j);
+                            }
                         }
                     };
                 }
@@ -431,7 +476,7 @@ namespace DataTransfer
                 {
                     // subscribe to all dynamic events (used for HTTP request event tracking)
                     session.Source.Dynamic.All += delegate (TraceEvent data) {
-                        if (data.ProcessID == myProcess.Id && data.EventName == "Request/Start" && hold == 0)
+                        if (data.ProcessID == myProcess.Id && data.EventName == "Request/Start")
                         {
                             Http_Request request = new Http_Request();
                             request.type = "Start";
@@ -440,16 +485,22 @@ namespace DataTransfer
                             request.App = instance;
                             request.method = data.PayloadString(0);
                             request.path = data.PayloadString(1);
-                            RequestVals.Add(request);
+                            lock (lockObject)
+                            {
+                                RequestVals.Add(request);
+                            }
                         }
-                        else if (data.ProcessID == myProcess.Id && data.EventName == "Request/Stop" && hold == 0)
+                        else if (data.ProcessID == myProcess.Id && data.EventName == "Request/Stop")
                         {
                             Http_Request request = new Http_Request();
                             request.type = "Stop";
                             request.timestamp = DateTime.Now;
                             request.id = data.ActivityID;
                             request.App = instance;
-                            RequestVals.Add(request);
+                            lock (lockObject)
+                            {
+                                RequestVals.Add(request);
+                            }
                         }
                     };
                 }
@@ -463,9 +514,9 @@ namespace DataTransfer
             }
         }
 
-        private static void FetchCPU()  // calculates CPU usage
+        private void FetchCPU()  // calculates CPU usage
         {
-            if (hold == 0 && CPUEnabled == 1)
+            if (CPUEnabled == 1)
             {
                 // clear the process' cached information
                 myProcess.Refresh();
@@ -482,18 +533,24 @@ namespace DataTransfer
                 // finds CPU usage for process as a percentage of total CPU time across the machine
                 cpu.usage = (change / (period * processorTotal) * 100.0);
                 cpu.timestamp = newStamp;
-                CPUVals.Add(cpu);
+                lock (lockObject)
+                {
+                    CPUVals.Add(cpu);
+                }
             }
         }
 
-        private static void FetchMem()  // fetches Memory usage
+        private void FetchMem()  // fetches Memory usage
         {
-            if (hold == 0 && MemEnabled == 1)
+            if (MemEnabled == 1)
             {
                 Mem_Usage mem = new Mem_Usage();
                 mem.usage = myProcess.WorkingSet64;
                 mem.timestamp = DateTime.Now;
-                MemVals.Add(mem);
+                lock (lockObject)
+                {
+                    MemVals.Add(mem);
+                }
             }
         }
 
