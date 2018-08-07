@@ -268,11 +268,7 @@
                     Mem_Usage m = Model.mem[i];
                     <tr>
                         <td>@c.usage.ToString("0.0000")</td>
-<<<<<<< HEAD
-                        <td>@(m.usage / 1000000.0).toString("0.0000")</td>
-=======
                         <td>@((m.usage/1000000.0).ToString("0.0000"))</td>
->>>>>>> upstream/master
                         <td>@c.timestamp.ToLongTimeString() @c.timestamp.ToShortDateString()</td>
                     </tr>
                 }
