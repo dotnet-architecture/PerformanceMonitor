@@ -7,7 +7,7 @@ namespace MonitorTest
 {
     public class Program
     {
-        static DataTransfer.Monitor monitor = new DataTransfer.Monitor("New Process", "App2");
+        static DataTransfer.Monitor monitor = new DataTransfer.Monitor("New Process", "App10");
         static void Main(string[] args)
         {
             CPUMemTest();
