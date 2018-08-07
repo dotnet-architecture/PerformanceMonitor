@@ -223,7 +223,6 @@ namespace DataTransfer
                         try
                         {
                             output = JsonConvert.SerializeObject(list);
-                            Console.WriteLine(output);
 
                             hold = 0;
 
