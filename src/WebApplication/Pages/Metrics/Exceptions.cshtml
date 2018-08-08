@@ -21,36 +21,6 @@
         <p>Most common exception: @Model.exceptionSorted[0].Key</p>
     }
 
-    <button class="btn btn-default" onClick="window.location.reload()">Refresh Data</button>
-
-    <p>Table of Exceptions</p>
-    <table class="table table-hover table-bordered">
-        <thead>
-            <tr>
-                <th>Exception Type</th>
-                <th>Timestamp</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.exceptions != null)
-            {
-                @for (int i = Model.exceptions.Count - 1; i >= 0; i--)
-                {
-                    Exceptions e = Model.exceptions[i];
-                    <tr>
-                        <td>@e.type</td>
-                        <td>@e.timestamp.ToLongTimeString() @e.timestamp.ToShortDateString()</td>
-                    </tr>
-
-                }
-            }
-            else
-            {
-                <tr>Unable to retrieve data</tr>
-            }
-        </tbody>
-    </table>
-
     @Model.message
     <form method="post">
         <input type="text" placeholder="Number of Exceptions" asp-for="@Model.userReqNum" name="userReqNum" /> <br />
@@ -79,6 +49,35 @@
                     <tr>
                         <td>@e.Key</td>
                         <td>@e.Value</td>
+                    </tr>
+
+                }
+            }
+            else
+            {
+                <tr>Unable to retrieve data</tr>
+            }
+        </tbody>
+    </table>
+
+    <button class="btn btn-default" onClick="window.location.reload()">Refresh Data</button>
+    <p>Table of Exceptions</p>
+    <table class="table table-hover table-bordered">
+        <thead>
+            <tr>
+                <th>Exception Type</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.exceptions != null)
+            {
+                @for (int i = Model.exceptions.Count - 1; i >= 0; i--)
+                {
+                    Exceptions e = Model.exceptions[i];
+                    <tr>
+                        <td>@e.type</td>
+                        <td>@e.timestamp.ToLongTimeString() @e.timestamp.ToShortDateString()</td>
                     </tr>
 
                 }

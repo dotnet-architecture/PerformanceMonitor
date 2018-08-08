@@ -47,11 +47,6 @@ namespace WebApplication.Pages.Metrics
             contentions.OrderBy(c => c.StartTimestamp).ToList(); // updating http so that is sorted by time
             contentions.Reverse(); // updating http so that the most current http requests are shown first
 
-
-            // Reset timers
-            this.oldStamp = newStamp;
-            this.newStamp = DateTime.Now.ToUniversalTime();
-
             totalContentions = contentions.Count;
             updateAvg();
         }

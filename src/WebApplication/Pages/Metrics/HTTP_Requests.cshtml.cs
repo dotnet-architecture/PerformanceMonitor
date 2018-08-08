@@ -48,10 +48,6 @@ namespace WebApplication.Pages.Metrics
             http.OrderBy(h => h.StartTimestamp).ToList(); // updating http so that is sorted by time
             http.Reverse(); // updating http so that the most current http requests are shown first
 
-            // Reset timers
-            this.oldStamp = newStamp;
-            this.newStamp = DateTime.Now.ToUniversalTime();
-
             totalHttpRequest = http.Count;
             updateAvg(); 
         }
