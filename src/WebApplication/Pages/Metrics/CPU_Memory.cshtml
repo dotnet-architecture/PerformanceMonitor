@@ -127,7 +127,7 @@
                             });
                         }
                     });
-            }, @IndexModel.userSession.sendRate*1.5));
+            }, @IndexModel.userSession.sendRate*1.1));
 
     </script>
 
@@ -242,7 +242,7 @@
                             });
                         }
                     });
-            }, @IndexModel.userSession.sendRate*1.5));
+            }, @IndexModel.userSession.sendRate*1.1));
     </script>
 
     <p>Average CPU Usage: @Model.avgCPU.ToString("0.00")</p>
@@ -262,22 +262,47 @@
         <tbody>
             @if (Model.cpu != null)
             {
-                @for (int i = Math.Min(Model.cpu.Count - 1, Model.mem.Count - 1); i >= 0; i--)
+                @for (int i = Math.Max(Model.cpu.Count - 1, Model.mem.Count - 1); i >= 0; i--)
                 {
-                    CPU_Usage c = Model.cpu[i];
-                    Mem_Usage m = Model.mem[i];
-                    <tr>
-                        <td>@c.usage.ToString("0.0000")</td>
-                        <td>@((m.usage/1000000.0).ToString("0.0000"))</td>
-                        <td>@c.timestamp.ToLongTimeString() @c.timestamp.ToShortDateString()</td>
-                    </tr>
+                    CPU_Usage c = null;
+                    Mem_Usage m = null;
+                    if (i <= Model.cpu.Count - 1)
+                    {
+                        c = Model.cpu[i];
+                    }
+                    if (i <= Model.mem.Count - 1)
+                    {
+                        m = Model.mem[i];                  
+                    }
+            <tr>
+                @if (c != null)
+                {
+                    <td>@c.usage.ToString("0.0000")</td>
                 }
-            }
-            else
-            {
-                <tr>
-                    Unable to retrieve data
-                </tr>
+                else
+                {
+                    <td></td>
+                }
+
+                @if (m != null)
+                {
+                    <td>@((m.usage / 1000000.0).ToString("0.0000"))</td>
+                }
+                else
+                {
+                    <td></td>
+                }
+
+                @if (c != null)
+                {
+                    <td>@c.timestamp.ToLongTimeString() @c.timestamp.ToShortDateString()</td>
+                }
+                @if (c == null && m != null)
+                {
+                    <td>@m.timestamp.ToLongTimeString() @m.timestamp.ToShortDateString()</td>
+                }
+            </tr>
+                }
             }
         </tbody>
     </table>
