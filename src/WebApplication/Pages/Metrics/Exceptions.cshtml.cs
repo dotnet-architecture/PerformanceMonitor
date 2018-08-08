@@ -47,10 +47,6 @@ namespace WebApplication.Pages.Metrics
                 }
             }
 
-            // Reset timers
-            this.oldStamp = newStamp;
-            this.newStamp = DateTime.Now.ToUniversalTime();
-
             exceptionSorted = exceptionTracker.ToList();
             exceptionSorted.Sort((pair1, pair2) => pair1.Value.CompareTo(pair2.Value));
 

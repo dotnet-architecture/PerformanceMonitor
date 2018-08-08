@@ -22,7 +22,6 @@ namespace WebApplication.Pages.Metrics
         public DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime();
         public DateTime newStamp = DateTime.Now.ToUniversalTime();
 
-        public String dateRange;
         public String oldStampString;
         public String newStampString;
 
@@ -57,14 +56,8 @@ namespace WebApplication.Pages.Metrics
             this.timeAccounted += mem_addOn.Count;
             this.avgMem = totalMem / (double)timeAccounted;
 
-            dateRange = FetchDataService.convertDateTime(oldStamp) + "&end=" + FetchDataService.convertDateTime(newStamp);
             oldStampString = FetchDataService.convertDateTime(oldStamp);
             newStampString = FetchDataService.convertDateTime(newStamp);
-            Console.WriteLine("test" + dateRange);
-
-            // Reset timers
-            oldStamp = newStamp;
-            newStamp = DateTime.Now.ToUniversalTime();
         }
 
         /*

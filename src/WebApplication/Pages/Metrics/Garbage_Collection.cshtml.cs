@@ -29,10 +29,6 @@ namespace WebApplication.Pages.Metrics
             }
 
             totalGC = gc.Count;
-
-            // Reset timers
-            this.oldStamp = newStamp;
-            this.newStamp = DateTime.Now.ToUniversalTime();
         }
     }
 }
