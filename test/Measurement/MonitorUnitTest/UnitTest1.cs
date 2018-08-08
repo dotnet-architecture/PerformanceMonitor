@@ -8,19 +8,11 @@ namespace MonitorUnitTest
         [Fact]
         public void SamplingTest()  // makes sure # of samples falls within expected range
         {
-            int send = Program.getSendRate();
-            int sample = Program.getSampleRate();
-            int ratio = send / sample;
-            int per;
-            if (ratio - 500 / sample < 0)
-            {
-                per = ratio;
-            } else
-            {
-                per = 500 / sample;
-            }
+            double send = (double)Program.getSendRate();
+            double sample = (double)Program.getSampleRate();
+            double ratio = send / sample;
             int ans = Program.UnitTest1();
-            Assert.True(ans >= (ratio - per - per/2) && ans <= (ratio - per + per/2));
+            Assert.True(ans >= (ratio - ratio / 4) && ans <= (ratio + ratio / 4));
         }
         
         [Fact]
