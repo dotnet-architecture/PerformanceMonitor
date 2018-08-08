@@ -21,7 +21,7 @@ namespace WebApplication.Pages.Metrics
         public Dictionary<string, int> exceptionTracker = new Dictionary<string, int>();
         public List<KeyValuePair<string, int>> exceptionSorted = new List<KeyValuePair<string, int>>();
 
-        public String message = "Enter the number of top Exceptions you would like to see.";
+        public String message = "Showing top 5 exceptions. Enter the number of top exceptions you would like to see.";
 
         [Required]
         [BindProperty]
@@ -60,7 +60,7 @@ namespace WebApplication.Pages.Metrics
         }
         public async Task OnPostAsync(String app, String pro)
         {
-            if (userReqNum - 1 <= exceptionSorted.Count)
+            if (userReqNum <= exceptionTracker.Count)
             {
                 message = "Currently showing top " + userReqNum + " exceptions.";
             } else
