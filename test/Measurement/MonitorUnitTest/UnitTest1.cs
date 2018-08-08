@@ -6,7 +6,7 @@ namespace MonitorUnitTest
     public class UnitTest1
     {
         [Fact]
-        public void Test1()
+        public void SamplingTest()  // makes sure # of samples falls within expected range
         {
             int send = Program.getSendRate();
             int sample = Program.getSampleRate();
@@ -24,7 +24,7 @@ namespace MonitorUnitTest
         }
         
         [Fact]
-        public void Test2()
+        public void FrequencyTest()  // makes sure requests are sent as often as expected
         {
             int send = Program.getSendRate();
             double ans = Program.UnitTest2();

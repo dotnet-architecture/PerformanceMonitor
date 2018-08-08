@@ -64,7 +64,7 @@ namespace MonitorTest
         }
         public static int UnitTest1() // makes sure expected number of samples are taken
         {
-            monitor.Record();
+            //monitor.Record();
             DateTime timer = DateTime.Now;
             while (DateTime.Now.Subtract(timer).TotalMilliseconds <= monitor.sendRate * 4) ;
             timer = DateTime.Now;
