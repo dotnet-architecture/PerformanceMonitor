@@ -277,8 +277,9 @@
             <tr>
                 @if (c != null)
                 {
-                <td>@c.usage.ToString("0.0000")</td>
-                } else
+                    <td>@c.usage.ToString("0.0000")</td>
+                }
+                else
                 {
                     <td></td>
                 }
@@ -286,18 +287,19 @@
                 @if (m != null)
                 {
                     <td>@((m.usage / 1000000.0).ToString("0.0000"))</td>
-                } else
+                }
+                else
                 {
                     <td></td>
                 }
 
                 @if (c != null)
                 {
-                <td>@c.timestamp.ToLongTimeString() @c.timestamp.ToShortDateString()</td>
+                    <td>@c.timestamp.ToLongTimeString() @c.timestamp.ToShortDateString()</td>
                 }
                 @if (c == null && m != null)
                 {
-                <td>@m.timestamp.ToLongTimeString() @m.timestamp.ToShortDateString()</td>
+                    <td>@m.timestamp.ToLongTimeString() @m.timestamp.ToShortDateString()</td>
                 }
             </tr>
                 }
