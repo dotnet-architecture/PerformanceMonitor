@@ -55,7 +55,7 @@ namespace DataTransfer
          * VARIABLE DECLARATION BLOCK
          */
 
-        // by default, all metric tracking enabled
+        // by default, no metric tracking enabled outside of CPU and mem
         private static int CPUEnabled = 1;
         private static int MemEnabled = 1;
         private static int ContentionEnabled = 0;
@@ -108,6 +108,7 @@ namespace DataTransfer
         
         // creates an HTTP client so that server requests can be made
         private static HttpClient client = new HttpClient();
+
         // time object used to check if data should be transmitted
         Stopwatch timer = new Stopwatch();
         // tracks duration of HTTP requests to adjust for delays
@@ -159,7 +160,7 @@ namespace DataTransfer
         public void Record()  // sets timer that calls Collect every five seconds
         {
             // sets base address for HTTP requests - in local testing, this may need to be changed periodically
-            client.BaseAddress = new Uri("http://localhost:54022/");
+            client.BaseAddress = new Uri("http://10.83.46.226:54022/");
 
             // assign all properties of the current process to the Session class instance
             instance.process = (this.process);
@@ -175,6 +176,7 @@ namespace DataTransfer
                 TraceEvents();
             });
 
+            // begins loop that samples CPU/mem and issues HTTP requests in separate task
             Task.Factory.StartNew(async () =>
             {
                 timer.Start();
@@ -189,7 +191,7 @@ namespace DataTransfer
                         FetchMem();
                     }
 
-                    // if five seconds have passed since HTTP request was made
+                    // if specified time has passed since HTTP request was made
                     if (timer.ElapsedMilliseconds >= sendRate)
                     {
                         timer.Restart();
@@ -207,6 +209,7 @@ namespace DataTransfer
                             list.gc = GCVals;
                             list.jit = JitVals;
 
+                            // creates new pointers for metric value collections
                             CPUVals = new List<CPU_Usage>();
                             MemVals = new List<Mem_Usage>();
                             ExceptionVals = new List<Exceptions>();
@@ -216,6 +219,7 @@ namespace DataTransfer
                             JitVals = new List<Jit>();
                         }
 
+                        // starts measurement of HTTP request duration for adjustment to task delay
                         duration.Start();
                         hold = 1;
 
@@ -239,7 +243,7 @@ namespace DataTransfer
                             catch { }
                         }
                         catch { }
-
+                        
                         if (sampleRate < duration.ElapsedMilliseconds)
                         {
                             duration.Reset();
