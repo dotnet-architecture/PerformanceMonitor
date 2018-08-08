@@ -26,10 +26,6 @@ namespace WebApplication.Pages.Metrics
             }
 
             totalJit = jit.Count; 
-
-            // Reset timers
-            this.oldStamp = newStamp;
-            this.newStamp = DateTime.Now.ToUniversalTime();
         }
     }
 }

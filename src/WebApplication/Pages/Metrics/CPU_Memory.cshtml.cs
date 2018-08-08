@@ -12,11 +12,7 @@ namespace WebApplication.Pages.Metrics
     {
         public List<CPU_Usage> cpu { get; set; } = new List<CPU_Usage>();
         public List<Mem_Usage> mem { get; set; } = new List<Mem_Usage>();
-
-        public List<double> cpuUsage { get; set; } = new List<double>();
-        public List<double> cpuTime { get; set; } = new List<double>();
-        public List<double> memUsage { get; set; } = new List<double>();
-
+      
         public double avgCPU;
         public double avgMem; 
         public int timeAccounted; // Total time that is accounted for in the average CPU. Used to update to new avgCPU
@@ -26,7 +22,6 @@ namespace WebApplication.Pages.Metrics
         public DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime();
         public DateTime newStamp = DateTime.Now.ToUniversalTime();
 
-        public String dateRange;
         public String oldStampString;
         public String newStampString;
 
@@ -61,47 +56,8 @@ namespace WebApplication.Pages.Metrics
             this.timeAccounted += mem_addOn.Count;
             this.avgMem = totalMem / (double)timeAccounted;
 
-            getCPUUsage();
-            getCPUTimeStamps(); 
-            getMemUsage();
-
-            dateRange = FetchDataService.convertDateTime(oldStamp) + "&end=" + FetchDataService.convertDateTime(newStamp);
             oldStampString = FetchDataService.convertDateTime(oldStamp);
             newStampString = FetchDataService.convertDateTime(newStamp);
-            Console.WriteLine("test" + dateRange);
-
-            // Reset timers
-            oldStamp = newStamp;
-            newStamp = DateTime.Now.ToUniversalTime();
-        }
-
-        // Returns cpu usage list as a double and reversed
-        public void getCPUUsage()
-        {
-            for (int i = cpu.Count - 1; i >= 0; i--)
-            {
-                cpuUsage.Add(cpu[i].usage);         
-            }
-        }
-
-        public void getMemUsage()
-        {
-            for (int i = mem.Count - 1; i >= 0; i--)
-            {
-                memUsage.Add(mem[i].usage/1000000.0);
-            }
-        }
-
-        // Returns cpu time stamp list as increasing integers for now
-        public void getCPUTimeStamps()
-        {
-            for (int i = 0; i < cpu.Count; i++)
-            {
-                DateTime origin = DateTime.UnixEpoch;
-                Double m = cpu[i].timestamp.Subtract(origin).TotalMilliseconds; 
-                cpuTime.Add(m);
-            }
-
         }
 
         /*
