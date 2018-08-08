@@ -97,6 +97,7 @@ namespace DataTransfer
         // fetching properties unique to current data collection session
         private static Process myProcess = Process.GetCurrentProcess();
         private static String myOS = Environment.OSVersion.ToString();
+        private static int processorTotal = Environment.ProcessorCount;
         private static Session instance = new Session();
 
         // variable used to detect data sending for testing purposes
@@ -115,8 +116,6 @@ namespace DataTransfer
         Stopwatch duration = new Stopwatch();
 
         // CPU block:
-        // fetches the processor count for the machine for total CPU calculation
-        private static int processorTotal = Environment.ProcessorCount;
         private static double oldTime = 0;
         private static DateTime oldStamp = DateTime.Now;
         private static double newTime = 0;
@@ -159,7 +158,7 @@ namespace DataTransfer
          */
         public void Record()  // sets timer that calls Collect every five seconds
         {
-            // sets base address for HTTP requests - in local testing, this may need to be changed periodically
+            // sets base address for HTTP requests - won't be hard-coded in future
             client.BaseAddress = new Uri("http://10.83.46.226:54022/");
 
             // assign all properties of the current process to the Session class instance

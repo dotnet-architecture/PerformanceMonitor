@@ -4,7 +4,6 @@ The Performance Monitor application allows .NET Core 2.1 developers to track app
 ### Table of Contents
 * Architecture Overview
 * Monitor Your Application
-* View Application Performance
 
 
 
@@ -87,7 +86,3 @@ If we were to additionally create two new processes - "Process3" and "Process4",
 ![New Application Diagram](Applications.png)
 
 Each process can be viewed individually, but they will be organized under whatever application they belong to. This allows an application with multiple, distinct processes to be easily tracked as a cohesive unit.
-
-
-
-## View Application Performance
