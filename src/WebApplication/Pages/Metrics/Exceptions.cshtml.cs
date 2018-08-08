@@ -67,7 +67,6 @@ namespace WebApplication.Pages.Metrics
             {
                 message = "Do not have " + userReqNum + " exceptions. Showing all exceptions seen so far.";
             }
-            await OnGet();
         }
     }
 }
