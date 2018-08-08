@@ -17,7 +17,9 @@
     <p>Total Http Requests: @Model.totalHttpRequest</p>
     <p>Average Duration of Http Requests: @((Model.avgDuration / 1000).ToString("0.0000")) seconds</p>
 
-    <p>Log of Http Requests</p>
+    <button class="btn btn-default" onClick="window.location.reload()">Refresh Data</button>
+
+    <p>Table of Http Requests</p>
     <table class="table table-hover table-bordered">
         <thead>
             <tr>
@@ -34,26 +36,24 @@
                 @for (int i = 0; i < Model.http.Count; i++)
                 {
                     Client_Http_Request h = Model.http.ElementAt<Client_Http_Request>(i);
-            <tr>
-
-                @if (h.EndTimestamp.Year != 1 && h.StartTimestamp.Year != 1)
-                {
-                    <td>@h.Method</td>
-                    <td>@h.Path</td>
-                    <td>@h.StartTimestamp.ToLongTimeString() @h.StartTimestamp.ToShortDateString()</td>
-                    <td>@h.EndTimestamp.ToLongTimeString() @h.EndTimestamp.ToShortDateString()</td>
-                    <td>@(h.Duration / 1000)</td>
-                }
-                else
-                {
-                    <td>@h.Method</td>
-                    <td>@h.Path</td>
-                    <td>@h.StartTimestamp.ToLongTimeString() @h.StartTimestamp.ToShortDateString()</td>
-                    <td></td>
-                    <td></td>
-                }
-            </tr>
-
+                    <tr>
+                        @if (h.EndTimestamp != null)
+                        {
+                            <td>@h.Method</td>
+                            <td>@h.Path</td>
+                            <td>@h.StartTimestamp.ToLongTimeString() @h.StartTimestamp.ToShortDateString()</td>
+                            <td>@h.EndTimestamp.ToLongTimeString() @h.EndTimestamp.ToShortDateString()</td>
+                            <td>@(h.Duration / 1000)</td>
+                        }
+                        else
+                        {
+                            <td>@h.Method</td>
+                            <td>@h.Path</td>
+                            <td>@h.StartTimestamp.ToLongTimeString() @h.StartTimestamp.ToShortDateString()</td>
+                            <td></td>
+                            <td></td>
+                        }
+                    </tr>
                 }
             }
             else

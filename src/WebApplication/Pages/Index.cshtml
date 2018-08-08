@@ -12,22 +12,22 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
-<div class="main">
-    <font size="50">.NET Performance Monitor</font>
-    <p>Check your app's performance by navigating the sidebar.</p>
+<body onload="updateApp()">
+    <div class="main">
+        <font size="50" style="font-family:Open Sans">.NET Performance Monitor</font>
+        <br /><p>Check your app's performance by navigating the sidebar.</p>
 
-    @Model.message
-    <form name="classic" method="post">
-        <button type="button" class="btn btn-default" onClick="updateApp()">Update Apps</button>
-        <select name="app" size="10" onChange="updatePro(this.selectedIndex)" style="width: 200px" asp-for="@Model.app"></select>
-        <select name="pro" size="10" style="width: 150px" asp-for="@Model.pro"></select>
-        <button class="btn btn-default">Examine</button>
-    </form>
+        <br />@Model.message
+        <form name="userSessionInput" method="post">
+            <select name="app" size="10" onChange="updatePro(this.selectedIndex)" style="width: 150px"></select>
+            <select name="pro" size="10" style="width: 150px"></select>
+            <button class="btn btn-default">Examine</button>
+        </form>
 
-    <script type="text/javascript">
+        <script type="text/javascript">
 
-        var appList = document.classic.app
-        var proList = document.classic.pro
+        var appList = document.userSessionInput.app
+        var proList = document.userSessionInput.pro
 
         var pro = new Array()
         var app = new Array()
@@ -51,5 +51,6 @@
             for (i = 0; i < pro[selectedApp].length; i++)
                 proList.options[proList.options.length] = new Option(pro[selectedApp][i], pro[selectedApp][i])
         }
-    </script>
-</div>
+        </script>
+    </div>
+</body>
