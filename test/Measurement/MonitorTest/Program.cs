@@ -32,9 +32,10 @@ namespace MonitorTest
         {
             monitor.Record();
             DateTime timer = DateTime.Now;
+            // wait for system to reach steady state
             while (DateTime.Now.Subtract(timer).TotalSeconds <= 20) ;
             timer = DateTime.Now;
-            double total = 0.0;
+            // spin until a request is finished sending
             while (DateTime.Now.Subtract(timer).TotalMilliseconds <= monitor.sendRate * 2)
             {
                 if (monitor.getHold() == 1)
@@ -44,15 +45,17 @@ namespace MonitorTest
                 }
             }
             DateTime newTimer = DateTime.Now;
+            // holdCount keeps track of the number of requests that have been sent while monitoring
             int holdCount = 0;
-            Stopwatch timer2 = Stopwatch.StartNew();
+            double total = 0.0;
+            timer = DateTime.Now;
             while (DateTime.Now.Subtract(newTimer).TotalMilliseconds <= monitor.sendRate * 4)
             {
                 if (monitor.getHold() == 1)
                 {
-                    total += timer2.ElapsedMilliseconds;
+                    total += DateTime.Now.Subtract(timer).TotalMilliseconds;
                     holdCount++;
-                    timer2.Restart();
+                    timer = DateTime.Now;
                     while (monitor.getHold() == 1) ;
                 }
             }
@@ -61,7 +64,7 @@ namespace MonitorTest
         }
         public static int UnitTest1() // makes sure expected number of samples are taken
         {
-            //monitor.Record();
+            monitor.Record();
             DateTime timer = DateTime.Now;
             while (DateTime.Now.Subtract(timer).TotalMilliseconds <= monitor.sendRate * 4) ;
             timer = DateTime.Now;

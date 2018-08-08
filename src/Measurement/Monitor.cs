@@ -22,10 +22,10 @@ namespace DataTransfer
         {
             this.process = "MyProcess";
             this.app = "UnnamedApp";
-            this.sampleRate = 1000;
-            this.sendRate = 5000;
+            this.sampleRate = 200;
+            this.sendRate = 500;
         }
-        public Monitor(String process = "MyProcess", String app = "UnnamedApp", int sampleRate = 1000, int sendRate = 5000)
+        public Monitor(String process = "MyProcess", String app = "UnnamedApp", int sampleRate = 200, int sendRate = 500)
         {
             this.process = process;
             this.app = app;
@@ -33,7 +33,7 @@ namespace DataTransfer
             this.sendRate = sendRate;
         }
 
-        public Monitor(int sampleRate = 1000, int sendRate = 5000)
+        public Monitor(int sampleRate = 200, int sendRate = 500)
         {
             this.process = "MyProcess";
             this.app = "UnnamedApp";
@@ -41,7 +41,7 @@ namespace DataTransfer
             this.sendRate = sendRate;
         }
 
-        public Monitor(String process = "MyProcess", int sampleRate = 1000, int sendRate = 5000)
+        public Monitor(String process = "MyProcess", int sampleRate = 200, int sendRate = 500)
         {
             this.process = process;
             this.app = "UnnamedApp";
@@ -169,11 +169,14 @@ namespace DataTransfer
             instance.os = myOS;
             instance.application = app;
 
-            // starts event collection via TraceEvent in separate task
-            Task.Factory.StartNew(() =>
+            // starts event collection via TraceEvent in separate task if necessary
+            if (ContentionEnabled == 1 | ExceptionEnabled == 1 | GCEnabled == 1 | HttpEnabled == 1 | JitEnabled == 1)
             {
-                TraceEvents();
-            });
+                Task.Factory.StartNew(() =>
+                {
+                    TraceEvents();
+                });
+            }
 
             // begins loop that samples CPU/mem and issues HTTP requests in separate task
             Task.Factory.StartNew(async () =>
@@ -227,8 +230,6 @@ namespace DataTransfer
                         {
                             output = JsonConvert.SerializeObject(list);
 
-                            hold = 0;
-
                             // escapes string so that JSON object is interpreted as a single string
                             output = JsonConvert.ToString(output);
 
@@ -242,7 +243,9 @@ namespace DataTransfer
                             catch { }
                         }
                         catch { }
-                        
+
+                        hold = 0;
+
                         if (sampleRate < duration.ElapsedMilliseconds)
                         {
                             duration.Reset();

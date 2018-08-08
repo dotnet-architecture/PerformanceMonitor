@@ -7,8 +7,9 @@ namespace ExceptionApp
     {
         static void Main(string[] args)
         {
-            Monitor monitor = new Monitor("New Process", "ExceptionApp", 200, 500);
+            Monitor monitor = new Monitor("Process1", "ExceptionApp");
             monitor.EnableException();
+            monitor.DisableCPU();
             monitor.Record();
             Console.WriteLine("Goodbye World!");
             Exceptions();
