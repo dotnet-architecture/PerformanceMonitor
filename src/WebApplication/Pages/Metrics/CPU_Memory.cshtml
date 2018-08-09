@@ -17,12 +17,12 @@
 
     <div id="cpu"></div>
     <script>
-        var startCPU = `@Html.Encode(Model.oldStampString)`;
-        var endCPU = `@Html.Encode(Model.newStampString)`;
+        var startCPU = `@Html.Encode(FetchDataService.convertDateTime(Model.oldStamp))`;
+        var endCPU = `@Html.Encode(FetchDataService.convertDateTime(Model.newStamp))`;
         const idCPU = `@Html.Encode(IndexModel.userSession.Id)`;
 
         function getCPUData(start, end) {
-            const url = `http://10.83.46.226:54022/api/v1/CPU/Daterange?start=${start}&end=${end}&id=${idCPU}`;
+            const url = `http://localhost:54022/api/v1/CPU/Daterange?start=${start}&end=${end}&id=${idCPU}`;
             return fetch(url, {
                 method: 'GET',
                 mode: 'cors',
@@ -133,8 +133,8 @@
 
     <div id="mem"></div>
     <script>
-        var startMem = `@Html.Encode(Model.oldStampString)`;
-        var endMem = `@Html.Encode(Model.newStampString)`;
+        var startMem = `@Html.Encode(FetchDataService.convertDateTime(Model.oldStamp))`;
+        var endMem = `@Html.Encode(FetchDataService.convertDateTime(Model.newStamp))`;
         const idMem = `@Html.Encode(IndexModel.userSession.Id)`;
         var cnt = 0;
 
