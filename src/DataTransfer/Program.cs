@@ -15,11 +15,11 @@ namespace DataTransfer
     {
         public static void Main(string[] args)
         {
-            //Monitor monitor = new Monitor();
-            //monitor.EnableHttp();
+            Monitor monitor = new Monitor();
+            monitor.EnableHttp();
             //monitor.DisableCPU();
             //monitor.DisableMem();
-            //monitor.Record();
+            monitor.Record();
             CreateWebHostBuilder(args).Build().Run();
         }
 

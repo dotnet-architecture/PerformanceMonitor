@@ -120,7 +120,10 @@ namespace DataTransfer
 
             modelBuilder.Entity<Http_Request>(entity =>
             {
-                entity.HasKey(e => e.timestamp);
+                entity.HasKey(e => e.id);
+                entity.Property(e => e.id).HasColumnName("id");
+
+
 
                 entity.ToTable("Http_Request");
 
@@ -130,7 +133,7 @@ namespace DataTransfer
 
                 entity.Property(e => e.AppId).HasColumnName("appId");
 
-                entity.Property(e => e.id).HasColumnName("id");
+                entity.Property(e => e.activityID).HasColumnName("activityID");
 
                 entity.Property(e => e.method)
                     .HasColumnName("method")
