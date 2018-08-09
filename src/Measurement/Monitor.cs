@@ -228,7 +228,6 @@ namespace DataTransfer
                         try
                         {
                             output = JsonConvert.SerializeObject(list);
-                            Console.WriteLine(output);
 
                             // escapes string so that JSON object is interpreted as a single string
                             output = JsonConvert.ToString(output);
@@ -246,6 +245,8 @@ namespace DataTransfer
 
                         hold = 0;
 
+                        // if HTTP request took longer than sampling rate, skip delay to minizime data loss
+                        // else, delay for difference between desired sampling rate and duration of request
                         if (sampleRate < duration.ElapsedMilliseconds)
                         {
                             duration.Reset();
@@ -254,7 +255,7 @@ namespace DataTransfer
                             await Task.Delay(sampleRate - (int)duration.ElapsedMilliseconds);
                             duration.Reset();
                         }
-                    } else
+                    } else           // delay for the amount of time between samples if request wasn't sent
                     {
                         await Task.Delay(sampleRate);
                     }
@@ -264,6 +265,7 @@ namespace DataTransfer
 
         private void TraceEvents()
         {
+            // will attempt to create a session named "MySession"
             using (var session = new TraceEventSession("MySession"))
             {
                 // set up Ctrl-C to stop the session
@@ -557,6 +559,8 @@ namespace DataTransfer
         {
             if (MemEnabled == 1)
             {
+                // clear the process' cached information
+                myProcess.Refresh();
                 Mem_Usage mem = new Mem_Usage();
                 mem.usage = myProcess.WorkingSet64;
                 mem.timestamp = DateTime.Now;
