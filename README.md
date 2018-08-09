@@ -2,8 +2,20 @@
 The Performance Monitor application allows .NET Core 2.1 developers to track application performance metrics via a web application. The application consists of three major components: performance data collection, data storage and handling, and data presentation. 
 
 ### Table of Contents
+* What is the Performance Monitor?
 * Architecture Overview
 * Monitor Your Application
+
+
+
+## What is the Performance Monitor?
+The .NET Core Performance Monitor is a tool designed to help .NET Core application developers better analyze performance across all .NET-supported platforms. It is designed to not only run on multiple platforms, but also to be capable of analyzing performance of any type of .NET application from console apps to web apps. Most notably, this tool is designed to support detailed and holistic performance analysis of complex applications with multiple microservices as well as simple, single-process applications.
+
+The Performance Monitor itself consists of a web application that can be connected to a user's application by using an installable class library. In a few simple steps, a user can view their application's performance data on the web application in real time, with data tables and live-updating graphs that display information relevant to any developer.
+
+Coherent application monitoring can be performed by grouping distinct application processes within the same logical application while utilizing the class library. These processes can be distinct microservices that run in parallel within a single application, or different executable code files that can be logically grouped together. On the user interface, a developer can see their monitored processes grouped together by application for ease of access.
+
+The data a developer chooses to view for their application is easily customizable and comprehensive. The Performance Monitor allows tracking of CPU usage, process memory usage, incoming Kestrel HTTP requests, exceptions, garbage collection, thread contention, and JIT events - as well as a number of performance insights inferred from these events. The tracking of each of these performance metrics can be easily enabled or disabled for each process, allowing a developer to record only the data that's relevant to their application.
 
 
 
