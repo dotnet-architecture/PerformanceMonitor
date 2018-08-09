@@ -109,19 +109,37 @@
                         var xaxis = values[0][1];
                         var yaxis = values[0][0];
 
-                        Plotly.extendTraces('cpu', {
+                        var update = {
                             x: [xaxis],
                             y: [yaxis]
-                        }, [0]);
-
-                        cnt++;
-                        if (cnt > 50) {
-                            Plotly.relayout('cpu', {
-                                xaxis: {
-                                    range: [cnt - 50, cnt]
-                                }
-                            });
                         }
+
+                        var oldTime = time.setMinutes(time.getMinutes() - 1);
+                        var futureTime = time.setMinutes(time.getMinutes() + 1);
+
+                        var minuteView = {
+                            xaxis: {
+                                type: 'date',
+                                range: [olderTime, futureTime]
+                            }
+                        };
+
+                        Plotly.relayout('cpu', minuteView);
+                        Plotly.extendTrace('cpu', update, [0]);
+
+                        //Plotly.extendTraces('cpu', {
+                        //    x: [xaxis],
+                        //    y: [yaxis]
+                        //}, [0]);
+
+                        //cnt++;
+                        //if (cnt > 500) {
+                        //    Plotly.relayout('cpu', {
+                        //        xaxis: {
+                        //            range: [cnt - 500, cnt]
+                        //        }
+                        //    });
+                        //}
                     });
             }, @IndexModel.userSession.sendRate*1.1));
 
