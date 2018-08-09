@@ -1,28 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using WebApplication.Services;
-using WebApplication.Interfaces;
 using System.Net.Http;
 using WebApplication.Pages;
-using DataTransfer; 
+using DataTransfer;
+using Newtonsoft.Json;
 
 namespace WebApplication
 {
     public class FetchDataService
     {
+        // Generic method that takes timestamps and makes a call to the API based off of the class T
         public static async Task<List<T>> getUpdatedData<T>(DateTime oldStamp, DateTime newStamp)
         {
-            IMetricService<T> _metricService = new MetricService<T>();
-
+            // Creating HttpClient that will call the web api
             HttpClient client = new HttpClient();
+            // Constructing url that will be called, the domain is hardcoded for now, will be more variable in the future
             client.BaseAddress = new Uri("http://localhost:54022/");
 
+            // Constructing string that will pass timestamps to web api controllers
             String dateRange = convertDateTime(oldStamp) + "&end=" + convertDateTime(newStamp);
+            // Passing session information to the web api controllers
             String sessionId = "&id=" + IndexModel.userSession.Id.ToString(); 
 
+            // Specifying which controller to call upon based off the object of T
             String type = "";
-
             if (typeof(T).ToString().Equals("DataTransfer.CPU_Usage"))
             {
                 type = "CPU";
@@ -53,40 +55,41 @@ namespace WebApplication
             }
             else
             {
-                type = "error"; //should never hit this 
+                type = "error"; // Should never hit this because T can only take on values defined above
             }
 
+            // Stringing all components of http request together and actually calling web api
             HttpResponseMessage response = await client.GetAsync("api/v1/" + 
                 type + 
                 "/Daterange?start=" + 
                 dateRange +
                 sessionId);
-            _metricService.updateUsingHttpResponse(response);
 
-            List<T> addOn = new List<T>();
-
-            if (response.IsSuccessStatusCode)
+            List<T> data = new List<T>();
+            if (response.IsSuccessStatusCode) // If the response is successfull, update data
             {
-                addOn = await _metricService.getServiceUsage();
+                var result = response.Content.ReadAsStringAsync().Result;
+                data = JsonConvert.DeserializeObject<List<T>>(result);
             }
 
-            return addOn;
+            return data; 
         }
 
+        // getUpdatedData method gets information for metrics based off of a daterange whereas the session 
+        // RETURNALL controller doesn't require a daterange, so getSessionData is separated from getUpdatedData
         public static async Task<List<Session>> getSessionData()
         {
-            IMetricService<Session> _metricService = new MetricService<Session>();
-
+            // Creating HttpClient that will call the web api
             HttpClient client = new HttpClient();
+            // Constructing url that will be called, the domain is hardcoded for now, will be more variable in the future
             client.BaseAddress = new Uri("http://localhost:54022/");
             HttpResponseMessage response = await client.GetAsync("RETURNALL");
-            _metricService.updateUsingHttpResponse(response);
 
             List<Session> sessionData = new List<Session>();
-
-            if (response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode) // If the response is successfull, update sessionData
             {
-                sessionData = await _metricService.getServiceUsage();
+                var result = response.Content.ReadAsStringAsync().Result;
+                sessionData = JsonConvert.DeserializeObject<List<Session>>(result);
             }
 
             return sessionData; 
