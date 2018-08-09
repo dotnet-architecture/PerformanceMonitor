@@ -21,8 +21,6 @@ namespace WebApplication.Pages.Metrics
         public Dictionary<string, int> exceptionTracker = new Dictionary<string, int>();
         public List<KeyValuePair<string, int>> exceptionSorted = new List<KeyValuePair<string, int>>();
 
-        public String message = "Showing top 5 exceptions. Enter the number of top exceptions you would like to see.";
-
         [Required]
         [BindProperty]
         [Display(Name = "userReqNum")]
@@ -53,18 +51,6 @@ namespace WebApplication.Pages.Metrics
             exceptionSorted.Reverse();
 
             totalExceptions = exceptions.Count;
-        }
-        public async Task OnPostAsync()
-        {
-            await OnGet(); // Refreshs graph. Need to fix.
-            
-            if (userReqNum <= exceptionSorted.Count)
-            {
-                message = "Currently showing top " + userReqNum + " exceptions.";
-            } else
-            {
-                message = "Do not have " + userReqNum + " exceptions. Showing all exceptions seen so far.";
-            }
         }
     }
 }
