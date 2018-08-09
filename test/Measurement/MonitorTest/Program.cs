@@ -7,7 +7,7 @@ namespace MonitorTest
 {
     public class Program
     {
-        static DataTransfer.Monitor monitor = new DataTransfer.Monitor("New Process", "App10", 1000, 5000);
+        static DataTransfer.Monitor monitor = new DataTransfer.Monitor("Test Process", "Test App", 1000, 5000);
         static void Main(string[] args)
         {
             CPUMemTest();
@@ -41,6 +41,7 @@ namespace MonitorTest
                 if (monitor.getHold() == 1)
                 {
                     while (monitor.getHold() == 1) ;
+                    Console.WriteLine(DateTime.Now.Subtract(timer).TotalMilliseconds);
                     break;
                 }
             }
@@ -57,6 +58,7 @@ namespace MonitorTest
                     holdCount++;
                     timer = DateTime.Now;
                     while (monitor.getHold() == 1) ;
+                    Console.WriteLine(DateTime.Now.Subtract(timer).TotalMilliseconds);
                 }
             }
             double avg = total / holdCount;
@@ -64,7 +66,7 @@ namespace MonitorTest
         }
         public static int UnitTest1() // makes sure expected number of samples are taken
         {
-            //monitor.Record();
+            monitor.Record();
             DateTime timer = DateTime.Now;
             while (DateTime.Now.Subtract(timer).TotalMilliseconds <= monitor.sendRate * 4) ;
             timer = DateTime.Now;
