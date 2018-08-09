@@ -7,10 +7,21 @@ namespace ExceptionApp
     {
         static void Main(string[] args)
         {
-            Monitor monitor = new Monitor("Process1", "ExceptionApp", 200, 500);
-            monitor.EnableException();
+            // initialize new Monitor instance
+            Monitor monitor = new Monitor("Process1", "ExceptionApp");
+
+            // enable tracking of exceptions by Monitor instance
+            //monitor.EnableException();
+
+            // disable tracking of CPU
+            //monitor.DisableCPU();
+
+            // begin recording metrics
             monitor.Record();
+
             Console.WriteLine("Goodbye World!");
+
+            // call function that will randomly throw exceptions each second
             Exceptions();
         }
         public static void Exceptions()

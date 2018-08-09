@@ -2,8 +2,20 @@
 The Performance Monitor application allows .NET Core 2.1 developers to track application performance metrics via a web application. The application consists of three major components: performance data collection, data storage and handling, and data presentation. 
 
 ### Table of Contents
+* What is the Performance Monitor?
 * Architecture Overview
 * Monitor Your Application
+
+
+
+## What is the Performance Monitor?
+The .NET Core Performance Monitor is a tool designed to help .NET Core application developers better analyze performance across all .NET-supported platforms. It is designed to not only run on multiple platforms, but also to be capable of analyzing performance of any type of .NET application from console apps to web apps. Most notably, this tool is designed to support detailed and holistic performance analysis of complex applications with multiple microservices as well as simple, single-process applications.
+
+The Performance Monitor itself consists of a web application that can be connected to a user's application by using an installable class library. In a few simple steps, a user can view their application's performance data on the web application in real time, with data tables and live-updating graphs that display information relevant to any developer.
+
+Coherent application monitoring can be performed by grouping distinct application processes within the same logical application while utilizing the class library. These processes can be distinct microservices that run in parallel within a single application, or different executable code files that can be logically grouped together. On the user interface, a developer can see their monitored processes grouped together by application for ease of access.
+
+The data a developer chooses to view for their application is easily customizable and comprehensive. The Performance Monitor allows tracking of CPU usage, process memory usage, incoming Kestrel HTTP requests, exceptions, garbage collection, thread contention, and JIT events - as well as a number of performance insights inferred from these events. The tracking of each of these performance metrics can be easily enabled or disabled for each process, allowing a developer to record only the data that's relevant to their application.
 
 
 
@@ -16,7 +28,7 @@ Data collection is performed via a class library that can be utilized in the use
 
 This will trigger performance metric tracking that is done on the user's machine through two channels. The first of these channels is the _System.Diagnostics_ namespace, which is used to fetch information unique to the current process. This data includes CPU and memory usage, which is sampled at the specified or default rate.
 
-The other channel for data collection is the TraceEvent library (repo found here: https://github.com/Microsoft/perfview/tree/master/src/TraceEvent). Using TraceEvent, the monitor can monitor certain exception, GC, contention, JIT, and HTTP request events (request events will only be triggered by interaction with ASP.NET Core applications). Handling events via TraceEvent is not done with a controlled sampling rate, since event responses are triggered live as events are discovered by the event parsers.
+The other channel for data collection is the TraceEvent library (repo found here: https://github.com/Microsoft/perfview/tree/master/src/TraceEvent). Using TraceEvent, the monitor can monitor certain exception, GC, contention, JIT, and incoming Kestrel HTTP request events. Handling events via TraceEvent is not done with a controlled sampling rate, since event responses are triggered live as events are discovered by the event parsers.
 
 ### Data Storage
 Data is stored in a SQL database running on Docker, and data is moved throughout the system via HTTP requests that are handled using Entity Framework. More information about data storage and handling can be found in the programmer's guide within the repository.
@@ -30,28 +42,24 @@ Navigating the metric pages is largely self-explanatory. The CPU and Memory grap
 Application health monitoring is performed by a C# class library function that simply needs to be included in the beginning of the user's application code. The function will trigger application performance reading on the user's machine, and periodically send packets of data to be presented on the web application. To utilize this service, include the PerfMonitor library and write the following at the start of the tracked application's Main method or equivalent:
 
 ```cs
+// Monitor class instantiation option 1:
 Monitor monitor = new Monitor(String process_name, String application_name, int sampling_rate, int transmission_rate);
-// specify desired metrics
-monitor.Record();
-```
 
-or:
-
-```cs
+// instatiation option 2:
 Monitor monitor = new Monitor(String process_name, int sampling_rate, int transmission_rate);
-// specify desired metrics
-monitor.Record();
+
+// instantiation option 3:
+Monitor monitor = new Monitor(int sampling_rate, int transmission_rate);
 ```
 
-or:
+After declaring a new instance of the _Monitor_ class using one of the above constructors, use the following code just beneath your instantiation statement:
 
 ```cs
-Monitor monitor = new Monitor(int sampling_rate, int transmission_rate);
 // specify desired metrics
 monitor.Record();
 ```
 
-By default, only CPU and memory usage are recorded. To enable monitoring of any of the other available events (exceptions, GC, contention, JIT, HTTP requests), simply fill in the commented section above with _monitor.Enable____. For example:
+By default, only CPU and memory usage are recorded. To enable monitoring of any of the other available events (exceptions, GC, contention, JIT, HTTP requests), simply fill in the commented section in the above snippet with _monitor.Enable____. For example:
 
 ```cs
 monitor.EnableGC();  // will enable monitoring of GC events
@@ -63,10 +71,11 @@ All arguments for _Monitor_ class instantiation are optional and a monitor can b
 
 Providing an application name will allow an application with multiple processes to have its processes grouped within the performance monitor's tracking. To do so, simply run performance monitoring for each process simultaneously, with each Monitor instantiation specifying the same application name. Below is an example of having multiple tracked processes within the same application:
 
-Say we have a .NET process that we want to monitor, and it belongs to a multi-process application named "MyApp". We're fine with the default monitoring rates, so we put the following code in our process' Main function:
+Say we have a .NET process that we want to monitor, and it belongs to a multi-process application named "MyApp". We're fine with the default monitoring rates, but we want to track exceptions as well. So, we put the following code in our process' Main function:
 
 ```cs
 Monitor monitor = new Monitor("Process1", "MyApp");
+monitor.EnableException();
 monitor.Record();
 ```
 
@@ -85,4 +94,4 @@ If we were to additionally create two new processes - "Process3" and "Process4",
 
 ![New Application Diagram](Applications.png)
 
-Each process can be viewed individually, but they will be organized under whatever application they belong to. This allows an application with multiple, distinct processes to be easily tracked as a cohesive unit.
+Each process can be viewed individually, but they will be organized under whatever application they belong to. This allows an application with multiple, distinct processes or microservices to be easily tracked as a cohesive unit.
