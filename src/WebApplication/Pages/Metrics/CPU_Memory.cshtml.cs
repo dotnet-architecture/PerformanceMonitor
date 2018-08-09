@@ -59,17 +59,5 @@ namespace WebApplication.Pages.Metrics
             oldStampString = FetchDataService.convertDateTime(oldStamp);
             newStampString = FetchDataService.convertDateTime(newStamp);
         }
-
-        /*
-        // Attempting to use SignalR
-        public void useSignalR(string httpGetRequestEnd)
-        {
-            String url = "http://localhost:58026/api/v1/CPU/Daterange?start=" + httpGetRequestEnd + "/";
-            var hubConnection = new HubConnection(url);
-            IHubProxy cpuHubProxy = hubConnection.CreateHubProxy("CPU");
-            cpuHubProxy.On<CPU_Usage>("UpdateCPU", cpu => Console.WriteLine("cpu update for {0} new price {1}", cpu.usage, cpu.timestamp));
-            await hubConnection.Start();
-        }
-        */
     }
 }
