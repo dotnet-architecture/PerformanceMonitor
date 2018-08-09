@@ -158,7 +158,7 @@ namespace DataTransfer
         public void Record()  // sets timer that calls Collect every five seconds
         {
             // sets base address for HTTP requests - won't be hard-coded in future
-            client.BaseAddress = new Uri("http://localhost:54022/");
+            client.BaseAddress = new Uri("http://10.83.46.226:54022/");
 
             // assign all properties of the current process to the Session class instance
             instance.process = (this.process);
@@ -488,7 +488,7 @@ namespace DataTransfer
                             Http_Request request = new Http_Request();
                             request.type = "Start";
                             request.timestamp = DateTime.Now;
-                            request.id = data.ActivityID;
+                            request.activityID = data.ActivityID;
                             request.App = instance;
                             request.method = data.PayloadString(0);
                             request.path = data.PayloadString(1);
@@ -502,7 +502,7 @@ namespace DataTransfer
                             Http_Request request = new Http_Request();
                             request.type = "Stop";
                             request.timestamp = DateTime.Now;
-                            request.id = data.ActivityID;
+                            request.activityID = data.ActivityID;
                             request.App = instance;
                             lock (lockObject)
                             {
