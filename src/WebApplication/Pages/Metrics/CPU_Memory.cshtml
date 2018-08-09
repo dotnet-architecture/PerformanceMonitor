@@ -22,7 +22,7 @@
         const idCPU = `@Html.Encode(IndexModel.userSession.Id)`;
 
         function getCPUData(start, end) {
-            const url = @WebApplication.Startup.apiDomain + `/api/v1/CPU/Daterange?start=${start}&end=${end}&id=${idCPU}`;
+            const url = `@WebApplication.Startup.apiDomain` + `api/v1/CPU/Daterange?start=${start}&end=${end}&id=${idCPU}`;
             return fetch(url, {
                 method: 'GET',
                 mode: 'cors',
@@ -115,10 +115,10 @@
                         }, [0]);
 
                         cnt++;
-                        if (cnt > 500) {
+                        if (cnt > 50) {
                             Plotly.relayout('cpu', {
                                 xaxis: {
-                                    range: [cnt - 500, cnt]
+                                    range: [cnt - 50, cnt]
                                 }
                             });
                         }
@@ -135,7 +135,7 @@
         var cnt = 0;
 
         function getMemData(start, end) {
-            const url = @WebApplication.Startup.apiDomain + `/api/v1/Memory/Daterange?start=${start}&end=${end}&id=${idMem}`;
+            const url = `@WebApplication.Startup.apiDomain` + `api/v1/Memory/Daterange?start=${start}&end=${end}&id=${idMem}`;
             return fetch(url, {
                 method: 'GET',
                 mode: 'cors',
