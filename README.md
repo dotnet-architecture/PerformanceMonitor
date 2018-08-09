@@ -30,28 +30,24 @@ Navigating the metric pages is largely self-explanatory. The CPU and Memory grap
 Application health monitoring is performed by a C# class library function that simply needs to be included in the beginning of the user's application code. The function will trigger application performance reading on the user's machine, and periodically send packets of data to be presented on the web application. To utilize this service, include the PerfMonitor library and write the following at the start of the tracked application's Main method or equivalent:
 
 ```cs
+// Monitor class instantiation option 1:
 Monitor monitor = new Monitor(String process_name, String application_name, int sampling_rate, int transmission_rate);
-// specify desired metrics
-monitor.Record();
-```
 
-or:
-
-```cs
+// instatiation option 2:
 Monitor monitor = new Monitor(String process_name, int sampling_rate, int transmission_rate);
-// specify desired metrics
-monitor.Record();
+
+// instantiation option 3:
+Monitor monitor = new Monitor(int sampling_rate, int transmission_rate);
 ```
 
-or:
+After declaring a new instance of the _Monitor_ class using one of the above constructors, use the following code just beneath your instantiation statement:
 
 ```cs
-Monitor monitor = new Monitor(int sampling_rate, int transmission_rate);
 // specify desired metrics
 monitor.Record();
 ```
 
-By default, only CPU and memory usage are recorded. To enable monitoring of any of the other available events (exceptions, GC, contention, JIT, HTTP requests), simply fill in the commented section above with _monitor.Enable____. For example:
+By default, only CPU and memory usage are recorded. To enable monitoring of any of the other available events (exceptions, GC, contention, JIT, HTTP requests), simply fill in the commented section in the above snippet with _monitor.Enable____. For example:
 
 ```cs
 monitor.EnableGC();  // will enable monitoring of GC events
@@ -63,10 +59,11 @@ All arguments for _Monitor_ class instantiation are optional and a monitor can b
 
 Providing an application name will allow an application with multiple processes to have its processes grouped within the performance monitor's tracking. To do so, simply run performance monitoring for each process simultaneously, with each Monitor instantiation specifying the same application name. Below is an example of having multiple tracked processes within the same application:
 
-Say we have a .NET process that we want to monitor, and it belongs to a multi-process application named "MyApp". We're fine with the default monitoring rates, so we put the following code in our process' Main function:
+Say we have a .NET process that we want to monitor, and it belongs to a multi-process application named "MyApp". We're fine with the default monitoring rates, but we want to track exceptions as well. So, we put the following code in our process' Main function:
 
 ```cs
 Monitor monitor = new Monitor("Process1", "MyApp");
+monitor.EnableException();
 monitor.Record();
 ```
 
