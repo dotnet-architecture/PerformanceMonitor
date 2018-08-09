@@ -56,8 +56,8 @@ namespace WebApplication.Pages.Metrics
         }
         public async Task OnPostAsync()
         {
-            await OnGet(); 
-
+            await OnGet(); // Refreshs graph. Need to fix.
+            
             if (userReqNum <= exceptionSorted.Count)
             {
                 message = "Currently showing top " + userReqNum + " exceptions.";
