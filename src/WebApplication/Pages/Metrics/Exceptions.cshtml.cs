@@ -54,9 +54,11 @@ namespace WebApplication.Pages.Metrics
 
             totalExceptions = exceptions.Count;
         }
-        public async Task OnPostAsync(String app, String pro)
+        public async Task OnPostAsync()
         {
-            if (userReqNum <= exceptionTracker.Count)
+            await OnGet(); 
+
+            if (userReqNum <= exceptionSorted.Count)
             {
                 message = "Currently showing top " + userReqNum + " exceptions.";
             } else
