@@ -31,13 +31,13 @@ namespace WebApplication.Pages.Metrics
                 if (h.type.Equals("Start"))
                 {
                     Client_Http_Request clientH = new Client_Http_Request(h);
-                    httpTracker[h.id] = clientH;
+                    httpTracker[h.activityID] = clientH;
                     http.Add(clientH);
                 } else if (h.type.Equals("Stop"))
                 {
-                    if (httpTracker.ContainsKey(h.id))
+                    if (httpTracker.ContainsKey(h.activityID))
                     {
-                        Client_Http_Request clientH = httpTracker[h.id];
+                        Client_Http_Request clientH = httpTracker[h.activityID];
                         http.Remove(clientH);
                         clientH.updateEndTimestamp(h.timestamp);
                         http.Add(clientH);

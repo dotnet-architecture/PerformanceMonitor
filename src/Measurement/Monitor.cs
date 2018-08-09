@@ -22,28 +22,27 @@ namespace DataTransfer
         {
             this.process = "MyProcess";
             this.app = "UnnamedApp";
-            this.sampleRate = 200;
-            this.sendRate = 500;
+            this.sampleRate = 500;
+            this.sendRate = 800;
         }
-        public Monitor(String process = "MyProcess", String app = "UnnamedApp", int sampleRate = 200, int sendRate = 500)
+        public Monitor(String process = "MyProcess", String app = "UnnamedApp", int sampleRate = 500, int sendRate = 800)
         {
             this.process = process;
             this.app = app;
             this.sampleRate = sampleRate;
             this.sendRate = sendRate;
         }
-
-        public Monitor(int sampleRate = 200, int sendRate = 500)
+        public Monitor(String process = "MyProcess", int sampleRate = 500, int sendRate = 800)
         {
-            this.process = "MyProcess";
+            this.process = process;
             this.app = "UnnamedApp";
             this.sampleRate = sampleRate;
             this.sendRate = sendRate;
         }
 
-        public Monitor(String process = "MyProcess", int sampleRate = 200, int sendRate = 500)
+        public Monitor(int sampleRate = 500, int sendRate = 800)
         {
-            this.process = process;
+            this.process = "MyProcess";
             this.app = "UnnamedApp";
             this.sampleRate = sampleRate;
             this.sendRate = sendRate;
@@ -159,7 +158,7 @@ namespace DataTransfer
         public void Record()  // sets timer that calls Collect every five seconds
         {
             // sets base address for HTTP requests - won't be hard-coded in future
-            client.BaseAddress = new Uri("http://localhost:54022/");
+            client.BaseAddress = new Uri("http://10.83.46.226:54022/");
 
             // assign all properties of the current process to the Session class instance
             instance.process = (this.process);
@@ -229,6 +228,7 @@ namespace DataTransfer
                         try
                         {
                             output = JsonConvert.SerializeObject(list);
+                            Console.WriteLine(output);
 
                             // escapes string so that JSON object is interpreted as a single string
                             output = JsonConvert.ToString(output);
@@ -488,7 +488,7 @@ namespace DataTransfer
                             Http_Request request = new Http_Request();
                             request.type = "Start";
                             request.timestamp = DateTime.Now;
-                            request.id = data.ActivityID;
+                            request.activityID = data.ActivityID;
                             request.App = instance;
                             request.method = data.PayloadString(0);
                             request.path = data.PayloadString(1);
@@ -502,7 +502,7 @@ namespace DataTransfer
                             Http_Request request = new Http_Request();
                             request.type = "Stop";
                             request.timestamp = DateTime.Now;
-                            request.id = data.ActivityID;
+                            request.activityID = data.ActivityID;
                             request.App = instance;
                             lock (lockObject)
                             {
@@ -538,7 +538,13 @@ namespace DataTransfer
                 oldStamp = newStamp;
 
                 // finds CPU usage for process as a percentage of total CPU time across the machine
-                cpu.usage = (change / (period * processorTotal) * 100.0);
+                double use = (change / (period * processorTotal) * 100.0);
+                // if sampling error causes CPU to read over 100, set to 100
+                if (use > 100.0)
+                {
+                    use = 100.0;
+                }
+                cpu.usage = use;
                 cpu.timestamp = newStamp;
                 lock (lockObject)
                 {

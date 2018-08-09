@@ -16,7 +16,7 @@ namespace WebApplication
             // Creating HttpClient that will call the web api
             HttpClient client = new HttpClient();
             // Constructing url that will be called, the domain is hardcoded for now, will be more variable in the future
-            client.BaseAddress = new Uri("http://localhost:54022/");
+            client.BaseAddress = new Uri(WebApplication.Startup.apiDomain);
 
             // Constructing string that will pass timestamps to web api controllers
             String dateRange = convertDateTime(oldStamp) + "&end=" + convertDateTime(newStamp);
@@ -82,7 +82,7 @@ namespace WebApplication
             // Creating HttpClient that will call the web api
             HttpClient client = new HttpClient();
             // Constructing url that will be called, the domain is hardcoded for now, will be more variable in the future
-            client.BaseAddress = new Uri("http://localhost:54022/");
+            client.BaseAddress = new Uri(WebApplication.Startup.apiDomain);
             HttpResponseMessage response = await client.GetAsync("RETURNALL");
 
             List<Session> sessionData = new List<Session>();
