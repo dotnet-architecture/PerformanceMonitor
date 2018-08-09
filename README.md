@@ -82,4 +82,4 @@ If we were to additionally create two new processes - "Process3" and "Process4",
 
 ![New Application Diagram](Applications.png)
 
-Each process can be viewed individually, but they will be organized under whatever application they belong to. This allows an application with multiple, distinct processes to be easily tracked as a cohesive unit.
+Each process can be viewed individually, but they will be organized under whatever application they belong to. This allows an application with multiple, distinct processes or microservices to be easily tracked as a cohesive unit.
