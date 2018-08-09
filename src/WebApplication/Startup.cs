@@ -10,6 +10,7 @@ namespace WebApplication
 {
     public class Startup
     {
+        public static string apiDomain = "http://localhost:54023";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -53,7 +54,7 @@ namespace WebApplication
             app.UseMvc();
 
             app.UseCors(builder =>
-                builder.WithOrigins("http://localhost:54023"));
+                builder.WithOrigins(apiDomain));
 
         }
     }

@@ -3,6 +3,7 @@
 @using DataTransfer
 @{
     ViewData["Title"] = "Exceptions";
+    string message = "Showing top exceptions (default <= 5). Enter the number of top exceptions you would like to see.";
 }
 
 <head>
@@ -21,11 +22,21 @@
         <p>Most common exception: @Model.exceptionSorted[0].Key</p>
     }
 
-    @Model.message
-    <form method="post">
+    @message
+    <form name="userExceptionInput" method="post">
         <input type="text" placeholder="Number of Exceptions" name="userReqNum" /> <br />
         <button class="btn btn-default">Examine</button>
     </form>
+
+    <script>
+        var numExceptions = document.userExceptionInput.userReqNum
+
+        if (numExceptions <= @Model.exceptionSorted.Count) {
+            @message = "Currently showing top " + numExceptions + " exceptions.";
+        } else {
+            @message = "Do not have " + userReqNum + " exceptions. Showing all exceptions seen so far.";
+        }
+    </script>
 
     <p>Exceptions by Frequency</p>
     <table class="table table-hover table-bordered">
