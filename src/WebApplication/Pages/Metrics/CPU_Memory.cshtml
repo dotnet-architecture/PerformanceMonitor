@@ -115,9 +115,18 @@
                         }
                         Plotly.extendTraces('cpu', update, [0]);
 
-                        @*var time = new Date();   
-                        var oldTime = time.setMinutes(time.getMinutes() - 5);
-                        var futureTime = time.setMinutes(time.getMinutes() + @IndexModel.userSession/60000);
+                        @*var time = new Date();  
+                        var latestTime = new Date(@Model.cpu[0].timestamp); 
+
+                        var oldTime; 
+                        var futureTime; 
+                        if (latestTime.getTime() > (time.getMinutes() - 10)) {
+                            oldTime = latestTime;
+                            futureTime = time.setMinutes(time.getMinutes() - @IndexModel.userSession/60000);
+                        } else {
+                            oldTime = time.setMinutes(time.getMinutes() - 10);
+                            futureTime = time.setMinutes(time.getMintues() + 10 - @IndexModel.userSession/60000);
+                        }
 
                         var minuteView = {
                             xaxis: {
