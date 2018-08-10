@@ -10,7 +10,7 @@ namespace WebApplication
 {
     public class Startup
     {
-        public static string apiDomain = "http://localhost:54022/";
+        public static string apiDomain = "http://10.83.46.226:54022/";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
