@@ -39,7 +39,7 @@ The web application is built using ASP.NET CORE and Razor Pages to create a dyna
 Navigating the metric pages is largely self-explanatory. The CPU and Memory graphs continuously update without requiring the user to refresh the page. All other tables require refreshing the page or clicking the refresh button above the table.
 
 ## Monitor Your Application
-Application health monitoring is performed by a C# class library function that simply needs to be included in the beginning of the user's application code. The function will trigger application performance reading on the user's machine, and periodically send packets of data to be presented on the web application. To utilize this service, include the PerfMonitor library and write the following at the start of the tracked application's Main method or equivalent:
+Application health monitoring is performed by a C# class library function that simply needs to be included in the beginning of the user's application code. The function will trigger application performance reading on the user's machine, and periodically send packets of data to be presented on the web application. To utilize this service, include the PerfMonitor library and write one of the following instantiation calls at the start of the tracked application's Main method or equivalent:
 
 ```cs
 // Monitor class instantiation option 1:
