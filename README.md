@@ -95,3 +95,23 @@ If we were to additionally create two new processes - "Process3" and "Process4",
 ![New Application Diagram](Applications.png)
 
 Each process can be viewed individually, but they will be organized under whatever application they belong to. This allows an application with multiple, distinct processes or microservices to be easily tracked as a cohesive unit.
+
+## Visualize your Data
+
+Once the web application is spin up, the user is prompted to enter the application and process name of the session that they want to monitor. The web application would look similar to this.
+
+![Homepage for Web Application](landingHomepage.png)
+
+Once the user clicks on an application name, all the associated process names will appear on the adjacent menu. 
+
+![Selecting application name](selectingApplication.png)
+
+Once the user clicks on a process name and clicks "Examine", the side bar will update to inform the user what session they are currently viewing data for and the menus will be cleared. 
+
+![Selected Session](updatingSideBartoSession.png)
+
+Now, the user can utilize the sidebar to navigate between the different metric pages and view the data collected from their application. For example, once the CPU and Memory tab is selected on the sidebar, the user will see the CPU and Memory graphs (which live update), the average percentage cpu used, the average memory used, and a table. 
+
+![CPU and Memory graphs](cpuMemGraphs.png)
+
+![CPU and Memory tables](tables.png)
