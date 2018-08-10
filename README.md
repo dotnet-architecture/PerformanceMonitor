@@ -21,7 +21,7 @@ The data a developer chooses to view for their application is easily customizabl
 
 ## Architecture Overview
 
-![Architecture Diagram](Architecture.PNG)
+![Architecture Diagram](docs/Photos/Architecture.PNG)
 
 ### Data Collection
 Data collection is performed via a class library that can be utilized in the user's executable code for the application they want to monitor. All that is required to perform this tracking is to include the library, create a class instance, and call the class' Record() function.
@@ -88,11 +88,11 @@ monitor.Record();
 
 Now when we view the web application, we'll be able to see the performance of both processes factor into performance of the overall application. Below is a diagram showing the structure of the system:
 
-![Application Diagram](Application.png)
+![Application Diagram](docs/Photos/Application.png)
 
 If we were to additionally create two new processes - "Process3" and "Process4", respectively - with arbitrary sampling and transmission rates but no application name, the system would now look like this:
 
-![New Application Diagram](Applications.png)
+![New Application Diagram](docs/Photos/Applications.png)
 
 Each process can be viewed individually, but they will be organized under whatever application they belong to. This allows an application with multiple, distinct processes or microservices to be easily tracked as a cohesive unit.
 
@@ -100,18 +100,18 @@ Each process can be viewed individually, but they will be organized under whatev
 
 Once the web application is spin up, the user is prompted to enter the application and process name of the session that they want to monitor. The web application would look similar to this.
 
-![Homepage for Web Application](landingHomepage.png)
+![Homepage for Web Application](docs/Photos/landingHomepage.png)
 
 Once the user clicks on an application name, all the associated process names will appear on the adjacent menu. 
 
-![Selecting application name](selectingApplication.png)
+![Selecting application name](docs/Photos/selectingApplication.png)
 
 Once the user clicks on a process name and clicks "Examine", the side bar will update to inform the user what session they are currently viewing data for and the menus will be cleared. 
 
-![Selected Session](updatingSideBartoSession.png)
+![Selected Session](docs/Photos/updatingSideBartoSession.png)
 
 Now, the user can utilize the sidebar to navigate between the different metric pages and view the data collected from their application. For example, once the CPU and Memory tab is selected on the sidebar, the user will see the CPU and Memory graphs (which live update), the average percentage cpu used, the average memory used, and a table. 
 
-![CPU and Memory graphs](cpuMemGraphs.png)
+![CPU and Memory graphs](docs/Photos/cpuMemGraphs.png)
 
-![CPU and Memory tables](tables.png)
+![CPU and Memory tables](docs/Photos/tables.png)
