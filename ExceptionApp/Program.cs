@@ -8,13 +8,13 @@ namespace ExceptionApp
         static void Main(string[] args)
         {
             // initialize new Monitor instance
-            Monitor monitor = new Monitor("Process1", "ExceptionApp");
+            Monitor monitor = new Monitor("Process1", "ExceptionApp", 500, 1500);
 
             // enable tracking of exceptions by Monitor instance
-            //monitor.EnableException();
+            monitor.EnableException();
 
             // disable tracking of CPU
-            //monitor.DisableCPU();
+            monitor.DisableCPU();
 
             // begin recording metrics
             monitor.Record();

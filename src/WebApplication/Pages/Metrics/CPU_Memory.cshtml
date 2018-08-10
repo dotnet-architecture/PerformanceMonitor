@@ -22,7 +22,7 @@
         const idCPU = `@Html.Encode(IndexModel.userSession.Id)`;
 
         function getCPUData(start, end) {
-            const url = `@WebApplication.Startup.apiDomain` + `api/v1/CPU/Daterange?start=${start}&end=${end}&id=${idCPU}`;
+            const url = `@WebApplication.Startup.apiDomain`+ `api/v1/CPU/Daterange?start=${start}&end=${end}&id=${idCPU}`;
             return fetch(url, {
                 method: 'GET',
                 mode: 'cors',
@@ -113,33 +113,20 @@
                             x: [xaxis],
                             y: [yaxis]
                         }
+                        Plotly.extendTraces('cpu', update, [0]);
 
-                        var oldTime = time.setMinutes(time.getMinutes() - 1);
-                        var futureTime = time.setMinutes(time.getMinutes() + 1);
+                        @*var time = new Date();   
+                        var oldTime = time.setMinutes(time.getMinutes() - 5);
+                        var futureTime = time.setMinutes(time.getMinutes() + @IndexModel.userSession/60000);
 
                         var minuteView = {
                             xaxis: {
                                 type: 'date',
-                                range: [olderTime, futureTime]
+                                range: [oldTime, futureTime]
                             }
                         };
 
-                        Plotly.relayout('cpu', minuteView);
-                        Plotly.extendTrace('cpu', update, [0]);
-
-                        //Plotly.extendTraces('cpu', {
-                        //    x: [xaxis],
-                        //    y: [yaxis]
-                        //}, [0]);
-
-                        //cnt++;
-                        //if (cnt > 500) {
-                        //    Plotly.relayout('cpu', {
-                        //        xaxis: {
-                        //            range: [cnt - 500, cnt]
-                        //        }
-                        //    });
-                        //}
+                        Plotly.relayout('cpu', minuteView);*@
                     });
             }, @IndexModel.userSession.sendRate*1.1));
 
@@ -150,7 +137,6 @@
         var startMem = `@Html.Encode(FetchDataService.convertDateTime(Model.oldStamp))`;
         var endMem = `@Html.Encode(FetchDataService.convertDateTime(Model.newStamp))`;
         const idMem = `@Html.Encode(IndexModel.userSession.Id)`;
-        var cnt = 0;
 
         function getMemData(start, end) {
             const url = `@WebApplication.Startup.apiDomain` + `api/v1/Memory/Daterange?start=${start}&end=${end}&id=${idMem}`;
@@ -238,19 +224,25 @@
                         var xaxis = values[0][1];
                         var yaxis = values[0][0];
 
-                        Plotly.extendTraces('mem', {
+                        var update = {
                             x: [xaxis],
                             y: [yaxis]
-                        }, [0]);
-
-                        cnt++;
-                        if (cnt > 500) {
-                            Plotly.relayout('mem', {
-                                xaxis: {
-                                    range: [cnt - 500, cnt]
-                                }
-                            });
                         }
+
+                        Plotly.extendTraces('mem', update, [0]);
+
+                        //var time = new Date();
+                        //var oldTime = time.setMinutes(time.getMinutes() - 10);
+                        //var futureTime = time.setMinutes(time.getMinutes() + 9.5);
+
+                        //var minuteView = {
+                        //    xaxis: {
+                        //        type: 'date',
+                        //        range: [oldTime, futureTime]
+                        //    }
+                        //};
+
+                        //Plotly.relayout('mem', minuteView);
                     });
             }, @IndexModel.userSession.sendRate*1.1));
     </script>
