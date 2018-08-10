@@ -100,18 +100,18 @@ Each process can be viewed individually, but they will be organized under whatev
 
 Once the web application is spin up, the user is prompted to enter the application and process name of the session that they want to monitor. The web application would look similar to this.
 
-![Homepage for Web Application](docs/Photos/landingHomepage.png)
+![Homepage for Web Application](docs/Photos/landingHomepage.PNG)
 
 Once the user clicks on an application name, all the associated process names will appear on the adjacent menu. 
 
-![Selecting application name](docs/Photos/selectingApplication.png)
+![Selecting application name](docs/Photos/selectingApplication.PNG)
 
 Once the user clicks on a process name and clicks "Examine", the side bar will update to inform the user what session they are currently viewing data for and the menus will be cleared. 
 
-![Selected Session](docs/Photos/updatingSideBartoSession.png)
+![Selected Session](docs/Photos/updatingSideBartoSession.PNG)
 
 Now, the user can utilize the sidebar to navigate between the different metric pages and view the data collected from their application. For example, once the CPU and Memory tab is selected on the sidebar, the user will see the CPU and Memory graphs (which live update), the average percentage cpu used, the average memory used, and a table. 
 
-![CPU and Memory graphs](docs/Photos/cpuMemGraphs.png)
+![CPU and Memory graphs](docs/Photos/cpuMemGraphs.PNG)
 
-![CPU and Memory tables](docs/Photos/tables.png)
+![CPU and Memory tables](docs/Photos/tables.PNG)
