@@ -31,7 +31,6 @@ The performance metrics that are monitored by the PerformanceMonitor are as foll
 
 5. __Garbage Collection__
   * Type
-  * Duration
   * Frequency
 
 6. __Contention__
@@ -43,7 +42,7 @@ The performance metrics that are monitored by the PerformanceMonitor are as foll
   * Count
  
 #### Recording Metrics (System.Diagnostics.Process class)
-As mentioned above, CPU and memory usage are fetched via the _System.Diagnostics.Process_ class. A new _Monitor_ class instance must be created for each process that a user would like to monitor, because the data is fetched by first calling Process.GetCurrentProcess();, which will return a _Process_ class instance. This class instance contains a number of fields that are used to track CPU and memory performance. These metrics will be sampled as often as the sampling rate dictates. This is done by looping through a while(true) loop in the Record() function, and comparing a TimeSpan between the last sample and the current time to the sampling rate.
+As mentioned above, CPU and memory usage are fetched via the _System.Diagnostics.Process_ class. By default, only CPU and memory tracking is enabled - to enable other metric tracking, function calls to enable each can be made before beginning recording. A new _Monitor_ class instance must be created for each process that a user would like to monitor, because the data is fetched by first calling Process.GetCurrentProcess();, which will return a _Process_ class instance. This class instance contains a number of fields that are used to track CPU and memory performance. CPU and memory usage will be sampled as often as the sampling rate dictates, while the other events, which are traced via TraceEvent, are collected as they are triggered. This is done by looping through a while(true) loop in the Record() function, and comparing a TimeSpan between the last sample and the current time to the sampling rate.
  
 ##### CPU
 Tracking CPU usage requires a small amount of overhead for calculation and comparison of a few variables. The total time that a machine's logical processors spend running the user's process is described by _Process.TotalProcessorTime_, and this is what is used to calculate the percentage of time that the processor (accounting for all logical cores) has spent running the user's code. The time between samplings in recording using DateTime objects, and the amount of time is multiplied by the number of logical cores (fetched by _System.Environment.ProcessorCount_) to determine the total amount of time that the processors can allocate to work during the interval. These values are used to generate a percentage of time spent running the process.
