@@ -27,7 +27,7 @@
                 <th>Path</th>
                 <th>Start Timestamp</th>
                 <th>End TimeStamp</th>
-                <th>Duration (seconds)</th>
+                <th>Duration (miliseconds)</th>
             </tr>
         </thead>
         <tbody>
@@ -43,7 +43,7 @@
                             <td>@h.Path</td>
                             <td>@h.StartTimestamp.ToLongTimeString() @h.StartTimestamp.ToShortDateString()</td>
                             <td>@h.EndTimestamp.ToLongTimeString() @h.EndTimestamp.ToShortDateString()</td>
-                            <td>@(h.Duration / 1000)</td>
+                            <td>@h.Duration</td>
                         }
                         else
                         {
