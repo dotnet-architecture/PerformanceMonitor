@@ -95,7 +95,8 @@
             .then(setInterval(function () {
                 // Updating time stamps
                 startCPU = endCPU;
-                var now = new Date();
+                var now = new Date(); // Gets current time
+
                 endCPU = now.getFullYear() + "-" +
                     ("0" + (now.getMonth() + 1)).slice(-2) + "-" +
                     ("0" + now.getDate()).slice(-2) + "T" +
@@ -115,30 +116,31 @@
                         }
                         Plotly.extendTraces('cpu', update, [0]);
 
-                        @*var time = new Date();  
-                        var latestTime = new Date(@Model.cpu[0].timestamp); 
+                        if (xaxis.length != 0) {
+                            var currTime = new Date(); 
+                            var latestTime = new Date(`@Model.cpu[0].timestamp`); 
 
-                        var oldTime; 
-                        var futureTime; 
-                        if (latestTime.getTime() > (time.getMinutes() - 10)) {
-                            oldTime = latestTime;
-                            futureTime = time.setMinutes(time.getMinutes() - @IndexModel.userSession/60000);
-                        } else {
-                            oldTime = time.setMinutes(time.getMinutes() - 10);
-                            futureTime = time.setMinutes(time.getMintues() + 10 - @IndexModel.userSession/60000);
-                        }
-
-                        var minuteView = {
-                            xaxis: {
-                                type: 'date',
-                                range: [oldTime, futureTime]
+                            var oldTime; 
+                            var futureTime; 
+                            if (latestTime > currTime.setMinutes(currTime.getMinutes() - 15)) {
+                                oldTime = latestTime.setMinutes(latestTime.getMinutes());
+                                futureTime = currTime.setMinutes(currTime.getMinutes() + 15);
+                            } else {
+                                oldTime = currTime.setMinutes(currTime.getMinutes() - 15); 
+                                futureTime = currTime.setMinutes(currTime.getMinutes() + 15);
                             }
-                        };
 
-                        Plotly.relayout('cpu', minuteView);*@
+                            var minuteView = {
+                                xaxis: {
+                                    type: 'date',
+                                    range: [oldTime, futureTime]
+                                }
+                            };
+
+                            Plotly.relayout('cpu', minuteView);
+                        }                    
                     });
             }, @IndexModel.userSession.sendRate*1.1));
-
     </script>
 
     <div id="mem"></div>
@@ -240,18 +242,29 @@
 
                         Plotly.extendTraces('mem', update, [0]);
 
-                        //var time = new Date();
-                        //var oldTime = time.setMinutes(time.getMinutes() - 10);
-                        //var futureTime = time.setMinutes(time.getMinutes() + 9.5);
+                        if (xaxis.length != 0) {
+                            var currTime = new Date(); 
+                            var latestTime = new Date(`@Model.cpu[0].timestamp`); 
 
-                        //var minuteView = {
-                        //    xaxis: {
-                        //        type: 'date',
-                        //        range: [oldTime, futureTime]
-                        //    }
-                        //};
+                            var oldTime; 
+                            var futureTime; 
+                            if (latestTime > currTime.setMinutes(currTime.getMinutes() - 15)) {
+                                oldTime = latestTime.setMinutes(latestTime.getMinutes());
+                                futureTime = currTime.setMinutes(currTime.getMinutes() + 15);
+                            } else {
+                                oldTime = currTime.setMinutes(currTime.getMinutes() - 15); 
+                                futureTime = currTime.setMinutes(currTime.getMinutes() + 15);
+                            }
 
-                        //Plotly.relayout('mem', minuteView);
+                            var minuteView = {
+                                xaxis: {
+                                    type: 'date',
+                                    range: [oldTime, futureTime]
+                                }
+                            };
+
+                            Plotly.relayout('mem', minuteView);
+                        }
                     });
             }, @IndexModel.userSession.sendRate*1.1));
     </script>

@@ -10,22 +10,19 @@ namespace WebApplication.Pages.Metrics
 {
     public class CPU_MemoryModel : PageModel
     {
-        // List of cpu data that will be shown on page when it loads
+        // List of cpu and mem data that will be shown on page when it loads
         public List<CPU_Usage> cpu { get; set; } = new List<CPU_Usage>();
-
-        // List of mem data that will be shown on page when it loads
         public List<Mem_Usage> mem { get; set; } = new List<Mem_Usage>();
 
-        // Average CPU data, calculated by (total cpu usage/ total period of time)
+        // Average CPU and percetnage of mem
         public double avgCPU;
-        // Average percentage of mem usage, calculated by (total percentage of mem used/ total period of time)
         public double avgMem;
         // Total time that is accounted for in the average CPU and mem. Used to update to new avgCPU and avgMem
         public int timeAccounted; 
 
         // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
         public DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime();
-        public DateTime newStamp = DateTime.Now.ToUniversalTime(); // Gets current time
+        public DateTime newStamp; // Represents current time
 
         public async Task OnGet()
         {
@@ -45,10 +42,6 @@ namespace WebApplication.Pages.Metrics
                 cpu.Add(c);
             }
 
-            // Calculating new avgCPUs
-            this.timeAccounted += cpu_addOn.Count;
-            this.avgCPU = totalCPU / (double)timeAccounted;
-
             // Updates Mem_Usage list and totalMem to calculate new average
             foreach (Mem_Usage m in mem_addOn)
             {
@@ -59,6 +52,9 @@ namespace WebApplication.Pages.Metrics
             // Calculating new avgMem
             this.timeAccounted += mem_addOn.Count;
             this.avgMem = totalMem / (double)timeAccounted;
+            // Calculating new avgCPUs
+            this.timeAccounted += cpu_addOn.Count;
+            this.avgCPU = totalCPU / (double)timeAccounted;
         }
     }
 }
