@@ -2,7 +2,15 @@
 
 ## Architecture Specifics
 
-![Tools Diagram](Tools.png)
+![Tools Diagram](Photos/Tools.png)
+
+### Data Collection
+
+Data collection is performed via a class library that can be utilized in the user's executable code for the application they want to monitor. All that is required to perform this tracking is to include the library, create a class instance, and call the class' Record() function.
+
+This will trigger performance metric tracking that is done on the user's machine through two channels. The first of these channels is the System.Diagnostics namespace through the .NET Core API, which is used to fetch information unique to the current process. This data includes CPU and memory usage (which is sampled at the specified or default rate) as well as performance-related machine-specific information. Specifically, the running machine's operating system information and count of total logical processors is collected.
+
+The other channel for data collection is the TraceEvent library (repo found here: https://github.com/Microsoft/perfview/tree/master/src/TraceEvent). Using TraceEvent, the monitor can monitor certain exception, GC, contention, JIT, and incoming Kestrel HTTP request events. Handling events via TraceEvent is not done with a controlled sampling rate, since event responses are triggered live as events are discovered by the event parsers.
 
 ### Data Storage
 The data collected is currently being hosted on a SQL database running through Docker. This allows for local testing of the application. In the future, the database will be moved to AzureSQL. This will allow the final product to run with minimal setup from the user. Startup.cs holds the location of the connection string for the server, and can be changed as necessary.
@@ -28,6 +36,7 @@ The performance metrics that are monitored by the PerformanceMonitor are as foll
 4. __Exceptions__
   * Type
   * Frequency
+  * Most common
 
 5. __Garbage Collection__
   * Type
@@ -69,6 +78,12 @@ session.EnableProvider(AspSourceGuid);
 This will allow the Dynamic event parser to detect, among other events, HTTP request Starts and Stops. The first provider enabling line of code above also allows activity ID's to be associated with these events such that request Starts can be associated with their corresponding Stop (which allows request duration to be calculated). Furthermore, Start events contain within their event message the method and path of the HTTP request. In order to access this information, some string parsing has to be done with the event message that can be referenced in the code.
  
 The HTTP request class contains - in addition to the session instance and timestamp - the HTTP event's type (String containing either "Start" or "Stop"), method (String only associated with Starts), path (String only associated with Starts), and activity ID (GUID).
+
+To enable HTTP request tracking, insert the following code after the _Monitor_ class instance is declared and before beginning recording:
+
+```cs
+monitor.EnableHttp();
+```
  
 ##### Exceptions
 Exceptions, and all of the non-HTTP TraceEvent-tracked events, are detected by the same event parser (the ClrTraceEventParser). In order to enable event detection for all of the events we want within the parser's umbrella, keywords have to be referenced for the event types we're interested in when enabling the provider:
@@ -92,12 +107,36 @@ clrParser.ExceptionStart += delegate (ExceptionTraceData data)
 ```
  
 The exception class contains all typical class fields in addition to a "type" field (String containing exception type).
+
+To enable exception tracking, insert the following code after the _Monitor_ class instance is declared and before beginning recording:
+
+```cs
+monitor.EnableException();
+```
  
 ##### Garbage Collection
 For garbage collection, delegates must be set up for a number of different events since the GC "type" is not specified within a general GC event like it is for exceptions. For this reason, the data collector is set up to record GCStart, GCStop, GCAllocationTick, GCCreateConcurrentThread, GCSuspendEEStart, GCRestartEEStop, and GCTriggered events. Using the timestamps and matching thread ID's of GCSuspendEEStart and GCRestartEEStop events, it's possible to determine how much time was set aside for performing garbage collection within the user's process. In addition to the typical class fields, the GC class contains a "type" field (String detailing event name) and thread ID field (int).
+
+To enable GC tracking, insert the following code after the _Monitor_ class instance is declared and before beginning recording:
+
+```cs
+monitor.EnableGC();
+```
  
 ##### Contention and JIT
 Both contention and JIT events are very straightforward in how they are tracked. ContentionStart and ContentionStop events are correlated by activity ID to determine time per contention, and JIT events are recorded every time a method within the process is jitted. The contention class includes a "type" field (String - "Start" or "Stop") as well as an activity ID field (GUID), and the JIT class includes the jitted method's name (String). Method jitting will typically be heaviest upon startup and then fall off in frequency.
+
+To enable contention event tracking, insert the following code after the _Monitor_ class instance is declared and before beginning recording:
+
+```cs
+monitor.EnableContention();
+```
+
+To enable JIT event tracking:
+
+```cs
+monitor.EnableJit();
+```
  
 #### Data Transmission
 There are two more shared classes within the project, in addition to the classes for each metric type: a _Session_ class and a _Metric_List_ class.
@@ -119,6 +158,8 @@ The design of the web application is specified in the .cshtml files of each Razo
 ## Testing
 ### Data Collection
 
-The _MonitorTest_ project within the solution contains C# classes that are each used to test a particular type of metric collection. The project's executable file is Program.cs, which contains only a Main method. In order to run a test for a particular metric, uncomment the metric's test line within Main - for example, to test collection of GC events, uncomment the line reading "GCTest.Test();". Then run _MonitorTest_, and GC events will be triggered for debugging. As it stands, only one test file can be run at a time (if multiple lines are uncommented, only the first test to appear in the code will run).
+The _MonitorTest_ project within the solution contains C# classes that are each used to test a particular type of metric collection. The project's executable file is Program.cs, which contains only a Main method. In order to run a test for a particular metric, uncomment the metric's test line within Main - for example, to test collection of GC events, uncomment the line reading "GCTest.Test();". Then run _MonitorTest_, and GC events will be triggered for debugging. As it stands, only one test can be run at a time (if multiple lines are uncommented, only the first test to appear in the code will run).
 
-__IMPORTANT__: When running _MonitorTest_, a console window will pop up and display the program's output. In order to safely terminate the program, press Ctrl+C before closing the window. If Ctrl+C is not pressed, the session allowing TraceEvent to run and collect events will not terminate. The next run of _MonitorTest_ would attempt to recreate the same session, and an error would be triggered. If you forget to Ctrl+C and run into this error, open up your machine's terminal or command prompt and run the command "logman stop MySession -ets". This will close the session, and you will be able to run _MonitorTest_ again.
+__IMPORTANT__: When running _MonitorTest_, a console window will pop up and display the program's output. In order to safely terminate the program, press Ctrl+C before closing the window. If Ctrl+C is not pressed, the session allowing TraceEvent to run and collect events may not terminate. The next run of _MonitorTest_ would attempt to recreate the same session, and an error would be triggered. If you forget to Ctrl+C and run into this error, open up your machine's terminal or command prompt and run the command "logman stop MySession -ets". This will close the session, and you will be able to run _MonitorTest_ again.
+
+In addition to manual triggering of events through the _MonitorTest_ project, there is also a _MonitorUnitTest_ project that contains unit tests in the form of xUnit tests. There are currently two unit tests: one tests the frequency of HTTP requests being sent to the server to make sure that requests are being made as often as specified. The other tests the number of CPU data points being collected per HTTP transmission cycle to ensure an expected number of samples is being taken. Currently, both tests operate with the sampling and transmission rates specified by the _Monitor_ class instance declared at the start of the _MonitorTest_ project's Program.cs file. Tests in this file are called by the xUnit tests in order to allow the monitor to run until a steady state of performance is reached and results can be sampled.
