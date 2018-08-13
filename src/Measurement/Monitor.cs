@@ -22,17 +22,17 @@ namespace DataTransfer
         {
             this.process = "MyProcess";
             this.app = "UnnamedApp";
-            this.sampleRate = 500;
-            this.sendRate = 800;
+            this.sampleRate = 1000;
+            this.sendRate = 5000;
         }
-        public Monitor(String process = "MyProcess", String app = "UnnamedApp", int sampleRate = 500, int sendRate = 800)
+        public Monitor(String process = "MyProcess", String app = "UnnamedApp", int sampleRate = 1000, int sendRate = 5000)
         {
             this.process = process;
             this.app = app;
             this.sampleRate = sampleRate;
             this.sendRate = sendRate;
         }
-        public Monitor(String process = "MyProcess", int sampleRate = 500, int sendRate = 800)
+        public Monitor(String process = "MyProcess", int sampleRate = 1000, int sendRate = 5000)
         {
             this.process = process;
             this.app = "UnnamedApp";
@@ -40,7 +40,7 @@ namespace DataTransfer
             this.sendRate = sendRate;
         }
 
-        public Monitor(int sampleRate = 500, int sendRate = 800)
+        public Monitor(int sampleRate = 1000, int sendRate = 5000)
         {
             this.process = "MyProcess";
             this.app = "UnnamedApp";
