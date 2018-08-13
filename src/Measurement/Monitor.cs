@@ -105,6 +105,11 @@ namespace DataTransfer
         {
             return hold;
         }
+        public static bool running = false;
+        public bool isRunning()
+        {
+            return running;
+        }
         
         // creates an HTTP client so that server requests can be made
         private static HttpClient client = new HttpClient();
@@ -157,6 +162,8 @@ namespace DataTransfer
          */
         public void Record()  // sets timer that calls Collect every five seconds
         {
+            running = true;
+
             // sets base address for HTTP requests - won't be hard-coded in future
             client.BaseAddress = new Uri("http://localhost:54022/");
 

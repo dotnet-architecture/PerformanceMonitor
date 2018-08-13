@@ -7,10 +7,10 @@ namespace MonitorTest
 {
     public class Program
     {
-        static DataTransfer.Monitor monitor = new DataTransfer.Monitor("Test Process", "Test App", 1000, 5000);
+        static DataTransfer.Monitor monitor = new DataTransfer.Monitor("Test Process", "Test App");
         static void Main(string[] args)
         {
-            CPUMemTest();
+            //CPUMemTest();
             //GCTest();
             //ExceptionTest();
             //ContentionTest();
@@ -30,7 +30,10 @@ namespace MonitorTest
         }
         public static double UnitTest2() // makes sure requests are being sent as often as specified
         {
-            monitor.Record();
+            if (!monitor.isRunning())
+            {
+                monitor.Record();
+            }
             DateTime timer = DateTime.Now;
             // wait for system to reach steady state
             while (DateTime.Now.Subtract(timer).TotalSeconds <= 20) ;
@@ -66,7 +69,10 @@ namespace MonitorTest
         }
         public static int UnitTest1() // makes sure expected number of samples are taken
         {
-            monitor.Record();
+            if (!monitor.isRunning())
+            {
+                monitor.Record();
+            }
             DateTime timer = DateTime.Now;
             while (DateTime.Now.Subtract(timer).TotalMilliseconds <= monitor.sendRate * 4) ;
             timer = DateTime.Now;
