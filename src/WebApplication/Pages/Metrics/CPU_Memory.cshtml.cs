@@ -92,7 +92,7 @@ namespace WebApplication.Pages.Metrics
 
             foreach (KeyValuePair<String, Tuple<CPU_Usage, Mem_Usage>> p in dataByTime)
             {
-                string format = "yyyyMMddHHmmssFFF"; 
+                string format = "yyyyMMddHHmmssFFF";
                 DateTime d = DateTime.ParseExact(p.Key, format, CultureInfo.InvariantCulture);
                 dataByTimeSorted.Add(new KeyValuePair<DateTime, Tuple<CPU_Usage, Mem_Usage>>(d, p.Value));
             }
