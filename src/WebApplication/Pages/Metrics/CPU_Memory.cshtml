@@ -95,7 +95,8 @@
             .then(setInterval(function () {
                 // Updating time stamps
                 startCPU = endCPU;
-                var now = new Date();
+                var now = new Date(); // Gets current time
+
                 endCPU = now.getFullYear() + "-" +
                     ("0" + (now.getMonth() + 1)).slice(-2) + "-" +
                     ("0" + now.getDate()).slice(-2) + "T" +
@@ -115,30 +116,31 @@
                         }
                         Plotly.extendTraces('cpu', update, [0]);
 
-                        @*var time = new Date();  
-                        var latestTime = new Date(@Model.cpu[0].timestamp); 
+                        if (xaxis.length != 0) {
+                            var currTime = new Date(); 
+                            var latestTime = new Date(`@Model.cpu[0].timestamp`); 
 
-                        var oldTime; 
-                        var futureTime; 
-                        if (latestTime.getTime() > (time.getMinutes() - 10)) {
-                            oldTime = latestTime;
-                            futureTime = time.setMinutes(time.getMinutes() - @IndexModel.userSession/60000);
-                        } else {
-                            oldTime = time.setMinutes(time.getMinutes() - 10);
-                            futureTime = time.setMinutes(time.getMintues() + 10 - @IndexModel.userSession/60000);
-                        }
-
-                        var minuteView = {
-                            xaxis: {
-                                type: 'date',
-                                range: [oldTime, futureTime]
+                            var oldTime; 
+                            var futureTime; 
+                            if (latestTime > currTime.setMinutes(currTime.getMinutes() - 15)) {
+                                oldTime = latestTime.setMinutes(latestTime.getMinutes());
+                                futureTime = currTime.setMinutes(currTime.getMinutes() + 15);
+                            } else {
+                                oldTime = currTime.setMinutes(currTime.getMinutes() - 15); 
+                                futureTime = currTime.setMinutes(currTime.getMinutes() + 15);
                             }
-                        };
 
-                        Plotly.relayout('cpu', minuteView);*@
+                            var minuteView = {
+                                xaxis: {
+                                    type: 'date',
+                                    range: [oldTime, futureTime]
+                                }
+                            };
+
+                            Plotly.relayout('cpu', minuteView);
+                        }                    
                     });
             }, @IndexModel.userSession.sendRate*1.1));
-
     </script>
 
     <div id="mem"></div>
@@ -240,18 +242,29 @@
 
                         Plotly.extendTraces('mem', update, [0]);
 
-                        //var time = new Date();
-                        //var oldTime = time.setMinutes(time.getMinutes() - 10);
-                        //var futureTime = time.setMinutes(time.getMinutes() + 9.5);
+                        if (xaxis.length != 0) {
+                            var currTime = new Date(); 
+                            var latestTime = new Date(`@Model.cpu[0].timestamp`); 
 
-                        //var minuteView = {
-                        //    xaxis: {
-                        //        type: 'date',
-                        //        range: [oldTime, futureTime]
-                        //    }
-                        //};
+                            var oldTime; 
+                            var futureTime; 
+                            if (latestTime > currTime.setMinutes(currTime.getMinutes() - 15)) {
+                                oldTime = latestTime.setMinutes(latestTime.getMinutes());
+                                futureTime = currTime.setMinutes(currTime.getMinutes() + 15);
+                            } else {
+                                oldTime = currTime.setMinutes(currTime.getMinutes() - 15); 
+                                futureTime = currTime.setMinutes(currTime.getMinutes() + 15);
+                            }
 
-                        //Plotly.relayout('mem', minuteView);
+                            var minuteView = {
+                                xaxis: {
+                                    type: 'date',
+                                    range: [oldTime, futureTime]
+                                }
+                            };
+
+                            Plotly.relayout('mem', minuteView);
+                        }
                     });
             }, @IndexModel.userSession.sendRate*1.1));
     </script>
@@ -271,50 +284,106 @@
             </tr>
         </thead>
         <tbody>
-            @if (Model.cpu != null)
+            @if (Model.dataByTimeSorted != null)
             {
-                @for (int i = Math.Max(Model.cpu.Count - 1, Model.mem.Count - 1); i >= 0; i--)
+                @for (int i = 0; i < Model.dataByTimeSorted.Count; i++)
                 {
-                    CPU_Usage c = null;
-                    Mem_Usage m = null;
-                    if (i <= Model.cpu.Count - 1)
-                    {
-                        c = Model.cpu[i];
-                    }
-                    if (i <= Model.mem.Count - 1)
-                    {
-                        m = Model.mem[i];                  
-                    }
-            <tr>
-                @if (c != null)
-                {
-                    <td>@c.usage.ToString("0.0000")</td>
-                }
-                else
-                {
-                    <td></td>
-                }
+                    KeyValuePair<DateTime, Tuple<CPU_Usage, Mem_Usage>> p = Model.dataByTimeSorted[i];
+                    <tr>
+                        @if (p.Value.Item1 != null)
+                        {
+                            <td>@p.Value.Item1.usage.ToString("0.0000")</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
 
-                @if (m != null)
-                {
-                    <td>@((m.usage / 1000000.0).ToString("0.0000"))</td>
-                }
-                else
-                {
-                    <td></td>
-                }
+                        @if (p.Value.Item2 != null)
+                        {
+                            <td>@((p.Value.Item2.usage / 1000000.0).ToString("0.0000"))</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
 
-                @if (c != null)
-                {
-                    <td>@c.timestamp.ToLongTimeString() @c.timestamp.ToShortDateString()</td>
-                }
-                @if (c == null && m != null)
-                {
-                    <td>@m.timestamp.ToLongTimeString() @m.timestamp.ToShortDateString()</td>
-                }
-            </tr>
+                        <td>@p.Key.ToLongTimeString() @p.Key.ToShortDateString()</td>
+                    </tr>
+
                 }
             }
+
+            @*@if (Model.cpu != null)
+        {
+            @for (int i = Math.Max(Model.cpu.Count - 1, Model.mem.Count - 1); i >= 0; i--)
+            {
+                if (Model.cpu.Count == Model.mem.Count)
+                {
+                    CPU_Usage c = Model.cpu[i];
+                    Mem_Usage m = Model.mem[i];
+                    <tr>
+                        <td>@c.usage.ToString("0.0000")</td>
+                        <td>@((m.usage / 1000000.0).ToString("0.0000"))</td>
+                        <td>@c.timestamp.ToLongTimeString() @c.timestamp.ToShortDateString()</td>
+                    </tr>
+
+                } else if (Model.cpu.Count > Model.mem.Count)
+                {
+                    DateTime d = Model.cpu[i].timestamp;
+                    CPU_Usage c = Model.cpu[i];
+
+                    <tr>
+                        <td>@c.usage.ToString("0.0000")</td>
+                    </tr>
+
+                }
+                if (Model.cpu.Count > Model.mem.Count)
+                {
+                    DateTime stamp = Model.cpu[i].timestamp;
+
+                }
+
+                //CPU_Usage c = null;
+                //Mem_Usage m = null;
+                //if (i <= Model.cpu.Count - 1)
+                //{
+                //    c = Model.cpu[i];
+                //}
+                //if (i <= Model.mem.Count - 1)
+                //{
+                //    m = Model.mem[i];
+                //}
+        <tr>
+            @if (c != null)
+            {
+                <td>@c.usage.ToString("0.0000")</td>
+            }
+            else
+            {
+                <td></td>
+            }
+
+            @if (m != null)
+            {
+                <td>@((m.usage / 1000000.0).ToString("0.0000"))</td>
+            }
+            else
+            {
+                <td></td>
+            }
+
+            @if (c != null)
+            {
+                <td>@c.timestamp.ToLongTimeString() @c.timestamp.ToShortDateString()</td>
+            }
+            @if (c == null && m != null)
+            {
+                <td>@m.timestamp.ToLongTimeString() @m.timestamp.ToShortDateString()</td>
+            }
+        </tr>
+            }
+        }*@
         </tbody>
     </table>
 </div>
