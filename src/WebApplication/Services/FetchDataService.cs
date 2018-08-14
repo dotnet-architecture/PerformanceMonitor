@@ -11,7 +11,7 @@ namespace WebApplication
     public class FetchDataService
     {
         // Generic method that takes timestamps and makes a call to the API based off of the class T
-        public static async Task<List<T>> getUpdatedData<T>(DateTime oldStamp, DateTime newStamp)
+        public static async Task<List<T>> getData<T>(DateTime oldStamp, DateTime newStamp)
         {
             // Creating HttpClient that will call the web api
             HttpClient client = new HttpClient();
