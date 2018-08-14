@@ -18,7 +18,7 @@ namespace WebApplication.Pages.Metrics
         public async Task OnGet()
         {
             newStamp = DateTime.Now.ToUniversalTime();
-            List<Jit> addOn = await FetchDataService.getUpdatedData<Jit>(oldStamp, newStamp);
+            List<Jit> addOn = await FetchDataService.getData<Jit>(oldStamp, newStamp);
 
             foreach (Jit j in addOn)
             {

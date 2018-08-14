@@ -13,7 +13,7 @@ namespace WebApplication
         // Generic method that takes timestamps and makes a call to the API based off of the class T
         public static async Task<List<T>> getData<T>(DateTime oldStamp, DateTime newStamp)
         {
-            // Creating HttpClient that will call the web api
+            // Creating HttpClient that will call the web upapi
             HttpClient client = new HttpClient();
             // Constructing url that will be called, the domain is hardcoded for now, will be more variable in the future
             client.BaseAddress = new Uri(WebApplication.Startup.apiDomain);
@@ -75,8 +75,8 @@ namespace WebApplication
             return data; 
         }
 
-        // getUpdatedData method gets information for metrics based off of a daterange whereas the session 
-        // RETURNALL controller doesn't require a daterange, so getSessionData is separated from getUpdatedData
+        // getData method gets information for metrics based off of a daterange whereas the session 
+        // RETURNALL controller doesn't require a daterange, so getSessionData is separated from getData
         public static async Task<List<Session>> getSessionData()
         {
             // Creating HttpClient that will call the web api

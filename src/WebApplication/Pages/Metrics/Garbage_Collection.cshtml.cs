@@ -21,7 +21,7 @@ namespace WebApplication.Pages.Metrics
         public async Task OnGet()
         {
             newStamp = DateTime.Now.ToUniversalTime();
-            List<DataTransfer.GC> addOn = await FetchDataService.getUpdatedData<DataTransfer.GC>(oldStamp, newStamp);
+            List<DataTransfer.GC> addOn = await FetchDataService.getData<DataTransfer.GC>(oldStamp, newStamp);
 
             foreach (DataTransfer.GC g in addOn)
             {

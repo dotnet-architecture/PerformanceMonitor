@@ -35,8 +35,8 @@ namespace WebApplication.Pages.Metrics
             newStamp = DateTime.Now.ToUniversalTime(); // Updating newStamp
 
             // Getting cpu and mem data based off of dates (oldStamp and newStamp)
-            List<CPU_Usage> cpu_addOn = await FetchDataService.getUpdatedData<CPU_Usage>(oldStamp, newStamp);
-            List<Mem_Usage> mem_addOn = await FetchDataService.getUpdatedData<Mem_Usage>(oldStamp, newStamp);
+            List<CPU_Usage> cpu_addOn = await FetchDataService.getData<CPU_Usage>(oldStamp, newStamp);
+            List<Mem_Usage> mem_addOn = await FetchDataService.getData<Mem_Usage>(oldStamp, newStamp);
 
             double totalCPU = avgCPU * timeAccounted; // Weighting previous avgCPU
             double totalMem = avgMem * timeAccounted; // Weighting previous avgMem

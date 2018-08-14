@@ -29,7 +29,7 @@ namespace WebApplication.Pages.Metrics
         public async Task OnGet()
         {
             newStamp = DateTime.Now.ToUniversalTime();
-            List<Exceptions> addOn = await FetchDataService.getUpdatedData<Exceptions>(oldStamp, newStamp);
+            List<Exceptions> addOn = await FetchDataService.getData<Exceptions>(oldStamp, newStamp);
 
             foreach (Exceptions e in addOn)
             {
