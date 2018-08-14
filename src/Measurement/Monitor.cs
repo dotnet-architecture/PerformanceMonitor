@@ -126,6 +126,7 @@ namespace DataTransfer
         private static DateTime newStamp = DateTime.Now;
         private static double change = 0;
         private static double period = 0;
+        public static DateTime CPUMemTime = DateTime.Now;
         // list containing instances of CPU readings
         public static List<CPU_Usage> CPUVals = new List<CPU_Usage>();
         public int getCPUCount()
@@ -190,6 +191,7 @@ namespace DataTransfer
                 timer.Start();
                 while (true)
                 {
+                    CPUMemTime = DateTime.Now;
                     if (CPUEnabled)
                     {
                         FetchCPU();
@@ -554,7 +556,7 @@ namespace DataTransfer
                     use = 100.0;
                 }
                 cpu.usage = use;
-                cpu.timestamp = newStamp;
+                cpu.timestamp = CPUMemTime;
                 lock (lockObject)
                 {
                     CPUVals.Add(cpu);
@@ -570,7 +572,7 @@ namespace DataTransfer
                 myProcess.Refresh();
                 Mem_Usage mem = new Mem_Usage();
                 mem.usage = myProcess.WorkingSet64;
-                mem.timestamp = DateTime.Now;
+                mem.timestamp = CPUMemTime;
                 lock (lockObject)
                 {
                     MemVals.Add(mem);
