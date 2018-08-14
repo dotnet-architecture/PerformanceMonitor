@@ -98,19 +98,15 @@ Each process can be viewed individually, but they will be organized under whatev
 
 ## Visualize your Data
 
-Once the web application is spin up, the user is prompted to enter the application and process name of the session that they want to monitor. The web application would look similar to this.
+Once the web application is running, you land on the homepage and are prompted to enter the application and process name of the session that you want to monitor. Since the performance monitor is designed to track multiple processes or microservices, you must enter an application and process name. Otherwise, the links on the sidebar will not work and the you will not be able to view any data. If the application of the session that you want to monitor is not showing up on the left menu, first check that the session actually sent out data and then refresh the page to see the latest sessions that were added. The homepage of the web application will look like this.
 
 ![Homepage for Web Application](docs/Photos/landingHomepage.PNG)
 
-Once the user clicks on an application name, all the associated process names will appear on the adjacent menu. 
-
-![Selecting application name](docs/Photos/selectingApplication.PNG)
-
-Once the user clicks on a process name and clicks "Examine", the side bar will update to inform the user what session they are currently viewing data for and the menus will be cleared. 
+Once you click on an application name, all the associated process names will appear on the adjacent menu. If a specific process is not showing up, try refreshing the page. Once both an application and process are selected, you may click "Examine" and the side bar will update to inform you what session you are currently viewing data for and the menus will be cleared.
 
 ![Selected Session](docs/Photos/updatingSideBartoSession.PNG)
 
-Now, the user can utilize the sidebar to navigate between the different metric pages and view the data collected from their application. For example, once the CPU and Memory tab is selected on the sidebar, the user will see the CPU and Memory graphs (which live update), the average percentage cpu used, the average memory used, and a table. 
+Now, you can utilize the sidebar to navigate between the different metric pages and view the data collected from their application. For example, once the CPU and Memory tab is selected on the sidebar, you will see the CPU and Memory graphs (which update continously), the average percentage cpu used, the average memory used, and a table. The graphs will show the most relevant data, which could be the last 15 minutes if the session you are monitoring is running simultaneously or the whole graph (which includes all data points). 
 
 ![CPU and Memory graphs](docs/Photos/cpuMemGraphs.PNG)
 
