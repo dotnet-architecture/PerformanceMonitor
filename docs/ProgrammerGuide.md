@@ -240,9 +240,29 @@ This gets the initial data but for the live updating, the getCPUData method must
 }, @IndexModel.userSession.sendRate * 1.1)); 
 ```
 
-After the initial data has been gathered, the setInterval method executes the function method every sendRate * 1.1 miliseconds. The function method contains a call to the getCPUData, thus triggering an http request to the api continuously. The interval is set to the sendRate of the session multiplied by a factor of 1.1 to ensure that the web application does not make uneccessary requests. Had it been multiplied by a factor of less than 1, it is guarenteed that some of the requests would give back empty results because the requests are being triggered faster than the data is being transferred to the server. 
+After the initial data has been gathered, the setInterval method executes the function method every sendRate * 1.1 miliseconds. The function method contains a call to the getCPUData, thus triggering an http request to the api continuously. The interval is set to the sendRate of the session multiplied by a factor of 1.1 to ensure that the web application does not make uneccessary requests. Had it been multiplied by a factor of less than 1, it is guarenteed that some of the requests would give back empty results because the requests are being triggered faster than the data is being transferred to the server.
+
+The fetch api is implemented in the following manner to live update the CPU and memory graphs as well as the Jit, garbage collection, and exceptions table. The live updating tables is not implemented for the CPU/memory, contentions, or http requests table because the fetch api is simply getting data on the client side and therefore cannot process the data on the server side. CPU/memory datapoints must be paired by timestamps whereas contentions and http requests must be paired by their ids so that the duration of an event can be calculated. For these reasons, live updating tables have not been implemented for these metrics. 
 
 #### Graphs with Plotly
+
+Plotly is used to graph the CPU and memory graph and uses the fetch API as discussed above to continuously get the current data. The initial graph is plotted once the initial data is fetched. Let us take a look at the CPU graph. Plotly.plot is passed 'cpu' (div in which the graph will be shown), CPU (contains data for xaxis and yaxis), and layout (defining other physical aspects of the graph). 
+
+```cs
+ Plotly.plot('cpu', CPU, layout);
+```
+
+To extend the lines in the graph, the Plotly.extendTraces method is used. It is passed 'cpu' (div in which the graph will be show), update (contains the datapoints of the new data), and an array specifying which trace is to be extended. In this case, the CPU graph only contains one trace and so the array [0] is passed. 
+
+```cs 
+Plotly.extendTraces('cpu', update, [0]);
+```
+
+To show only the most relevant data, the last 15 minutes are shown on the graph. This is done by the Plotly.relayout method. Once again, this method is passed 'cpu' (div in which the graph will be shown), and minuteView (array specifying the time range which the graph should display).
+
+```cs
+Plotly.relayout('cpu', minuteView);
+```
 
 #### Data Analysis and ClientSideData
 
