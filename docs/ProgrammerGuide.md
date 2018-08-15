@@ -117,7 +117,15 @@ The web application that supports the UI is an ASP.NET Core application that is 
 
 Every Razor Page for the metrics communicates with the FetchDataService file under the Services folder to retrieve data for their respective tables. The getData(DateTime oldStamp, DateTime newStamp) method calls the web api and returns a list of objects which represent a metric (can be any one of the shared classes because the method is generic). The method is passed parameters so that it can return data within the date range specified by the parameters and utilize the controllers that send data caught between a certain date range. This reduces the overhead and only transfer necessary information. 
 
-To call the web api, a new instance of an HttpClient is declared and the base address is defined. For now, the base address is hard coded in Startup file as the string apiDomain but can be made configurable later on as well. Then, the method starts constructing a string that will serve as the http request when the web api call is made. The method was made generic so that this method could be used to get information on any metric. Therefore, the controller which this method calls is not hard coded and must be determined by examining the type of object that this generic function is being used for. Depending on this type of object, the string named type is updated. The DateRange controllers take in a start and end parameter, which are the oldStamp and newStamp respectively. In order to make these variables url safe, the convertDateTime(DateTime d) method is utilized (an appropriate DateTime method could not be found and so this method was manually made). Becuase each all data is linked to a session id, the controllers also require a session id number. The string sessionId will be the portion of the string that specifies the sesion id in the http request. All these components of the http request are strung together to make a request. The response of that request is stored and if successful, the data is deserialized. 
+To call the web api, a new instance of an HttpClient is declared and the base address is defined. For now, the base address is hard coded in Startup file as the string apiDomain but can be made configurable later on as well. Then, the method starts constructing a string that will serve as the http request when the web api call is made. The method was made generic so that this method could be used to get information on any metric. Therefore, the controller which this method calls is not hard coded and must be determined by examining the type of object that this generic function is being used for. Depending on this type of object, the string named type is updated. The DateRange controllers take in a start and end parameter, which are the oldStamp and newStamp respectively. In order to make these variables url safe, the convertDateTime(DateTime d) method is utilized (an appropriate DateTime method could not be found and so this method was manually made). Becuase each all data is linked to a session id, the controllers also require a session id number. The string sessionId will be the portion of the string that specifies the sesion id in the http request. All these components of the http request are strung together to make a request. The GetAsync method actually makes the request. The response of that request is stored and if successful, the data is deserialized. 
+
+```cs
+HttpResponseMessage response = await client.GetAsync("api/v1/" + 
+                type + 
+                "/Daterange?start=" + 
+                dateRange +
+                sessionId);
+```
 
 For all metrics, the controllers require a date range. However, for the sessions controller, a date range is not required because all the sessions must be shown on the homepage. Therefore, the method getSessionData is separated from getData. This method calls the web api in a similar manner but just calls upon a different controller that takes in 0 parameters. 
 
@@ -125,7 +133,38 @@ For all metrics, the controllers require a date range. However, for the sessions
 
 For each metric that the Performance Monitor tracks, it has a separate Razor Page that makes individual Http requests to the server through the generic class FetchDataService. A Razor Page contain a cshtml file (which is comparable to an html file and determines the physical layout of a page) and a cshtml.cs file. While each Razor Page may operate differently and do different tasks with the data it recieves, for all Razor pages, the cshtml.cs file communicates with the FetchDataService class (explained in detail above) to retrieve data for the tables. The getData method (that is defined in FetchDataService) is called upon in the OnGet() method of the Razor Page. The OnGet() method is triggered every time the page is loaded or refreshed so data is updated everytime the page is refreshed. This data is then displayed on a table in the associated cshtml file. A refresh button is provided so that the users can refresh the page and see the most current data on the tables.
 
-#### Fetching Data for Graphs and Plotly
+#### Fetching Data by Javascript Fetch API
+
+Data for live updating is retrieved through the Javascript fetch api. Let us look at the Javascript code for the CPU graph under CPU_Memory.cshtml to get a better understanding of how the fetch api is implemented. For live updating, the fetch api must be triggered every so often. To facilitate this functionality, the actual implementation of the fetch api is separated into a getCPUData method, which takes in two parameters: start and end. Similar to the getData method in FetchDataServices, the controllers that utilize date range will be used and therefore getCPUData is given these parameters. Using these parameters and the apiDomain as the base address, a string is constructed that will be the HTTP request. The method then returns the following, in which the url is the http request string that was constructed. To allow the browser to give permission for the web application to make requests to a domain that is not its own, cors must be enabled. If the response is successful, then the response is converted to a JSON and then deserialized by the JSON.parse method. All these steps are split up into .then() methods because they ensure that the code is executed in the order specified. 
+
+```cs
+return fetch(url, {
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    "Accept": "application/json",
+                    'Access-Control-Allow-Origin': '*',
+                    "Content-type": "application/json"
+                }
+            })
+            .then(response => {
+                    if (response.ok) {
+                        return response;
+                    } else {
+                        return Promise.reject(response);
+                        throw Error(response.statusText);
+                    }
+                })
+                .then(response => response.json())
+                .then(function (data) {
+                    var dataArray = JSON.parse(data);
+                    // Some data manipulation
+                    return finalizedData; 
+                });
+```
+
+#### Graphs with Plotly
+
 
 #### Data Analysis and ClientSideData
 
