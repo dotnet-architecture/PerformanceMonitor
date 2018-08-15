@@ -13,9 +13,14 @@ This will trigger performance metric tracking that is done on the user's machine
 The other channel for data collection is the TraceEvent library (repo found here: https://github.com/Microsoft/perfview/tree/master/src/TraceEvent). Using TraceEvent, the monitor can monitor certain exception, GC, contention, JIT, and incoming Kestrel HTTP request events. Handling events via TraceEvent is not done with a controlled sampling rate, since event responses are triggered live as events are discovered by the event parsers.
 
 ### Data Storage
+
 The data collected is currently being hosted on a SQL database running through Docker. This allows for local testing of the application. In the future, the database will be moved to AzureSQL. This will allow the final product to run with minimal setup from the user. Startup.cs holds the location of the connection string for the server, and can be changed as necessary.
 
 Entity framework was used to manage the sending and fetching of data from the server. There are object-specific controllers for the fetching of data, and there is an all-purpose controller for sending the data in a single packet. Entity framework largely simplifies querying a SQL server, as no commands need to be written. The primary used POST request is POST/api/v1/General/ALL, which allows for pushing all the currently collected data to the server. The receiving of data is done by the specific page being used. Primarily, /api/v1/CPU/Daterange is being used to receive data from the server for CPU usage information. /api/v1/MEM/Daterange will be used to receive data for memory usage information. Data is sent and received in JSON form.
+
+### Data Presentation
+
+The web application is built through ASP.NET Core and Razor Pages. The data is received through the web API in JSON form and then deseralized into the custom classes for each metric. The Razor Pages use this data to perform data analysis and compile the useful information. Plotly requests data from the web API through the javascript fetch API and and constructs the graphs. 
 
 ## Functionality Specifics
 ### Data Collection
@@ -285,7 +290,7 @@ The start and stop events of an HTTP request are matched by the HTTP request ids
 * Exception by frequency
 * Total number of exceptions
 
-To keep track of the most frequent types of exceptions, a dictionary is kept with the key being the types of exceptions and the values are the amount of times that exception has been seen. While the table that lists all the exceptions is updated continuously (through the fetch API), the exception by frequency table or the total number of exceptions is not updated continuously. As mentioned previously, the data analysis must be performed on the server side and the new data is only being received on the client side of the web application. 
+To keep track of the most frequent types of exceptions, a dictionary is kept with the key being the types of exceptions and the values are the amount of times that exception has been seen. While the table that lists all the exceptions is updated continuously (through the fetch API), the exception by frequency table or the total number of exceptions is not updated continuously. As mentioned previously, the data analysis must be performed on the server side and the new data is only being received on the client side of the web application. So, to update the total number of exceptions or the exception by frequency table, the user must refresh the page or click the refresh button. 
 
 ##### Contentions
 * Duration of each contention
