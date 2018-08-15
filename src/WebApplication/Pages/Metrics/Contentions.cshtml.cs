@@ -25,7 +25,7 @@ namespace WebApplication.Pages.Metrics
         public async Task OnGet()
         {
             newStamp = DateTime.Now.ToUniversalTime();
-            List<Contention> addOn = await FetchDataService.getUpdatedData<Contention>(oldStamp, newStamp);
+            List<Contention> addOn = await FetchDataService.getData<Contention>(oldStamp, newStamp);
 
             foreach (Contention c in addOn)
             {

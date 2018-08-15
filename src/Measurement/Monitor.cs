@@ -22,17 +22,17 @@ namespace DataTransfer
         {
             this.process = "MyProcess";
             this.app = "UnnamedApp";
-            this.sampleRate = 500;
-            this.sendRate = 800;
+            this.sampleRate = 1000;
+            this.sendRate = 5000;
         }
-        public Monitor(String process = "MyProcess", String app = "UnnamedApp", int sampleRate = 500, int sendRate = 800)
+        public Monitor(String process = "MyProcess", String app = "UnnamedApp", int sampleRate = 1000, int sendRate = 5000)
         {
             this.process = process;
             this.app = app;
             this.sampleRate = sampleRate;
             this.sendRate = sendRate;
         }
-        public Monitor(String process = "MyProcess", int sampleRate = 500, int sendRate = 800)
+        public Monitor(String process = "MyProcess", int sampleRate = 1000, int sendRate = 5000)
         {
             this.process = process;
             this.app = "UnnamedApp";
@@ -40,7 +40,7 @@ namespace DataTransfer
             this.sendRate = sendRate;
         }
 
-        public Monitor(int sampleRate = 500, int sendRate = 800)
+        public Monitor(int sampleRate = 1000, int sendRate = 5000)
         {
             this.process = "MyProcess";
             this.app = "UnnamedApp";
@@ -55,42 +55,42 @@ namespace DataTransfer
          */
 
         // by default, no metric tracking enabled outside of CPU and mem
-        private static int CPUEnabled = 1;
-        private static int MemEnabled = 1;
-        private static int ContentionEnabled = 0;
-        private static int ExceptionEnabled = 0;
-        private static int GCEnabled = 0;
-        private static int HttpEnabled = 0;
-        private static int JitEnabled = 0;
+        private static bool CPUEnabled = true;
+        private static bool MemEnabled = true;
+        private static bool ContentionEnabled = false;
+        private static bool ExceptionEnabled = false;
+        private static bool GCEnabled = false;
+        private static bool HttpEnabled = false;
+        private static bool JitEnabled = false;
 
         // these methods all turn metric tracking on or off
         public void DisableCPU()
         {
-            CPUEnabled = 0;
+            CPUEnabled = false;
         }
         public void DisableMem()
         {
-            MemEnabled = 0;
+            MemEnabled = false;
         }
         public void EnableContention()
         {
-            ContentionEnabled = 1;
+            ContentionEnabled = true;
         }
         public void EnableException()
         {
-            ExceptionEnabled = 1;
+            ExceptionEnabled = true;
         }
         public void EnableGC()
         {
-            GCEnabled = 1;
+            GCEnabled = true;
         }
         public void EnableHttp()
         {
-            HttpEnabled = 1;
+            HttpEnabled = true;
         }
         public void EnableJit()
         {
-            JitEnabled = 1;
+            JitEnabled = true;
         }
 
         // fetching properties unique to current data collection session
@@ -104,6 +104,11 @@ namespace DataTransfer
         public int getHold()
         {
             return hold;
+        }
+        public static bool running = false;
+        public bool isRunning()
+        {
+            return running;
         }
         
         // creates an HTTP client so that server requests can be made
@@ -121,6 +126,7 @@ namespace DataTransfer
         private static DateTime newStamp = DateTime.Now;
         private static double change = 0;
         private static double period = 0;
+        public static DateTime CPUMemTime = DateTime.Now;
         // list containing instances of CPU readings
         public static List<CPU_Usage> CPUVals = new List<CPU_Usage>();
         public int getCPUCount()
@@ -157,6 +163,8 @@ namespace DataTransfer
          */
         public void Record()  // sets timer that calls Collect every five seconds
         {
+            running = true;
+
             // sets base address for HTTP requests - won't be hard-coded in future
             client.BaseAddress = new Uri("http://localhost:54022/");
 
@@ -169,7 +177,7 @@ namespace DataTransfer
             instance.application = app;
 
             // starts event collection via TraceEvent in separate task if necessary
-            if (ContentionEnabled == 1 | ExceptionEnabled == 1 | GCEnabled == 1 | HttpEnabled == 1 | JitEnabled == 1)
+            if (ContentionEnabled | ExceptionEnabled | GCEnabled | HttpEnabled | JitEnabled)
             {
                 Task.Factory.StartNew(() =>
                 {
@@ -183,11 +191,12 @@ namespace DataTransfer
                 timer.Start();
                 while (true)
                 {
-                    if (CPUEnabled == 1)
+                    CPUMemTime = DateTime.Now;
+                    if (CPUEnabled)
                     {
                         FetchCPU();
                     }
-                    if (MemEnabled == 1)
+                    if (MemEnabled)
                     {
                         FetchMem();
                     }
@@ -274,7 +283,7 @@ namespace DataTransfer
                 // set up parser to read CLR events
                 var clrParser = new ClrTraceEventParser(session.Source);
 
-                if (ExceptionEnabled == 1)
+                if (ExceptionEnabled)
                 {
                     // subscribe to all exception start events
                     clrParser.ExceptionStart += delegate (ExceptionTraceData data)
@@ -294,7 +303,7 @@ namespace DataTransfer
                     };
                 }
 
-                if (ContentionEnabled == 1)
+                if (ContentionEnabled)
                 {
                     // subscribe to all contention start events
                     clrParser.ContentionStart += delegate (ContentionTraceData data)
@@ -330,7 +339,7 @@ namespace DataTransfer
                     };
                 }
 
-                if (GCEnabled == 1)
+                if (GCEnabled)
                 {
                     // subscribe to all GC start events
                     clrParser.GCStart += delegate (GCStartTraceData data)
@@ -462,7 +471,7 @@ namespace DataTransfer
                     };
                 }
 
-                if (JitEnabled == 1)
+                if (JitEnabled)
                 {
                     // subscribe to all Jit start events
                     clrParser.MethodJittingStarted += delegate (MethodJittingStartedTraceData data)
@@ -481,7 +490,7 @@ namespace DataTransfer
                     };
                 }
 
-                if (HttpEnabled == 1)
+                if (HttpEnabled)
                 {
                     // subscribe to all dynamic events (used for HTTP request event tracking)
                     session.Source.Dynamic.All += delegate (TraceEvent data) {
@@ -525,7 +534,7 @@ namespace DataTransfer
 
         private void FetchCPU()  // calculates CPU usage
         {
-            if (CPUEnabled == 1)
+            if (CPUEnabled)
             {
                 // clear the process' cached information
                 myProcess.Refresh();
@@ -547,7 +556,7 @@ namespace DataTransfer
                     use = 100.0;
                 }
                 cpu.usage = use;
-                cpu.timestamp = newStamp;
+                cpu.timestamp = CPUMemTime;
                 lock (lockObject)
                 {
                     CPUVals.Add(cpu);
@@ -557,13 +566,13 @@ namespace DataTransfer
 
         private void FetchMem()  // fetches Memory usage
         {
-            if (MemEnabled == 1)
+            if (MemEnabled)
             {
                 // clear the process' cached information
                 myProcess.Refresh();
                 Mem_Usage mem = new Mem_Usage();
                 mem.usage = myProcess.WorkingSet64;
-                mem.timestamp = DateTime.Now;
+                mem.timestamp = CPUMemTime;
                 lock (lockObject)
                 {
                     MemVals.Add(mem);

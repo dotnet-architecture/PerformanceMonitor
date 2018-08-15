@@ -138,6 +138,17 @@
                             };
 
                             Plotly.relayout('cpu', minuteView);
+
+                            @*var table = document.getElementById("cpuMemTable");
+
+                            for (var i = 0; i < xaxis.length; i++) {
+                                var row = table.insertRow(1);
+                                var cell1 = row.insertCell(0);
+                                var cell2 = row.insertCell(1);
+                                var cell3 = row.insertCell(2); 
+                                cell1.innerHTML = yaxis[i];
+                                cell3.innerHTML = xaxis[i].toString();*@
+                            }
                         }                    
                     });
             }, @IndexModel.userSession.sendRate*1.1));
@@ -285,8 +296,8 @@
         </thead>
         <tbody>
             @if (Model.dataByTimeSorted != null)
-            {
-                @for (int i = 0; i < Model.dataByTimeSorted.Count; i++)
+            {           
+                @for (int i = Model.dataByTimeSorted.Count - 1; i >= 0 ; i--)
                 {
                     KeyValuePair<DateTime, Tuple<CPU_Usage, Mem_Usage>> p = Model.dataByTimeSorted[i];
                     <tr>
@@ -298,7 +309,6 @@
                         {
                             <td></td>
                         }
-
                         @if (p.Value.Item2 != null)
                         {
                             <td>@((p.Value.Item2.usage / 1000000.0).ToString("0.0000"))</td>
@@ -307,83 +317,10 @@
                         {
                             <td></td>
                         }
-
                         <td>@p.Key.ToLongTimeString() @p.Key.ToShortDateString()</td>
                     </tr>
-
                 }
             }
-
-            @*@if (Model.cpu != null)
-        {
-            @for (int i = Math.Max(Model.cpu.Count - 1, Model.mem.Count - 1); i >= 0; i--)
-            {
-                if (Model.cpu.Count == Model.mem.Count)
-                {
-                    CPU_Usage c = Model.cpu[i];
-                    Mem_Usage m = Model.mem[i];
-                    <tr>
-                        <td>@c.usage.ToString("0.0000")</td>
-                        <td>@((m.usage / 1000000.0).ToString("0.0000"))</td>
-                        <td>@c.timestamp.ToLongTimeString() @c.timestamp.ToShortDateString()</td>
-                    </tr>
-
-                } else if (Model.cpu.Count > Model.mem.Count)
-                {
-                    DateTime d = Model.cpu[i].timestamp;
-                    CPU_Usage c = Model.cpu[i];
-
-                    <tr>
-                        <td>@c.usage.ToString("0.0000")</td>
-                    </tr>
-
-                }
-                if (Model.cpu.Count > Model.mem.Count)
-                {
-                    DateTime stamp = Model.cpu[i].timestamp;
-
-                }
-
-                //CPU_Usage c = null;
-                //Mem_Usage m = null;
-                //if (i <= Model.cpu.Count - 1)
-                //{
-                //    c = Model.cpu[i];
-                //}
-                //if (i <= Model.mem.Count - 1)
-                //{
-                //    m = Model.mem[i];
-                //}
-        <tr>
-            @if (c != null)
-            {
-                <td>@c.usage.ToString("0.0000")</td>
-            }
-            else
-            {
-                <td></td>
-            }
-
-            @if (m != null)
-            {
-                <td>@((m.usage / 1000000.0).ToString("0.0000"))</td>
-            }
-            else
-            {
-                <td></td>
-            }
-
-            @if (c != null)
-            {
-                <td>@c.timestamp.ToLongTimeString() @c.timestamp.ToShortDateString()</td>
-            }
-            @if (c == null && m != null)
-            {
-                <td>@m.timestamp.ToLongTimeString() @m.timestamp.ToShortDateString()</td>
-            }
-        </tr>
-            }
-        }*@
         </tbody>
     </table>
 </div>

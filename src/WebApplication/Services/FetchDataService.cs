@@ -11,17 +11,12 @@ namespace WebApplication
     public class FetchDataService
     {
         // Generic method that takes timestamps and makes a call to the API based off of the class T
-        public static async Task<List<T>> getUpdatedData<T>(DateTime oldStamp, DateTime newStamp)
+        public static async Task<List<T>> getData<T>(DateTime oldStamp, DateTime newStamp)
         {
-            // Creating HttpClient that will call the web api
+            // Creating HttpClient that will call the web upapi
             HttpClient client = new HttpClient();
-            // Constructing url that will be called, the domain is hardcoded for now, will be more variable in the future
+            // Constructing url that will be called, the domain is hardcoded for now
             client.BaseAddress = new Uri(WebApplication.Startup.apiDomain);
-
-            // Constructing string that will pass timestamps to web api controllers
-            String dateRange = convertDateTime(oldStamp) + "&end=" + convertDateTime(newStamp);
-            // Passing session information to the web api controllers
-            String sessionId = "&id=" + IndexModel.userSession.Id.ToString(); 
 
             // Specifying which controller to call upon based off the object of T
             String type = "";
@@ -58,6 +53,11 @@ namespace WebApplication
                 type = "error"; // Should never hit this because T can only take on values defined above
             }
 
+            // Constructing string that will pass timestamps to web api controllers
+            String dateRange = convertDateTime(oldStamp) + "&end=" + convertDateTime(newStamp);
+            // Passing session information to the web api controllers
+            String sessionId = "&id=" + IndexModel.userSession.Id.ToString();
+
             // Stringing all components of http request together and actually calling web api
             HttpResponseMessage response = await client.GetAsync("api/v1/" + 
                 type + 
@@ -75,8 +75,8 @@ namespace WebApplication
             return data; 
         }
 
-        // getUpdatedData method gets information for metrics based off of a daterange whereas the session 
-        // RETURNALL controller doesn't require a daterange, so getSessionData is separated from getUpdatedData
+        // getData method gets information for metrics based off of a daterange whereas the session 
+        // RETURNALL controller doesn't require a daterange, so getSessionData is separated from getData
         public static async Task<List<Session>> getSessionData()
         {
             // Creating HttpClient that will call the web api

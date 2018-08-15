@@ -14,12 +14,96 @@
 <div class="main">
     <font size="50">Jit</font>
 
+    <div id="jit"></div>
+    <script>
+        var end = `@Html.Encode(FetchDataService.convertDateTime(Model.newStamp))`;
+        const id = `@Html.Encode(IndexModel.userSession.Id)`;
+
+        function getData(start, end) {
+            const url = `@WebApplication.Startup.apiDomain`+ `api/v1/Jit/Daterange?start=${start}&end=${end}&id=${id}`;
+            return fetch(url, {
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    "Accept": "application/json",
+                    'Access-Control-Allow-Origin': '*',
+                    "Content-type": "application/json"
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response;
+                    } else {
+                        return Promise.reject(response);
+                        throw Error(response.statusText);
+                    }
+                })
+                .then(response => response.json())
+                .then(function (data) {
+                    var dataArray = JSON.parse(data);
+                    var jitMethod = new Array();
+                    var jitTimestamp = new Array();
+
+                    for (var i = 0; i < dataArray.length; i++) {
+                        jitMethod[i] = dataArray[i].method;
+                        jitTimestamp[i] = new Date(dataArray[i].timestamp);
+                    }
+
+                    var dataReturn = new Array();
+                    dataReturn[0] = jitMethod;
+                    dataReturn[1] = jitTimestamp;
+
+                    return dataReturn;
+                });
+        }
+
+        Promise.all([getData(end, end)])
+            .then(setInterval(function () {
+                // Updating time stamps
+                start = end;
+                var now = new Date(); // Gets current time
+
+                end = now.getFullYear() + "-" +
+                    ("0" + (now.getMonth() + 1)).slice(-2) + "-" +
+                    ("0" + now.getDate()).slice(-2) + "T" +
+                    ("0" + now.getHours()).slice(-2) + "%3A" +
+                    ("0" + now.getMinutes()).slice(-2) + "%3A" +
+                    ("0" + now.getSeconds()).slice(-2) + "." +
+                    ("0" + now.getMilliseconds()).slice(-3);
+
+                Promise.all([getData(start, end)])
+                    .then(function (values) {
+                        var methods = values[0][0];
+                        var timestamps = values[0][1];
+
+                        if (timestamps.length != 0) {
+                            var table = document.getElementById("jitTable");
+
+                            for (var i = 0; i < timestamps.length; i++) {
+                                var row = table.insertRow(0);
+                                var cell1 = row.insertCell(0);
+                                var cell2 = row.insertCell(1);
+                                var time = timestamps[i]; 
+
+                                cell1.innerHTML = methods[i];
+                                cell2.innerHTML = time.getUTCHours() + `:` +
+                                    time.getUTCMinutes() + `:` +
+                                    time.getUTCSeconds() + ` ` +
+                                    time.getUTCMonth() + `/` +
+                                    time.getUTCDate() + `/` +
+                                    time.getUTCFullYear(); 
+                            }
+                        }
+                    });
+            }, @IndexModel.userSession.sendRate*1.1));
+    </script>
+
     <p>Total Jit Events: @Model.totalJit</p>
 
     <button class="btn btn-default" onClick="window.location.reload()">Refresh Data</button>
 
     <p>Jit Log</p>
-    <table class="table table-hover table-bordered">
+    <table class="table table-hover table-bordered" id="jitTable">
         <thead>
             <tr>
                 <th>Method</th>
@@ -38,10 +122,6 @@
                     </tr>
 
                 }
-            }
-            else
-            {
-                <tr>Unable to retrieve data</tr>
             }
         </tbody>
     </table>
