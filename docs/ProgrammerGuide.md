@@ -123,17 +123,15 @@ For all metrics, the controllers require a date range. However, for the sessions
 
 #### Razor Pages for Metrics
 
-Razor Pages contain a cshtml file (which is comparable to an html file and determines the physical layout of a page) and a cshtml.cs file. The cshtml.cs file for each metric communicates with the FetchDataService class (explained in detail above) to retrieve data for the tables. 
+For each metric that the Performance Monitor tracks, it has a separate Razor Page that makes individual Http requests to the server through the generic class FetchDataService. A Razor Page contain a cshtml file (which is comparable to an html file and determines the physical layout of a page) and a cshtml.cs file. While each Razor Page may operate differently and do different tasks with the data it recieves, for all Razor pages, the cshtml.cs file communicates with the FetchDataService class (explained in detail above) to retrieve data for the tables. The getData method (that is defined in FetchDataService) is called upon in the OnGet() method of the Razor Page. The OnGet() method is triggered every time the page is loaded or refreshed so data is updated everytime the page is refreshed. This data is then displayed on a table in the associated cshtml file. A refresh button is provided so that the users can refresh the page and see the most current data on the tables.
 
 #### Fetching Data for Graphs and Plotly
 
 #### Data Analysis and ClientSideData
 
-The home page lists all current sessions (with the application name and process name) calling the FetchDataService class to get a list of all sessions, which is then used to create the table seen on the home page. The user is then prompted to input the specific session that they want to examine. If the sessions with the specified application name and process name is not found, an error pops up and the user is prompted to re-enter the information. Afterwards, another call to the API determines the session that the user is interested in based off the users' input. This session and its id is used to look up all further data. 
- 
-For each metric that the Performance Monitor tracks, it has a separate Razor Page that makes individual Http requests to the server through the generic class FetchDataService. Based off of the type of metric, the FetchDataService constructs an HTTP request that then returns a list of data (only of the type that was requested) by utilizing the generic MetricService class, which deserializes the JSON objects (this is the response that is received when performing an HTTP request) to objects that correlate to a specific metric type. The data is fetched on the onGet() method of each Razor Page, meaning that the data is fetched and displayed when the page is refreshed.
- 
-The design of the web application is specified in the .cshtml files of each Razor Page. There is a shared _Layout.cshtml page that dictates the design of the sidebar. The sidebar points towards all the different Razor pages metrics. The contents of the individual metric Razor pages then solely are responsible for the metric content portion of the web page. For each metric page, a log of data is presented in a table. A refresh button is also given so that the users can see the most current data.
+#### UI Design
+  
+The design of the web application is specified in the .cshtml files of each Razor Page. There is a shared _Layout.cshtml page that dictates the design of the sidebar. The sidebar points towards all the different Razor pages metrics. The contents of the individual metric Razor Pages then solely are responsible for the metric content portion of the web page.
 
 ## Testing
 ### Data Collection
