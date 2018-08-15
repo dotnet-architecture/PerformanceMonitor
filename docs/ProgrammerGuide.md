@@ -240,11 +240,59 @@ This gets the initial data but for the live updating, the getCPUData method must
 }, @IndexModel.userSession.sendRate * 1.1)); 
 ```
 
-After the initial data has been gathered, the setInterval method executes the function method every sendRate * 1.1 miliseconds. The function method contains a call to the getCPUData, thus triggering an http request to the api continuously. The interval is set to the sendRate of the session multiplied by a factor of 1.1 to ensure that the web application does not make uneccessary requests. Had it been multiplied by a factor of less than 1, it is guarenteed that some of the requests would give back empty results because the requests are being triggered faster than the data is being transferred to the server. 
+After the initial data has been gathered, the setInterval method executes the function method every sendRate * 1.1 miliseconds. The function method contains a call to the getCPUData, thus triggering an http request to the api continuously. The interval is set to the sendRate of the session multiplied by a factor of 1.1 to ensure that the web application does not make uneccessary requests. Had it been multiplied by a factor of less than 1, it is guarenteed that some of the requests would give back empty results because the requests are being triggered faster than the data is being transferred to the server.
+
+The fetch api is implemented in the following manner to live update the CPU and memory graphs as well as the Jit, garbage collection, and exceptions table. The live updating tables is not implemented for the CPU/memory, contentions, or http requests table because the fetch api is simply getting data on the client side and therefore cannot process the data on the server side. CPU/memory datapoints must be paired by timestamps whereas contentions and http requests must be paired by their ids so that the duration of an event can be calculated. For these reasons, live updating tables have not been implemented for these metrics. 
 
 #### Graphs with Plotly
 
-#### Data Analysis and ClientSideData
+Plotly is used to graph the CPU and memory graph and uses the fetch API as discussed above to continuously get the current data. The initial graph is plotted once the initial data is fetched. Let us take a look at the CPU graph. Plotly.plot is passed 'cpu' (div in which the graph will be shown), CPU (contains data for xaxis and yaxis), and layout (defining other physical aspects of the graph). 
+
+```cs
+ Plotly.plot('cpu', CPU, layout);
+```
+
+To extend the lines in the graph, the Plotly.extendTraces method is used. It is passed 'cpu' (div in which the graph will be show), update (contains the datapoints of the new data), and an array specifying which trace is to be extended. In this case, the CPU graph only contains one trace and so the array [0] is passed. 
+
+```cs 
+Plotly.extendTraces('cpu', update, [0]);
+```
+
+To show only the most relevant data, the last 15 minutes are shown on the graph. This is done by the Plotly.relayout method. Once again, this method is passed 'cpu' (div in which the graph will be shown), and minuteView (array specifying the time range which the graph should display).
+
+```cs
+Plotly.relayout('cpu', minuteView);
+```
+
+#### Data Analysis
+
+The following measurements are given for the associated metrics.
+
+##### CPU and Memory 
+* Average CPU usage
+* Average percentage of memory used
+
+Because either CPU or memory could be disabled, the table must be able to reflect those changes. As a result, a dictionary is used to pair the CPU and memory data. This dictionary is then sorted so that the data can be shown in a chronological order in the CPU and memory table.
+
+##### HTTP Requests
+* Duration of each HTTP request
+* Average duration of all HTTP requests
+* Total number of HTTP requests
+
+The start and stop events of an HTTP request are matched by the HTTP request ids. So, a dictionary is kept with the ids as the keys and the start times as the values. Once a stop event is identified, the respective start event is found through the dictionary and the duration is calculated by taking the difference between the start and the stop timestamps. 
+
+##### Exceptions
+* Exception by frequency
+* Total number of exceptions
+
+To keep track of the most frequent types of exceptions, a dictionary is kept with the key being the types of exceptions and the vlues being the amount of times that exception has been seen
+
+##### Contentions
+* Duration of each contention
+* Average duration of all contentions
+* Total number of contentions
+
+Implemented in the same manner as HTTP requests.
 
 #### UI Design
   

@@ -76,22 +76,30 @@
                     .then(function (values) {
                         var types = values[0][0];
                         var timestamps = values[0][1];
-                     
+
                         if (types.length != 0) {
-                            var table = document.getElementById("myTable");
+                            var table = document.getElementById("exceptionTable");
 
                             for (var i = 0; i < types.length; i++) {
-                                @Model.totalExceptions = @(Model.totalExceptions + 1); 
                                 var row = table.insertRow(0);
                                 var cell1 = row.insertCell(0);
                                 var cell2 = row.insertCell(1);
+                                var time = timestamps[i];
+
                                 cell1.innerHTML = types[i];
-                                cell2.innerHTML = timestamps[i].toString();
-                            }                
+                                cell2.innerHTML = time.getUTCHours() + `:` +
+                                    time.getUTCMinutes() + `:` +
+                                    time.getUTCSeconds() + ` ` +
+                                    time.getUTCMonth() + `/` +
+                                    time.getUTCDate() + `/` +
+                                    time.getUTCFullYear();
+                            }
                         }
                     });
             }, @IndexModel.userSession.sendRate*1.1));
     </script>
+
+    <button class="btn btn-default" onClick="window.location.reload()">Refresh for Total Number of Exceptions and Frequency Table</button>
 
     <p>Total number of exceptions: @Model.totalExceptions</p>
 
@@ -116,7 +124,7 @@
 
     @message
     <p>Exceptions by Frequency</p>
-    <table class="table table-hover table-bordered" id="myTable">
+    <table class="table table-hover table-bordered" id="exceptionTable">
         <thead>
             <tr>
                 <th>Exception Type</th>
