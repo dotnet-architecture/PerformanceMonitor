@@ -78,7 +78,7 @@
                         var timestamps = values[0][1];
 
                         if (types.length != 0) {
-                            var table = document.getElementById("myTable");
+                            var table = document.getElementById("exceptionTable");
 
                             for (var i = 0; i < types.length; i++) {
                                 var row = table.insertRow(0);
@@ -124,7 +124,7 @@
 
     @message
     <p>Exceptions by Frequency</p>
-    <table class="table table-hover table-bordered" id="myTable">
+    <table class="table table-hover table-bordered" id="exceptionTable">
         <thead>
             <tr>
                 <th>Exception Type</th>
