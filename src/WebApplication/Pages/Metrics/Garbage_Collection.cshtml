@@ -18,8 +18,92 @@
 
     <button class="btn btn-default" onClick="window.location.reload()">Refresh Data</button>
 
+    <div id="garbageCollection"></div>
+    <script>
+        var end = `@Html.Encode(FetchDataService.convertDateTime(Model.newStamp))`;
+        const id = `@Html.Encode(IndexModel.userSession.Id)`;
+
+        function getData(start, end) {
+            const url = `@WebApplication.Startup.apiDomain`+ `api/v1/GC/Daterange?start=${start}&end=${end}&id=${id}`;
+            return fetch(url, {
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    "Accept": "application/json",
+                    'Access-Control-Allow-Origin': '*',
+                    "Content-type": "application/json"
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response;
+                    } else {
+                        return Promise.reject(response);
+                        throw Error(response.statusText);
+                    }
+                })
+                .then(response => response.json())
+                .then(function (data) {
+                    var dataArray = JSON.parse(data);
+                    var gcType = new Array();
+                    var gcTimestamp = new Array();
+
+                    for (var i = 0; i < dataArray.length; i++) {
+                        gcType[i] = dataArray[i].method;
+                        gcTimestamp[i] = new Date(dataArray[i].timestamp);
+                    }
+
+                    var dataReturn = new Array();
+                    dataReturn[0] = gcType;
+                    dataReturn[1] = gcTimestamp;
+
+                    return dataReturn;
+                });
+        }
+
+        Promise.all([getData(end, end)])
+            .then(setInterval(function () {
+                // Updating time stamps
+                start = end;
+                var now = new Date(); // Gets current time
+
+                end = now.getFullYear() + "-" +
+                    ("0" + (now.getMonth() + 1)).slice(-2) + "-" +
+                    ("0" + now.getDate()).slice(-2) + "T" +
+                    ("0" + now.getHours()).slice(-2) + "%3A" +
+                    ("0" + now.getMinutes()).slice(-2) + "%3A" +
+                    ("0" + now.getSeconds()).slice(-2) + "." +
+                    ("0" + now.getMilliseconds()).slice(-3);
+
+                Promise.all([getData(start, end)])
+                    .then(function (values) {
+                        var types = values[0][0];
+                        var timestamps = values[0][1];
+
+                        if (timestamps.length != 0) {
+                            var table = document.getElementById("gcTable");
+
+                            for (var i = 0; i < timestamps.length; i++) {
+                                var row = table.insertRow(0);
+                                var cell1 = row.insertCell(0);
+                                var cell2 = row.insertCell(1);
+                                var time = timestamps[i];
+
+                                cell1.innerHTML = methods[i];
+                                cell2.innerHTML = time.getUTCHours() + `:` +
+                                    time.getUTCMinutes() + `:` +
+                                    time.getUTCSeconds() + ` ` +
+                                    time.getUTCMonth() + `/` +
+                                    time.getUTCDate() + `/` +
+                                    time.getUTCFullYear();
+                            }
+                        }
+                    });
+            }, @IndexModel.userSession.sendRate*1.1));
+    </script>
+
     <p>Table of Garbage Collection</p>
-    <table class="table table-hover table-bordered">
+    <table class="table table-hover table-bordered" id="gcTable">
         <thead>
             <tr>
                 <th>GC Type</th>

@@ -76,10 +76,10 @@
                         var methods = values[0][0];
                         var timestamps = values[0][1];
 
-                        if (tmethodsypes.length != 0) {
-                            var table = document.getElementById("myTable");
+                        if (timestamps.length != 0) {
+                            var table = document.getElementById("jitTable");
 
-                            for (var i = 0; i < methods.length; i++) {
+                            for (var i = 0; i < timestamps.length; i++) {
                                 var row = table.insertRow(0);
                                 var cell1 = row.insertCell(0);
                                 var cell2 = row.insertCell(1);
@@ -103,7 +103,7 @@
     <button class="btn btn-default" onClick="window.location.reload()">Refresh Data</button>
 
     <p>Jit Log</p>
-    <table class="table table-hover table-bordered">
+    <table class="table table-hover table-bordered" id="jitTable">
         <thead>
             <tr>
                 <th>Method</th>
