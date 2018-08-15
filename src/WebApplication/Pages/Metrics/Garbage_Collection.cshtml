@@ -14,10 +14,6 @@
 <div class="main">
     <font size="50">Garbage Collection</font>
 
-    <p>Total Garbage Collection: @Model.totalGC</p>
-
-    <button class="btn btn-default" onClick="window.location.reload()">Refresh Data</button>
-
     <div id="garbageCollection"></div>
     <script>
         var end = `@Html.Encode(FetchDataService.convertDateTime(Model.newStamp))`;
@@ -101,6 +97,8 @@
                     });
             }, @IndexModel.userSession.sendRate*1.1));
     </script>
+
+    <p>Total Garbage Collection: @Model.totalGC</p>
 
     <p>Table of Garbage Collection</p>
     <table class="table table-hover table-bordered" id="gcTable">
