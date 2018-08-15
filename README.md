@@ -100,13 +100,7 @@ If we were to additionally create two new processes - "Process3" and "Process4",
 
 Each process can be viewed individually, but they will be organized under whatever application they belong to. This allows an application with multiple, distinct processes or microservices to be easily tracked as a cohesive unit.
 
-<<<<<<< HEAD
-## Visualize your Data
-=======
-
-
-## Visualize Your Data
->>>>>>> upstream/master
+## Data Presentation
 
 Once the web application is spin up, the user is prompted to enter the application and process name of the session that they want to monitor. The web application would look similar to this.
 
