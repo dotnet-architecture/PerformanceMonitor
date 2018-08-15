@@ -15,8 +15,8 @@ namespace WebApplication.Pages.Metrics
         public int totalExceptions = 0;
 
         // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
-        private DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime();
-        private DateTime newStamp = DateTime.Now.ToUniversalTime();
+        public DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime();
+        public DateTime newStamp; 
 
         public Dictionary<string, int> exceptionTracker = new Dictionary<string, int>();
         public List<KeyValuePair<string, int>> exceptionSorted = new List<KeyValuePair<string, int>>();

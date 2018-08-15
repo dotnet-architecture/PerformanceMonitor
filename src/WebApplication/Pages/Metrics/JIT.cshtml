@@ -14,6 +14,83 @@
 <div class="main">
     <font size="50">Jit</font>
 
+    <div id="jit"></div>
+    <script>
+        var end = `@Html.Encode(FetchDataService.convertDateTime(Model.newStamp))`;
+        const id = `@Html.Encode(IndexModel.userSession.Id)`;
+
+        function getData(start, end) {
+            const url = `@WebApplication.Startup.apiDomain`+ `api/v1/Jit/Daterange?start=${start}&end=${end}&id=${id}`;
+            return fetch(url, {
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    "Accept": "application/json",
+                    'Access-Control-Allow-Origin': '*',
+                    "Content-type": "application/json"
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response;
+                    } else {
+                        return Promise.reject(response);
+                        throw Error(response.statusText);
+                    }
+                })
+                .then(response => response.json())
+                .then(function (data) {
+                    var dataArray = JSON.parse(data);
+                    var jitMethod = new Array();
+                    var jitTimestamp = new Array();
+
+                    for (var i = 0; i < dataArray.length; i++) {
+                        exceptionType[i] = dataArray[i].type;
+                        exceptionTimestamp[i] = new Date(dataArray[i].timestamp);
+                    }
+
+                    var dataReturn = new Array();
+                    dataReturn[0] = exceptionType;
+                    dataReturn[1] = exceptionTimestamp;
+
+                    return dataReturn;
+                });
+        }
+
+        Promise.all([getData(end, end)])
+            .then(setInterval(function () {
+                // Updating time stamps
+                start = end;
+                var now = new Date(); // Gets current time
+
+                end = now.getFullYear() + "-" +
+                    ("0" + (now.getMonth() + 1)).slice(-2) + "-" +
+                    ("0" + now.getDate()).slice(-2) + "T" +
+                    ("0" + now.getHours()).slice(-2) + "%3A" +
+                    ("0" + now.getMinutes()).slice(-2) + "%3A" +
+                    ("0" + now.getSeconds()).slice(-2) + "." +
+                    ("0" + now.getMilliseconds()).slice(-3);
+
+                Promise.all([getData(start, end)])
+                    .then(function (values) {
+                        var types = values[0][0];
+                        var timestamps = values[0][1];
+
+                        if (types.length != 0) {
+                            var table = document.getElementById("myTable");
+
+                            for (var i = 0; i < types.length; i++) {
+                                var row = table.insertRow(0);
+                                var cell1 = row.insertCell(0);
+                                var cell2 = row.insertCell(1);
+                                cell1.innerHTML = types[i];
+                                cell2.innerHTML = timestamps[i].toString();
+                            }
+                        }
+                    });
+            }, @IndexModel.userSession.sendRate*1.1));
+    </script>
+
     <p>Total Jit Events: @Model.totalJit</p>
 
     <button class="btn btn-default" onClick="window.location.reload()">Refresh Data</button>
