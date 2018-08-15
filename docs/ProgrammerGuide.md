@@ -173,6 +173,7 @@ This gets the initial data but for the live updating, the getCPUData method must
 
 ```cs
 .then(setInterval(function () {
+    ...
 }, @IndexModel.userSession.sendRate * 1.1)); 
 ```
 
