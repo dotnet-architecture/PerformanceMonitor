@@ -51,7 +51,7 @@ The performance metrics that are monitored by the PerformanceMonitor are as foll
   * Count
  
 #### Recording Metrics (System.Diagnostics.Process class)
-As mentioned above, CPU and memory usage are fetched via the _System.Diagnostics.Process_ class. By default, only CPU and memory tracking is enabled - to enable other metric tracking, function calls to enable each can be made before beginning recording. A new _Monitor_ class instance must be created for each process that a user would like to monitor, because the data is fetched by first calling Process.GetCurrentProcess();, which will return a _Process_ class instance. This class instance contains a number of fields that are used to track CPU and memory performance. CPU and memory usage will be sampled as often as the sampling rate dictates, while the other events, which are traced via TraceEvent, are collected as they are triggered. This is done by looping through a while(true) loop in the Record() function, and comparing a TimeSpan between the last sample and the current time to the sampling rate.
+As mentioned above, CPU and memory usage are fetched via the _System.Diagnostics.Process_ class. By default, only CPU and memory tracking is enabled - to enable other metric tracking, function calls to enable each can be made before beginning recording (this will be covered in the TraceEvent tracing section). A new _Monitor_ class instance must be created for each process that a user would like to monitor, because the data is fetched by first calling Process.GetCurrentProcess();, which will return a _Process_ class instance. This class instance contains a number of fields that are used to track CPU and memory performance. CPU and memory usage will be sampled as often as the sampling rate dictates, while the other events, which are traced via TraceEvent, are collected as they are triggered. This is done by looping through a while(true) loop in the Record() function, and comparing the time elapsed on a Stopwatch between the last sample and the current time to the sampling rate.
  
 ##### CPU
 Tracking CPU usage requires a small amount of overhead for calculation and comparison of a few variables. The total time that a machine's logical processors spend running the user's process is described by _Process.TotalProcessorTime_, and this is what is used to calculate the percentage of time that the processor (accounting for all logical cores) has spent running the user's code. The time between samplings in recording using DateTime objects, and the amount of time is multiplied by the number of logical cores (fetched by _System.Environment.ProcessorCount_) to determine the total amount of time that the processors can allocate to work during the interval. These values are used to generate a percentage of time spent running the process.
@@ -142,7 +142,32 @@ monitor.EnableJit();
 There are two more shared classes within the project, in addition to the classes for each metric type: a _Session_ class and a _Metric_List_ class.
  
 ##### The _Session_ class
-The _Session_ class is meant to contain information unique to a user's process and michine that will help the user 1. identify and recognize unique processes within a single application, and 2. understand performance metrics in the context of the local machine's environment. The class has six fields: "application" (String containing the user-specified application name), "process" (String composed of the process' name - for example, "dotnet" - and unique ID), "sampleRate" (int - milliseconds between CPU and memory measurements), "sendRate" (int - milliseconds between data transmissions to server), "processorCount" (int - number of logical processors on machine), "os" (String describing the machine's operating system), and "Id" (int - internal key used to uniquely identify the session).
+The _Session_ class is meant to contain information unique to a user's process and michine that will help the user 1. identify and recognize unique processes within a single application, and 2. understand performance metrics in the context of the local machine's environment. The class has six fields: 
+
+```cs
+public partial class Session() 
+{
+    .
+    .
+    .
+    public string application { get; set; }   // String containing the user-specified application name
+    
+    public string process { get; set; }       // String composed of the process' name, as specified by the user
+    
+    public string os { get; set; }            // String describing the machine's operating system (from Process class)
+    
+    public int? sampleRate { get; set; }      // int - milliseconds between CPU and memory measurements
+    
+    public int? sendRate { get; set; }        // int - milliseconds between transmission of batched data
+    
+    public int? processorCount { get; set; }  // int - number of logical processors on machine (from Process class)
+    
+    public int Id { get; set; }               // int - key generated for database organization
+    .
+    .
+    .
+}
+```
  
 ##### The _Metric_List_ class
 The _Metric_List_ class is meant to be used for data packaging and efficient sharing between the different components of the project. Its fields are: "session", "cpu", "mem", "exceptions", "requests", "contentions", "gc", and "jit". The session field contains an instance of the _Session_ class for the current process - this will not change throughout the running of a single process. Each of the fields corresponding to a performance metric type is a Collection of class instances for the given type.
