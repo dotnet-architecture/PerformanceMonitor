@@ -12,8 +12,6 @@ namespace WebApplication.Pages.Metrics
     {
         public List<DataTransfer.GC> gc { get; set; } = new List<DataTransfer.GC>();
 
-        public int totalGC = 0;
-
         // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
         public DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime();
         public DateTime newStamp = DateTime.Now.ToUniversalTime();
@@ -27,8 +25,6 @@ namespace WebApplication.Pages.Metrics
             {
                 gc.Add(g);
             }
-
-            totalGC = gc.Count;
         }
     }
 }
