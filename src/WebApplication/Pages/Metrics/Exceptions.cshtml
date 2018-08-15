@@ -81,6 +81,7 @@
                             var table = document.getElementById("myTable");
 
                             for (var i = 0; i < types.length; i++) {
+                                @Model.totalExceptions = @(Model.totalExceptions + 1); 
                                 var row = table.insertRow(0);
                                 var cell1 = row.insertCell(0);
                                 var cell2 = row.insertCell(1);
