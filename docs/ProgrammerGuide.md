@@ -264,7 +264,35 @@ To show only the most relevant data, the last 15 minutes are shown on the graph.
 Plotly.relayout('cpu', minuteView);
 ```
 
-#### Data Analysis and ClientSideData
+#### Data Analysis
+
+The following measurements are given for the associated metrics.
+
+##### CPU and Memory 
+* Average CPU usage
+* Average percentage of memory used
+
+Because either CPU or memory could be disabled, the table must be able to reflect those changes. As a result, a dictionary is used to pair the CPU and memory data. This dictionary is then sorted so that the data can be shown in a chronological order in the CPU and memory table.
+
+##### HTTP Requests
+* Duration of each HTTP request
+* Average duration of all HTTP requests
+* Total number of HTTP requests
+
+The start and stop events of an HTTP request are matched by the HTTP request ids. So, a dictionary is kept with the ids as the keys and the start times as the values. Once a stop event is identified, the respective start event is found through the dictionary and the duration is calculated by taking the difference between the start and the stop timestamps. 
+
+##### Exceptions
+* Exception by frequency
+* Total number of exceptions
+
+To keep track of the most frequent types of exceptions, a dictionary is kept with the key being the types of exceptions and the vlues being the amount of times that exception has been seen
+
+##### Contentions
+* Duration of each contention
+* Average duration of all contentions
+* Total number of contentions
+
+Implemented in the same manner as HTTP requests.
 
 #### UI Design
   
