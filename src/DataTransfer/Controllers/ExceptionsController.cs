@@ -21,7 +21,7 @@ namespace DataTransfer.Controllers
             _MetricContext = context ?? throw new ArgumentNullException(nameof(context));
         }
         [HttpGet]
-        [EnableCors("AllowSpecificOrigin")]
+        [EnableCors("AllowAllOrigins")]
         [Route("Daterange")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> getExceptionDataByTimerange(DateTime start, DateTime end, int id)

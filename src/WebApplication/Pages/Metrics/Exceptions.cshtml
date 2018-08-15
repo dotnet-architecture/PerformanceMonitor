@@ -15,6 +15,84 @@
 <div class="main">
     <font size="50">Exceptions</font>
 
+    <div id="exception"></div>
+    <script>
+        var end = `@Html.Encode(FetchDataService.convertDateTime(Model.newStamp))`;
+        const id = `@Html.Encode(IndexModel.userSession.Id)`;
+
+        function getData(start, end) {
+            const url = `@WebApplication.Startup.apiDomain`+ `api/v1/Exception/Daterange?start=${start}&end=${end}&id=${id}`;
+            return fetch(url, {
+                method: 'GET',
+                mode: 'cors',
+                headers: {
+                    "Accept": "application/json",
+                    'Access-Control-Allow-Origin': '*',
+                    "Content-type": "application/json"
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        return response;
+                    } else {
+                        return Promise.reject(response);
+                        throw Error(response.statusText);
+                    }
+                })
+                .then(response => response.json())
+                .then(function (data) {
+                    var dataArray = JSON.parse(data);
+                    var exceptionType = new Array();
+                    var exceptionTimestamp = new Array();
+
+                    for (var i = 0; i < dataArray.length; i++) {
+                        exceptionType[i] = dataArray[i].type;
+                        exceptionTimestamp[i] = new Date(dataArray[i].timestamp);
+                    }
+
+                    var dataReturn = new Array();
+                    dataReturn[0] = exceptionType;
+                    dataReturn[1] = exceptionTimestamp;
+
+                    return dataReturn;
+                });
+        }
+
+        Promise.all([getData(end, end)])
+            .then(setInterval(function () {
+                // Updating time stamps
+                start = end;
+                var now = new Date(); // Gets current time
+
+                end = now.getFullYear() + "-" +
+                    ("0" + (now.getMonth() + 1)).slice(-2) + "-" +
+                    ("0" + now.getDate()).slice(-2) + "T" +
+                    ("0" + now.getHours()).slice(-2) + "%3A" +
+                    ("0" + now.getMinutes()).slice(-2) + "%3A" +
+                    ("0" + now.getSeconds()).slice(-2) + "." +
+                    ("0" + now.getMilliseconds()).slice(-3);
+
+                Promise.all([getData(start, end)])
+                    .then(function (values) {
+                        var types = values[0][0];
+                        var timestamps = values[0][1];
+                     
+                        if (types.length != 0) {
+                            var table = document.getElementById("myTable");
+
+                            for (var i = 0; i < types.length; i++) {
+                                @Model.totalExceptions = @(Model.totalExceptions + 1); 
+                                var row = table.insertRow(0);
+                                var cell1 = row.insertCell(0);
+                                var cell2 = row.insertCell(1);
+                                cell1.innerHTML = types[i];
+                                cell2.innerHTML = timestamps[i].toString();
+                            }                
+                        }
+                    });
+            }, @IndexModel.userSession.sendRate*1.1));
+    </script>
+
     <p>Total number of exceptions: @Model.totalExceptions</p>
 
     @if (Model.exceptionSorted.Count >= 1)
@@ -22,23 +100,23 @@
         <p>Most common exception: @Model.exceptionSorted[0].Key</p>
     }
 
-    @message
     @*<form name="userExceptionInput" method="post">
-        <input type="text" placeholder="Number of Exceptions" name="userReqNum" /> <br />
-        <button class="btn btn-default">Examine</button>
-    </form>
+            <input type="text" placeholder="Number of Exceptions" name="userReqNum" /> <br />
+            <button class="btn btn-default">Examine</button>
+        </form>
 
-    <script>
-        var numExceptions = @Model.userReqNum
-        if (numExceptions <= @Model.exceptionSorted.Count) {
-            @message = `Currently showing top ` + numExceptions + ` exceptions.`;
-        } else {
-            @message = `Do not have ` + userReqNum + ` exceptions. Showing all exceptions seen so far.`;
-        }
-    </script>*@
+        <script>
+            var numExceptions = @Model.userReqNum
+            if (numExceptions <= @Model.exceptionSorted.Count) {
+                @message = `Currently showing top ` + numExceptions + ` exceptions.`;
+            } else {
+                @message = `Do not have ` + userReqNum + ` exceptions. Showing all exceptions seen so far.`;
+            }
+        </script>*@
 
+    @message
     <p>Exceptions by Frequency</p>
-    <table class="table table-hover table-bordered">
+    <table class="table table-hover table-bordered" id="myTable">
         <thead>
             <tr>
                 <th>Exception Type</th>

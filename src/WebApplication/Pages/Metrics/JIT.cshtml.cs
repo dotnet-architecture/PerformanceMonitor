@@ -12,13 +12,13 @@ namespace WebApplication.Pages.Metrics
         public int totalJit = 0;
 
         // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
-        private DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime();
-        private DateTime newStamp = DateTime.Now.ToUniversalTime();
+        public DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime();
+        public DateTime newStamp = DateTime.Now.ToUniversalTime();
 
         public async Task OnGet()
         {
             newStamp = DateTime.Now.ToUniversalTime();
-            List<Jit> addOn = await FetchDataService.getUpdatedData<Jit>(oldStamp, newStamp);
+            List<Jit> addOn = await FetchDataService.getData<Jit>(oldStamp, newStamp);
 
             foreach (Jit j in addOn)
             {
