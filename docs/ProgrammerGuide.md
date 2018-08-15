@@ -163,8 +163,22 @@ return fetch(url, {
                 });
 ```
 
-#### Graphs with Plotly
+This method is actually called in the following code. The Promise.all ensures that the array of objects that utilize the fetch api are all resolved and return a response before executing the code inside the promise method. 
 
+```cs
+Promise.all([getCPUData(startCPU, endCPU)]) {...}
+```
+
+This gets the initial data but for the live updating, the getCPUData method must be called frequently, which is done through this code. 
+
+```cs
+.then(setInterval(function () {
+}, @IndexModel.userSession.sendRate * 1.1)); 
+```
+
+After the initial data has been gathered, the setInterval method executes the function method every sendRate * 1.1 miliseconds. The function method contains a call to the getCPUData, thus triggering an http request to the api continuously. The interval is set to the sendRate of the session multiplied by a factor of 1.1 to ensure that the web application does not make uneccessary requests. Had it been multiplied by a factor of less than 1, it is guarenteed that some of the requests would give back empty results because the requests are being triggered faster than the data is being transferred to the server. 
+
+#### Graphs with Plotly
 
 #### Data Analysis and ClientSideData
 
