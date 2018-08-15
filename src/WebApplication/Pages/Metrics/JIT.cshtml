@@ -45,13 +45,13 @@
                     var jitTimestamp = new Array();
 
                     for (var i = 0; i < dataArray.length; i++) {
-                        exceptionType[i] = dataArray[i].type;
-                        exceptionTimestamp[i] = new Date(dataArray[i].timestamp);
+                        jitMethod[i] = dataArray[i].method;
+                        jitTimestamp[i] = new Date(dataArray[i].timestamp);
                     }
 
                     var dataReturn = new Array();
-                    dataReturn[0] = exceptionType;
-                    dataReturn[1] = exceptionTimestamp;
+                    dataReturn[0] = jitMethod;
+                    dataReturn[1] = jitTimestamp;
 
                     return dataReturn;
                 });
@@ -73,18 +73,25 @@
 
                 Promise.all([getData(start, end)])
                     .then(function (values) {
-                        var types = values[0][0];
+                        var methods = values[0][0];
                         var timestamps = values[0][1];
 
-                        if (types.length != 0) {
+                        if (tmethodsypes.length != 0) {
                             var table = document.getElementById("myTable");
 
-                            for (var i = 0; i < types.length; i++) {
+                            for (var i = 0; i < methods.length; i++) {
                                 var row = table.insertRow(0);
                                 var cell1 = row.insertCell(0);
                                 var cell2 = row.insertCell(1);
-                                cell1.innerHTML = types[i];
-                                cell2.innerHTML = timestamps[i].toString();
+                                var time = timestamps[i]; 
+
+                                cell1.innerHTML = methods[i];
+                                cell2.innerHTML = time.getUTCHours() + `:` +
+                                    time.getUTCMinutes() + `:` +
+                                    time.getUTCSeconds() + ` ` +
+                                    time.getUTCMonth() + `/` +
+                                    time.getUTCDate() + `/` +
+                                    time.getUTCFullYear(); 
                             }
                         }
                     });
