@@ -5,6 +5,7 @@ The Performance Monitor application allows .NET Core 2.1 developers to track app
 * What is the Performance Monitor?
 * Architecture Overview
 * Monitor Your Application
+* Visualize Your Data
 
 
 
@@ -39,6 +40,9 @@ The web application is built using ASP.NET CORE and Razor Pages to create a dyna
 Navigating the metric pages is largely self-explanatory. The CPU and Memory graphs continuously update without requiring the user to refresh the page. All other tables require refreshing the page or clicking the refresh button above the table.
 
 ## Monitor Your Application
+
+Visual Studio is required to run the performance monitor, which can be downloaded by following this link: https://visualstudio.microsoft.com/downloads/.
+
 Application health monitoring is performed by a C# class library function that simply needs to be included in the beginning of the user's application code. The function will trigger application performance reading on the user's machine, and periodically send packets of data to be presented on the web application. To utilize this service, include the PerfMonitor library and write one of the following instantiation calls at the start of the tracked application's Main method or equivalent:
 
 ```cs
@@ -96,17 +100,23 @@ If we were to additionally create two new processes - "Process3" and "Process4",
 
 Each process can be viewed individually, but they will be organized under whatever application they belong to. This allows an application with multiple, distinct processes or microservices to be easily tracked as a cohesive unit.
 
-## Visualize your Data
 
-Once the web application is running, you land on the homepage and are prompted to enter the application and process name of the session that you want to monitor. Since the performance monitor is designed to track multiple processes or microservices, you must enter an application and process name. Otherwise, the links on the sidebar will not work and the you will not be able to view any data. If the application of the session that you want to monitor is not showing up on the left menu, first check that the session actually sent out data and then refresh the page to see the latest sessions that were added. The homepage of the web application will look like this.
+
+## Visualize Your Data
+
+Once the web application is spin up, the user is prompted to enter the application and process name of the session that they want to monitor. The web application would look similar to this.
 
 ![Homepage for Web Application](docs/Photos/landingHomepage.PNG)
 
-Once you click on an application name, all the associated process names will appear on the adjacent menu. If a specific process is not showing up, try refreshing the page. Once both an application and process are selected, you may click "Examine" and the side bar will update to inform you what session you are currently viewing data for and the menus will be cleared.
+Once the user clicks on an application name, all the associated process names will appear on the adjacent menu. 
+
+![Selecting application name](docs/Photos/selectingApplication.PNG)
+
+Once the user clicks on a process name and clicks "Examine", the side bar will update to inform the user what session they are currently viewing data for and the menus will be cleared. 
 
 ![Selected Session](docs/Photos/updatingSideBartoSession.PNG)
 
-Now, you can utilize the sidebar to navigate between the different metric pages and view the data collected from their application. For example, once the CPU and Memory tab is selected on the sidebar, you will see the CPU and Memory graphs (which update continously), the average percentage cpu used, the average memory used, and a table. The graphs will show the most relevant data, which could be the last 15 minutes if the session you are monitoring is running simultaneously or the whole graph (which includes all data points). 
+Now, the user can utilize the sidebar to navigate between the different metric pages and view the data collected from their application. For example, once the CPU and Memory tab is selected on the sidebar, the user will see the CPU and Memory graphs (which live update), the average percentage cpu used, the average memory used, and a table. 
 
 ![CPU and Memory graphs](docs/Photos/cpuMemGraphs.PNG)
 
