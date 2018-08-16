@@ -33,7 +33,7 @@
         <tbody>
             @if (Model.http != null)
             {
-                @for (int i = 0; i < Model.http.Count; i++)
+                @for (int i = Model.http.Count - 1; i >= 0; i--)
                 {
                     Client_Http_Request h = Model.http.ElementAt<Client_Http_Request>(i);
                     <tr>
