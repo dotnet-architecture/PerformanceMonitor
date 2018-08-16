@@ -138,8 +138,8 @@ To enable JIT event tracking:
 monitor.EnableJit();
 ```
  
-#### Data Transmission
-There are two more shared classes within the project, in addition to the classes for each metric type: a _Session_ class and a _Metric_List_ class.
+#### Client-Side Data Storage and Transmission
+There are two more shared classes within the project, in addition to the classes for each metric type: a _Session_ class and a _Metric_List_ class. These are used to provide more context to the data being collected and to allow data to be cleanly transmitted.
  
 ##### The _Session_ class
 The _Session_ class is meant to contain information unique to a user's process and michine that will help the user 1. identify and recognize unique processes within a single application, and 2. understand performance metrics in the context of the local machine's environment. The class has six fields: 
@@ -171,6 +171,83 @@ public partial class Session()
  
 ##### The _Metric_List_ class
 The _Metric_List_ class is meant to be used for data packaging and efficient sharing between the different components of the project. Its fields are: "session", "cpu", "mem", "exceptions", "requests", "contentions", "gc", and "jit". The session field contains an instance of the _Session_ class for the current process - this will not change throughout the running of a single process. Each of the fields corresponding to a performance metric type is a Collection of class instances for the given type.
+
+These Collections are the means by which data is stored on the client machine before it is batched and sent to the server. Data only persists on the client side for the duration of time between these transmissions, which is dictated by the transmission rate of a particular _Monitor_ class instance. To ensure thread safety of the program, a sequence of steps is followed when handling these data structures:
+
+1. Globally accessible Collections are created for each unique data type/metric at the start of the program:
+
+```cs
+// for example, the exception data Collection - this pattern is followed for each metric
+public static List<Exceptions> ExceptionVals = new List<Exceptions>();
+```
+
+2. A global _Object_, lockObject, is instantiated:
+
+```cs
+Object lockObject = new object();
+```
+
+3. At any point in the code where a data point is collected, attempt to add the data point (abstracted into the form of a class instance) to the appropriate Collection. Only add the data point if the lock object is not being held elsewhere, which indicates that the Collection is free to be mutated:
+
+```cs
+if (ExceptionEnabled)  // if user has enabled exception data tracking
+{
+    // subscribe to all exception start events
+    clrParser.ExceptionStart += delegate (ExceptionTraceData data)
+    {
+        // if exception was in user process, add it to list of exceptions
+        if (data.ProcessID == myProcess.Id)
+        {
+            // create a new data point
+            Exceptions e = new Exceptions();
+            e.type = data.ExceptionType;
+            e.timestamp = DateTime.Now;
+            // "instance" contains session-specific data
+            e.App = instance;
+            
+            // add the data point to the Collection if lock isn't held elsewhere
+            lock (lockObject)
+            {
+                ExceptionVals.Add(e);
+            }
+        }
+    };
+}
+```
+
+4. Ensure that these Collections are being exclusively worked with when aggregating data into a _Metric_List_ instance for transmission via a lock. Additionally, redirect the pointers associated with the Collection names to a new set of Collections (this will "refresh" the locally held data by pointing to new, empty Collections - as well as ensure _Metric_List_ fields aren't pointing to data that will be mutated by TraceEvent during JSON serialization):
+
+```cs
+// if specified time has passed since HTTP request was made
+if (timer.ElapsedMilliseconds >= sendRate)
+{
+    timer.Restart();
+    // creates object that will store all event instances
+    Metric_List list = new Metric_List();
+
+    lock (lockObject)
+    {
+        // fill list with Collections containing data points
+        list.cpu = CPUVals;
+        list.mem = MemVals;
+        .
+        .
+        .
+
+        // create new pointers for metric value collections
+        CPUVals = new List<CPU_Usage>();
+        MemVals = new List<Mem_Usage>();
+        .
+        .
+        .
+    }
+
+    // serialize the Metric_List into JSON in order to transmit to server
+    String output = JsonConvert.SerializeObject(list);
+    
+    // send HTTP request with appropriate data
+}
+```
  
 ### Data Presentation
 
