@@ -10,7 +10,7 @@ namespace MonitorTest
         static DataTransfer.Monitor monitor = new DataTransfer.Monitor("Test Process", "Test App");
         static void Main(string[] args)
         {
-            //CPUMemTest();
+            CPUMemTest();
             //GCTest();
             //ExceptionTest();
             //ContentionTest();
@@ -88,6 +88,7 @@ namespace MonitorTest
         }
         public static void GCTest()
         {
+            monitor.EnableGC();
             monitor.Record();
             DateTime timer = DateTime.Now;
             while (true)
@@ -102,7 +103,9 @@ namespace MonitorTest
         }
         public static void ExceptionTest()
         {
+            monitor.EnableException();
             monitor.Record();
+            monitor.Destroy();
             Random random = new Random();
             DateTime timer = DateTime.Now;
             while (true)
@@ -143,6 +146,7 @@ namespace MonitorTest
         static object valueTypeLock = new object();
         public static void ContentionTest()
         {
+            monitor.EnableContention();
             monitor.Record();
             Thread t = new Thread(new ThreadStart(ThreadMethod));
             t.Start();
