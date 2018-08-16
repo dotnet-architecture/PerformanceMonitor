@@ -138,8 +138,7 @@
                             };
 
                             Plotly.relayout('cpu', minuteView);
-                            }
-                        }                    
+                        }
                     });
             }, @IndexModel.userSession.sendRate*1.1));
     </script>
@@ -270,12 +269,12 @@
             }, @IndexModel.userSession.sendRate*1.1));
     </script>
 
-    <p>Average CPU Usage: @Model.avgCPU.ToString("0.00")</p>
-    <p>Average Memory Usage: @((Model.avgMem / 1000000).ToString("0.00")) MB</p>
+    <h5>Average CPU Usage: @Model.avgCPU.ToString("0.00")</h5>
+    <h5>Average Memory Usage: @((Model.avgMem / 1000000).ToString("0.00")) MB</h5>
 
     <button class="btn btn-default" onClick="window.location.reload()">Refresh Data</button>
 
-    <p>Table of CPU and Mem Usage</p>
+    <h3>Table of CPU and Mem Usage</h3>
     <table class="table table-hover table-bordered" id="cpuMemTable">
         <thead>
             <tr>

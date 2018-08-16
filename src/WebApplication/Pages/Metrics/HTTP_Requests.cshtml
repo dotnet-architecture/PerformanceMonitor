@@ -14,12 +14,12 @@
 <div class="main">
     <font size="50">HTTP Requests</font>
 
-    <p>Total Http Requests: @Model.totalHttpRequest</p>
-    <p>Average Duration of Http Requests: @((Model.avgDuration / 1000).ToString("0.0000")) seconds</p>
+    <h5>Total Http Requests: @Model.totalHttpRequest</h5>
+    <h5>Average Duration of Http Requests: @((Model.avgDuration / 1000).ToString("0.0000")) seconds</h5>
 
     <button class="btn btn-default" onClick="window.location.reload()">Refresh Data</button>
 
-    <p>Table of Http Requests</p>
+    <h3>Table of Http Requests</h3>
     <table class="table table-hover table-bordered">
         <thead>
             <tr>
