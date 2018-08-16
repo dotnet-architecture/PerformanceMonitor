@@ -1,4 +1,14 @@
-# How to Implement a New Metric in .NET Core Performance Monitor
+# How to Implement a New Metric in the .NET Core Performance Monitor
+
+Due to the current implementation of this tool, the addition of another metric's tracking requires changes to each of the three components of the system. This process can be streamlined by following the instructions below for each domain of the application.
+
+## Data Collection
+
+To discover which metrics the monitor can actually trace, a look is required at the _System.Diagnostics_ namespace [here](https://docs.microsoft.com/es-es/dotnet/api/system.diagnostics?view=netcore-2.1) and/or the TraceEvent library [here](https://github.com/Microsoft/perfview/blob/master/documentation/TraceEvent/TraceEventLibrary.md). In this repository's ProgrammerGuide.md there are a few examples of how events can be subscribed to through TraceEvent, for reference.
+
+What's most important to add to the code base in order to support other metrics is an abstraction of the data, which is currently performed through the custom classes that exist in the shared directory. Storing event data into a custom class makes the information associated with an event more readily digestible and more easily accessible.
+
+It's also important to remember that TraceEvent runs in parallel with the rest of the code in the monitor, so any actions performed with the data fetched from TraceEvent must be kept thread-safe. This is currently done by sharing a lock object between the code that interacts with the shared collections that store event instances, and it's recommended that a similar approach is taken with any added metrics.
 
 ## Data Presentation
 
