@@ -10,7 +10,7 @@ namespace MonitorTest
         static DataTransfer.Monitor monitor = new DataTransfer.Monitor("Test Process", "Test App");
         static void Main(string[] args)
         {
-            CPUMemTest();
+            //CPUMemTest();
             //GCTest();
             //ExceptionTest();
             //ContentionTest();
@@ -105,7 +105,6 @@ namespace MonitorTest
         {
             monitor.EnableException();
             monitor.Record();
-            monitor.Destroy();
             Random random = new Random();
             DateTime timer = DateTime.Now;
             while (true)
