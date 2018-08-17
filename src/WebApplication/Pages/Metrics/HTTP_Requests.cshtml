@@ -15,7 +15,10 @@
     <font size="50">HTTP Requests</font>
 
     <h5>Total Http Requests: @Model.totalHttpRequest</h5>
-    <h5>Average Duration of Http Requests: @((Model.avgDuration / 1000).ToString("0.0000")) seconds</h5>
+    @if (Model.totalHttpRequest != 0)
+    {
+        <h5>Average Duration of Http Requests: @((Model.avgDuration / 1000).ToString("0.0000")) seconds</h5>
+    }
 
     <button class="btn btn-default" onClick="window.location.reload()">Refresh Data</button>
 
