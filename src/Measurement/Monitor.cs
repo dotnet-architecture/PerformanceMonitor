@@ -285,7 +285,7 @@ namespace DataTransfer
         // lock to protect against attempting to use session while it's stopped
         Object sessionLock = new object();
 
-        public void Destroy()  // deconstructor (really a pauser) of a Monitor class instance
+        public void Pause()  // deconstructor (really a pauser) of a Monitor class instance
         {
             running = false;
             lock (sessionLock)
@@ -294,6 +294,7 @@ namespace DataTransfer
                 session.Stop();
             }
 
+            // sends an HTTP request with the data stored before pausing monitor
             // creates object that will store all event instances
             Metric_List list = new Metric_List();
 

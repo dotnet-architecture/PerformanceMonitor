@@ -100,6 +100,12 @@ If we were to additionally create two new processes - "Process3" and "Process4",
 
 Each process can be viewed individually, but they will be organized under whatever application they belong to. This allows an application with multiple, distinct processes or microservices to be easily tracked as a cohesive unit.
 
+Additionally, the monitor can be paused and continued at any point in your application's life cycle. A possible use of this functionality would be to monitor the performance of only certain functions or snippets of code - also, multiple monitor instances could be declared and run independently to track unique performance metrics for certain parts of your application's code. To continue a paused monitor, use the Record() function; to pause the monitor, simply write:
+
+```cs
+monitor.Pause();
+```
+
 ## Visualize your Data
 
 Once the web application is spin up, the user is prompted to enter the application and process name of the session that they want to monitor. The web application would look similar to this.
