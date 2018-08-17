@@ -20,6 +20,7 @@
         var startCPU = `@Html.Encode(FetchDataService.convertDateTime(Model.oldStamp))`;
         var endCPU = `@Html.Encode(FetchDataService.convertDateTime(Model.newStamp))`;
         const idCPU = `@Html.Encode(IndexModel.userSession.Id)`;
+        var hundredCPUTimeStamps = [];
 
         function getCPUData(start, end) {
             const url = `@WebApplication.Startup.apiDomain`+ `api/v1/CPU/Daterange?start=${start}&end=${end}&id=${idCPU}`;
@@ -62,6 +63,13 @@
         Promise.all([getCPUData(startCPU, endCPU)])
             // Plotting initial graph
             .then(function (value) {
+                hundredCPUTimeStamps = value[0][1];
+
+                if (hundredCPUTimeStamps.length > 100) {
+                    hundredCPUTimeStamps =
+                        hundredCPUTimeStamps.slice(hundredCPUTimeStamps.length - 100, hundredCPUTimeStamps.length);
+                }
+
                 var CPU = [{
                     x: value[0][1],
                     y: value[0][0],
@@ -89,7 +97,19 @@
                     }
                 };
 
+                var startTime = hundredCPUTimeStamps[0].setMinutes(hundredCPUTimeStamps[0].getMinutes());
+                var endTime = hundredCPUTimeStamps[hundredCPUTimeStamps.length - 1]
+                    .setMinutes(hundredCPUTimeStamps[hundredCPUTimeStamps.length - 1].getMinutes());
+
+                var lastHundredPoints = {
+                    xaxis: {
+                        type: 'date',
+                        range: [startTime, endTime]
+                    }
+                };
+
                 Plotly.plot('cpu', CPU, layout);
+                Plotly.relayout('cpu', lastHundredPoints);
                 return;
             })
             .then(setInterval(function () {
@@ -106,27 +126,48 @@
                     ("0" + now.getMilliseconds()).slice(-3);
 
                 Promise.all([getCPUData(startCPU, endCPU)])
-                    .then(function (values) {
-                        var xaxis = values[0][1];
-                        var yaxis = values[0][0];
+                    .then(function (value) {
+                        hundredCPUTimeStamps.push.apply(hundredCPUTimeStamps, value[0][1]);
+
+                        if (hundredCPUTimeStamps.length > 100) {
+                            hundredCPUTimeStamps = hundredCPUTimeStamps
+                                .slice(hundredCPUTimeStamps.length - 100, hundredCPUTimeStamps.length);
+                        }
+
+                        var xaxis = value[0][1];
+                        var yaxis = value[0][0];
 
                         var update = {
                             x: [xaxis],
                             y: [yaxis]
                         }
+
+                        var startTime = hundredCPUTimeStamps[0].setMinutes(hundredCPUTimeStamps[0].getMinutes());
+                        var endTime = hundredCPUTimeStamps[hundredCPUTimeStamps.length - 1]
+                            .setMinutes(hundredCPUTimeStamps[hundredCPUTimeStamps.length - 1].getMinutes());
+
+                        var lastHundredPoints = {
+                            xaxis: {
+                                type: 'date',
+                                range: [startTime, endTime]
+                            }
+                        };
+
                         Plotly.extendTraces('cpu', update, [0]);
+                        Plotly.relayout('cpu', lastHundredPoints);
 
-                        if (xaxis.length != 0) {
-                            var currTime = new Date(); 
-                            var latestTime = new Date(`@Model.cpu[0].timestamp`); 
+                        // Used to show last 15 minutes 
+                        @*if (xaxis.length != 0) {
+                            var currTime = new Date();
+                            var latestTime = new Date(`@Model.cpu[0].timestamp`);
 
-                            var oldTime; 
-                            var futureTime; 
+                            var oldTime;
+                            var futureTime;
                             if (latestTime > currTime.setMinutes(currTime.getMinutes() - 15)) {
                                 oldTime = latestTime.setMinutes(latestTime.getMinutes());
                                 futureTime = currTime.setMinutes(currTime.getMinutes() + 15);
                             } else {
-                                oldTime = currTime.setMinutes(currTime.getMinutes() - 15); 
+                                oldTime = currTime.setMinutes(currTime.getMinutes() - 15);
                                 futureTime = currTime.setMinutes(currTime.getMinutes() + 15);
                             }
 
@@ -138,7 +179,7 @@
                             };
 
                             Plotly.relayout('cpu', minuteView);
-                        }
+                        }*@
                     });
             }, @IndexModel.userSession.sendRate*1.1));
     </script>
@@ -148,6 +189,7 @@
         var startMem = `@Html.Encode(FetchDataService.convertDateTime(Model.oldStamp))`;
         var endMem = `@Html.Encode(FetchDataService.convertDateTime(Model.newStamp))`;
         const idMem = `@Html.Encode(IndexModel.userSession.Id)`;
+        var hundredMemTimeStamps = []; 
 
         function getMemData(start, end) {
             const url = `@WebApplication.Startup.apiDomain` + `api/v1/Memory/Daterange?start=${start}&end=${end}&id=${idMem}`;
@@ -189,6 +231,13 @@
         Promise.all([getMemData(startMem, endMem)])
             // Plotting initial graph
             .then(function (value) {
+                hundredMemTimeStamps = value[0][1];
+
+                if (hundredMemTimeStamps.length > 100) {
+                    hundredMemTimeStamps =
+                        hundredMemTimeStamps.slice(hundredMemTimeStamps.length - 100, hundredMemTimeStamps.length);
+                }
+
                 var Mem = [{
                     x: value[0][1],
                     y: value[0][0],
@@ -215,7 +264,19 @@
                     }
                 };
 
+                var startTime = hundredMemTimeStamps[0].setMinutes(hundredMemTimeStamps[0].getMinutes());
+                var endTime = hundredMemTimeStamps[hundredMemTimeStamps.length - 1]
+                    .setMinutes(hundredMemTimeStamps[hundredMemTimeStamps.length - 1].getMinutes());
+
+                var lastHundredPoints = {
+                    xaxis: {
+                        type: 'date',
+                        range: [startTime, endTime]
+                    }
+                };
+
                 Plotly.plot('mem', Mem, layout);
+                Plotly.relayout('mem', lastHundredPoints);
                 return;
             })
             .then(setInterval(function () {
@@ -231,18 +292,37 @@
                     ("0" + now.getMilliseconds()).slice(-3);
 
                 Promise.all([getMemData(startMem, endMem)])
-                    .then(function (values) {
-                        var xaxis = values[0][1];
-                        var yaxis = values[0][0];
+                    .then(function (value) {
+                        hundredMemTimeStamps.push.apply(hundredMemTimeStamps, value[0][1]);
+
+                        if (hundredMemTimeStamps.length > 100) {
+                            hundredMemTimeStamps = hundredMemTimeStamps
+                                .slice(hundredMemTimeStamps.length - 100, hundredMemTimeStamps.length);
+                        }
+
+                        var xaxis = value[0][1];
+                        var yaxis = value[0][0];
 
                         var update = {
                             x: [xaxis],
                             y: [yaxis]
                         }
 
-                        Plotly.extendTraces('mem', update, [0]);
+                        var startTime = hundredMemTimeStamps[0].setMinutes(hundredMemTimeStamps[0].getMinutes());
+                        var endTime = hundredMemTimeStamps[hundredMemTimeStamps.length - 1]
+                            .setMinutes(hundredMemTimeStamps[hundredMemTimeStamps.length - 1].getMinutes());
 
-                        if (xaxis.length != 0) {
+                        var lastHundredPoints = {
+                            xaxis: {
+                                type: 'date',
+                                range: [startTime, endTime]
+                            }
+                        };
+
+                        Plotly.extendTraces('mem', update, [0]);
+                        Plotly.relayout('mem', lastHundredPoints);
+
+                        @*if (xaxis.length != 0) {
                             var currTime = new Date(); 
                             var latestTime = new Date(`@Model.cpu[0].timestamp`); 
 
@@ -264,7 +344,7 @@
                             };
 
                             Plotly.relayout('mem', minuteView);
-                        }
+                        }*@
                     });
             }, @IndexModel.userSession.sendRate*1.1));
     </script>
