@@ -9,7 +9,6 @@ namespace WebApplication.Pages.Metrics
     public class JITModel : PageModel
     {
         public List<Jit> jit { get; set; } = new List<Jit>();
-        public int totalJit = 0;
 
         // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
         public DateTime oldStamp = DateTime.Today.AddMonths(-1).ToUniversalTime();
@@ -24,8 +23,6 @@ namespace WebApplication.Pages.Metrics
             {
                 jit.Add(j);
             }
-
-            totalJit = jit.Count; 
         }
     }
 }

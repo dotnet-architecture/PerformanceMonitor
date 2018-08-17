@@ -17,6 +17,9 @@ namespace DataTransfer
         {
             Monitor monitor = new Monitor();
             monitor.EnableHttp();
+            monitor.EnableException();
+            monitor.EnableGC();
+            monitor.EnableJit(); 
             //monitor.DisableCPU();
             //monitor.DisableMem();
             monitor.Record();
