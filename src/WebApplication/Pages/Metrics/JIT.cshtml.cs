@@ -8,6 +8,7 @@ namespace WebApplication.Pages.Metrics
 {
     public class JITModel : PageModel
     {
+        // List of data
         public List<Jit> jit { get; set; } = new List<Jit>();
 
         // Will decide later on oldStamp, automatically set to a month previous to current time (gets data for a month range)
@@ -17,7 +18,7 @@ namespace WebApplication.Pages.Metrics
         public async Task OnGet()
         {
             newStamp = DateTime.Now.ToUniversalTime();
-            List<Jit> addOn = await FetchDataService.getData<Jit>(oldStamp, newStamp);
+            List<Jit> addOn = await FetchDataService.getData<Jit>(oldStamp, newStamp); // Get data
 
             foreach (Jit j in addOn)
             {

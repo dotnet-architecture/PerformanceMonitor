@@ -11,6 +11,7 @@ namespace WebApplication.Pages.Metrics
 {
     public class ContentionsModel : PageModel
     {
+        // Contains contentions that have both an start and stop, and a calculated duration
         public List<Client_Contention> contentions { get; set; } = new List<Client_Contention>();
         public double avgDuration = 0;
 
@@ -25,16 +26,21 @@ namespace WebApplication.Pages.Metrics
         public async Task OnGet()
         {
             newStamp = DateTime.Now.ToUniversalTime();
+
+            // Geting new data 
             List<Contention> addOn = await FetchDataService.getData<Contention>(oldStamp, newStamp);
 
             foreach (Contention c in addOn)
             {
+                // When there is start event, create a new Client_Contention object and add it to contentionTracker
                 if (c.type.Equals("Start"))
                 {
                     Client_Contention clientC = new Client_Contention(c);
                     contentionTracker[c.id] = clientC;
                     contentions.Add(clientC);
                 }
+                // When there is a stop event, remove associated contention (by looking at id) from contentionTracker,
+                // update the Client_Contention to include stop event and update contentions list
                 else if (c.type.Equals("Stop"))
                 {
                     Client_Contention clientC = contentionTracker[c.id];
@@ -44,12 +50,14 @@ namespace WebApplication.Pages.Metrics
                 }
             }
 
-            contentions.OrderBy(c => c.StartTimestamp).ToList(); // updating http so that is sorted by time
-            contentions.Reverse(); // updating http so that the most current http requests are shown first
+            contentions.OrderBy(c => c.StartTimestamp).ToList(); // Updating contentions so that is sorted by time
+            contentions.Reverse(); // Updating contentions so that the most current contentions are shown first
 
             totalContentions = contentions.Count;
             updateAvg();
         }
+
+        // Updates avgerage duration of contention
         public double updateAvg()
         {
             double totalDuration = 0;
@@ -65,7 +73,7 @@ namespace WebApplication.Pages.Metrics
 
             if (totalEndedReq == 0)
             {
-                return avgDuration;
+                return 0;
             }
             else
             {
