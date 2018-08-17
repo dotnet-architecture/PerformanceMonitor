@@ -15,7 +15,10 @@
     <font size="50">Contentions</font>
 
     <h5>Total Contentions: @Model.totalContentions</h5>
-    <h5>Average Duration of Contentions: @Model.avgDuration</h5>
+    @if (Model.totalContentions != 0)
+    {
+        <h5>Average Duration of Contentions: @Model.avgDuration</h5>
+    }
 
     <button class="btn btn-default" onClick="window.location.reload()">Refresh Data</button>
 
