@@ -19,6 +19,7 @@ namespace WebApplication.Pages.Metrics
         public List<KeyValuePair<DateTime, Tuple<CPU_Usage, Mem_Usage>>> dataByTimeSorted =
             new List<KeyValuePair<DateTime, Tuple<CPU_Usage, Mem_Usage>>>();
 
+        public int pointsOnGraph = 100; 
 
         // Average CPU and percetnage of mem
         public double avgCPU;
