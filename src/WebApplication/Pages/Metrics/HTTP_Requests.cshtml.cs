@@ -55,24 +55,21 @@ namespace WebApplication.Pages.Metrics
         public double updateAvg() 
         {
             double totalDuration = 0;
-            double totalEndedReq = 0;
             foreach (Client_Http_Request c in http)
             {
                 if (c.EndTimestamp != null)
                 {
                     totalDuration += c.Duration;
-                    totalEndedReq++; 
                 }
             }
 
-            avgDuration = totalDuration / totalEndedReq;
-            if (totalEndedReq == 0)
+            if (totalHttpRequest == 0)
             {
-                return avgDuration;
+                return 0;
             }
             else
             {
-                avgDuration = totalDuration / totalEndedReq;
+                avgDuration = totalDuration / totalHttpRequest;
                 return avgDuration;
             }
         }

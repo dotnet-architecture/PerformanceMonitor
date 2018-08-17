@@ -3,7 +3,6 @@
 @using DataTransfer
 @{
     ViewData["Title"] = "Exceptions";
-    string message = "Showing the top 5 (or less) exceptions.";
 }
 
 <head>
@@ -99,13 +98,9 @@
             }, @IndexModel.userSession.sendRate*1.1));
     </script>
 
-    <button class="btn btn-default" onClick="window.location.reload()">Refresh for Total Number of Exceptions and Frequency Table</button>
-
-    <p>Total number of exceptions: @Model.totalExceptions</p>
-
     @if (Model.exceptionSorted.Count >= 1)
     {
-        <p>Most common exception: @Model.exceptionSorted[0].Key</p>
+        <h4>Most common exception: @Model.exceptionSorted[0].Key</h4>
     }
 
     @*<form name="userExceptionInput" method="post">
@@ -122,8 +117,8 @@
             }
         </script>*@
 
-    @message
-    <p>Exceptions by Frequency</p>
+    <h3>Exceptions by Frequency</h3>
+    <h5>Showing the top 5 (or less exceptions)</h5>
     <table class="table table-hover table-bordered" id="exceptionTable">
         <thead>
             <tr>
@@ -152,8 +147,10 @@
         </tbody>
     </table>
 
-    <button class="btn btn-default" onClick="window.location.reload()">Refresh Data</button>
-    <p>Table of Exceptions</p>
+    <button class="btn btn-default" onClick="window.location.reload()">Refresh Frequency Data</button>
+
+    <h3>Table of Exceptions</h3>
+    <h5>Total number of exceptions: @Model.totalExceptions</h5>
     <table class="table table-hover table-bordered">
         <thead>
             <tr>

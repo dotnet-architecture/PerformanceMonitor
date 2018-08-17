@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
@@ -6,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-
 
 namespace DataTransfer.Controllers
 {
@@ -23,6 +23,7 @@ namespace DataTransfer.Controllers
 
         [HttpGet]
         [Route("Daterange")]
+        [EnableCors("AllowAllOrigins")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> getContentionDataByTimerange(DateTime start, DateTime end, int id)
         {

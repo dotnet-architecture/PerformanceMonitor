@@ -14,12 +14,15 @@
 <div class="main">
     <font size="50">HTTP Requests</font>
 
-    <p>Total Http Requests: @Model.totalHttpRequest</p>
-    <p>Average Duration of Http Requests: @((Model.avgDuration / 1000).ToString("0.0000")) seconds</p>
+    <h5>Total Http Requests: @Model.totalHttpRequest</h5>
+    @if (Model.totalHttpRequest != 0)
+    {
+        <h5>Average Duration of Http Requests: @((Model.avgDuration / 1000).ToString("0.0000")) seconds</h5>
+    }
 
     <button class="btn btn-default" onClick="window.location.reload()">Refresh Data</button>
 
-    <p>Table of Http Requests</p>
+    <h3>Table of Http Requests</h3>
     <table class="table table-hover table-bordered">
         <thead>
             <tr>
@@ -33,7 +36,7 @@
         <tbody>
             @if (Model.http != null)
             {
-                @for (int i = 0; i < Model.http.Count; i++)
+                @for (int i = Model.http.Count - 1; i >= 0; i--)
                 {
                     Client_Http_Request h = Model.http.ElementAt<Client_Http_Request>(i);
                     <tr>

@@ -13,9 +13,14 @@ This will trigger performance metric tracking that is done on the user's machine
 The other channel for data collection is the TraceEvent library (repo found here: https://github.com/Microsoft/perfview/tree/master/src/TraceEvent). Using TraceEvent, the monitor can monitor certain exception, GC, contention, JIT, and incoming Kestrel HTTP request events. Handling events via TraceEvent is not done with a controlled sampling rate, since event responses are triggered live as events are discovered by the event parsers.
 
 ### Data Storage
+
 The data collected is currently being hosted on a SQL database running through Docker. This allows for local testing of the application. In the future, the database will be moved to AzureSQL. This will allow the final product to run with minimal setup from the user. Startup.cs holds the location of the connection string for the server, and can be changed as necessary.
 
 Entity framework was used to manage the sending and fetching of data from the server. There are object-specific controllers for the fetching of data, and there is an all-purpose controller for sending the data in a single packet. Entity framework largely simplifies querying a SQL server, as no commands need to be written. The primary used POST request is POST/api/v1/General/ALL, which allows for pushing all the currently collected data to the server. The receiving of data is done by the specific page being used. Primarily, /api/v1/CPU/Daterange is being used to receive data from the server for CPU usage information. /api/v1/MEM/Daterange will be used to receive data for memory usage information. Data is sent and received in JSON form.
+
+### Data Presentation
+
+The web application is built through ASP.NET Core and Razor Pages. The data is received through the web API in JSON form and then deseralized into the custom classes for each metric. The Razor Pages use this data to perform data analysis and compile the useful information. Plotly requests data from the web API through the javascript fetch API and and constructs the graphs. 
 
 ## Functionality Specifics
 ### Data Collection
@@ -362,7 +367,7 @@ The start and stop events of an HTTP request are matched by the HTTP request ids
 * Exception by frequency
 * Total number of exceptions
 
-To keep track of the most frequent types of exceptions, a dictionary is kept with the key being the types of exceptions and the vlues being the amount of times that exception has been seen
+To keep track of the most frequent types of exceptions, a dictionary is kept with the key being the types of exceptions and the values are the amount of times that exception has been seen. While the table that lists all the exceptions is updated continuously (through the fetch API), the exception by frequency table or the total number of exceptions is not updated continuously. As mentioned previously, the data analysis must be performed on the server side and the new data is only being received on the client side of the web application. So, to update the total number of exceptions or the exception by frequency table, the user must refresh the page or click the refresh button. 
 
 ##### Contentions
 * Duration of each contention
@@ -383,3 +388,17 @@ The _MonitorTest_ project within the solution contains C# classes that are each 
 __IMPORTANT__: When running _MonitorTest_, a console window will pop up and display the program's output. In order to safely terminate the program, press Ctrl+C before closing the window. If Ctrl+C is not pressed, the session allowing TraceEvent to run and collect events may not terminate. The next run of _MonitorTest_ would attempt to recreate the same session, and an error would be triggered. If you forget to Ctrl+C and run into this error, open up your machine's terminal or command prompt and run the command "logman stop MySession -ets". This will close the session, and you will be able to run _MonitorTest_ again.
 
 In addition to manual triggering of events through the _MonitorTest_ project, there is also a _MonitorUnitTest_ project that contains unit tests in the form of xUnit tests. There are currently two unit tests: one tests the frequency of HTTP requests being sent to the server to make sure that requests are being made as often as specified. The other tests the number of CPU data points being collected per HTTP transmission cycle to ensure an expected number of samples is being taken. Currently, both tests operate with the sampling and transmission rates specified by the _Monitor_ class instance declared at the start of the _MonitorTest_ project's Program.cs file. Tests in this file are called by the xUnit tests in order to allow the monitor to run until a steady state of performance is reached and results can be sampled.
+
+## Moving Forward
+
+### Data Presentation
+
+In the future, an useful addition to the performance monitor would be the implementation of SignalR so that the server side of the web application can continuously request new data and update both the list of objects it holds as well as any data analytics appropriately. This would allow for the tables to be updated continuously. Although not explored, but if SignalR is implemented, it is thought that the fetch API would not be needed even for the graphs (as there is no point in requesting the same data from both the client side and server side). 
+
+In addition, the UI/UX could be improved upon. Here are a few examples of changes that could be put into effect.
+* When looking at the top exceptions and selecting a specific type of exception, those types of exceptions are highlighted within the table that contains all the exceptions. This way, a user could pinpoint the specific times that these popular exceptions occured and perhaps use this information to figure out a trend. 
+* Put a toggle button on top of the exceptions by frequency that allows users to just see the top 5 exceptions or all the exceptions sorted by their frequency.
+* Allow for more customization in the CPU and memory graphs. For example, see the past 10 minutes or see the past hour. See the past 100 datapoints or see all datapoints so far. 
+* Implement a better algorithm that determines what the most relevant data is. This depends on the sending rate of the session, how long the session has been monitored for, when the monitoring took breaks, etc. 
+* Cross process analysis. This could allow users to compare multiple sessions by bringing up the data for all the sessions side by side. This could be further extended by having the graphs overlaid on top of each other to make the comparison of the sessions easier or having the tables include all the data points in an easy to read table.
+* Graphs could be implemented for metrics other than CPU and memory. For example, there could be a graph showing amount of HTTP requests made over time (this could be generalized to GC events over time, or exceptions over time). 
