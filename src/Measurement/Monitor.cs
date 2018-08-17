@@ -368,7 +368,6 @@ namespace DataTransfer
                                 {
                                     ExceptionVals.Add(e);
                                 }
-                                Console.WriteLine("Exception");
                             }
                         };
                     }
