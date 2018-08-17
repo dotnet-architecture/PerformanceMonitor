@@ -13,9 +13,14 @@ This will trigger performance metric tracking that is done on the user's machine
 The other channel for data collection is the TraceEvent library (repo found here: https://github.com/Microsoft/perfview/tree/master/src/TraceEvent). Using TraceEvent, the monitor can monitor certain exception, GC, contention, JIT, and incoming Kestrel HTTP request events. Handling events via TraceEvent is not done with a controlled sampling rate, since event responses are triggered live as events are discovered by the event parsers.
 
 ### Data Storage
+
 The data collected is currently being hosted on a SQL database running through Docker. This allows for local testing of the application. In the future, the database will be moved to AzureSQL. This will allow the final product to run with minimal setup from the user. Startup.cs holds the location of the connection string for the server, and can be changed as necessary.
 
 Entity framework was used to manage the sending and fetching of data from the server. There are object-specific controllers for the fetching of data, and there is an all-purpose controller for sending the data in a single packet. Entity framework largely simplifies querying a SQL server, as no commands need to be written. The primary used POST request is POST/api/v1/General/ALL, which allows for pushing all the currently collected data to the server. The receiving of data is done by the specific page being used. Primarily, /api/v1/CPU/Daterange is being used to receive data from the server for CPU usage information. /api/v1/MEM/Daterange will be used to receive data for memory usage information. Data is sent and received in JSON form.
+
+### Data Presentation
+
+The web application is built through ASP.NET Core and Razor Pages. The data is received through the web API in JSON form and then deseralized into the custom classes for each metric. The Razor Pages use this data to perform data analysis and compile the useful information. Plotly requests data from the web API through the javascript fetch API and and constructs the graphs. 
 
 ## Functionality Specifics
 ### Data Collection
@@ -138,8 +143,8 @@ To enable JIT event tracking:
 monitor.EnableJit();
 ```
  
-#### Data Transmission
-There are two more shared classes within the project, in addition to the classes for each metric type: a _Session_ class and a _Metric_List_ class.
+#### Client-Side Data Storage and Transmission
+There are two more shared classes within the project, in addition to the classes for each metric type: a _Session_ class and a _Metric_List_ class. These are used to provide more context to the data being collected and to allow data to be cleanly transmitted.
  
 ##### The _Session_ class
 The _Session_ class is meant to contain information unique to a user's process and michine that will help the user 1. identify and recognize unique processes within a single application, and 2. understand performance metrics in the context of the local machine's environment. The class has six fields: 
@@ -171,6 +176,83 @@ public partial class Session()
  
 ##### The _Metric_List_ class
 The _Metric_List_ class is meant to be used for data packaging and efficient sharing between the different components of the project. Its fields are: "session", "cpu", "mem", "exceptions", "requests", "contentions", "gc", and "jit". The session field contains an instance of the _Session_ class for the current process - this will not change throughout the running of a single process. Each of the fields corresponding to a performance metric type is a Collection of class instances for the given type.
+
+These Collections are the means by which data is stored on the client machine before it is batched and sent to the server. Data only persists on the client side for the duration of time between these transmissions, which is dictated by the transmission rate of a particular _Monitor_ class instance. To ensure thread safety of the program, a sequence of steps is followed when handling these data structures:
+
+1. Globally accessible Collections are created for each unique data type/metric at the start of the program:
+
+```cs
+// for example, the exception data Collection - this pattern is followed for each metric
+public static List<Exceptions> ExceptionVals = new List<Exceptions>();
+```
+
+2. A global _Object_, lockObject, is instantiated:
+
+```cs
+Object lockObject = new object();
+```
+
+3. At any point in the code where a data point is collected, attempt to add the data point (abstracted into the form of a class instance) to the appropriate Collection. Only add the data point if the lock object is not being held elsewhere, which indicates that the Collection is free to be mutated:
+
+```cs
+if (ExceptionEnabled)  // if user has enabled exception data tracking
+{
+    // subscribe to all exception start events
+    clrParser.ExceptionStart += delegate (ExceptionTraceData data)
+    {
+        // if exception was in user process, add it to list of exceptions
+        if (data.ProcessID == myProcess.Id)
+        {
+            // create a new data point
+            Exceptions e = new Exceptions();
+            e.type = data.ExceptionType;
+            e.timestamp = DateTime.Now;
+            // "instance" contains session-specific data
+            e.App = instance;
+            
+            // add the data point to the Collection if lock isn't held elsewhere
+            lock (lockObject)
+            {
+                ExceptionVals.Add(e);
+            }
+        }
+    };
+}
+```
+
+4. Ensure that these Collections are being exclusively worked with when aggregating data into a _Metric_List_ instance for transmission via a lock. Additionally, redirect the pointers associated with the Collection names to a new set of Collections (this will "refresh" the locally held data by pointing to new, empty Collections - as well as ensure _Metric_List_ fields aren't pointing to data that will be mutated by TraceEvent during JSON serialization):
+
+```cs
+// if specified time has passed since HTTP request was made
+if (timer.ElapsedMilliseconds >= sendRate)
+{
+    timer.Restart();
+    // creates object that will store all event instances
+    Metric_List list = new Metric_List();
+
+    lock (lockObject)
+    {
+        // fill list with Collections containing data points
+        list.cpu = CPUVals;
+        list.mem = MemVals;
+        .
+        .
+        .
+
+        // create new pointers for metric value collections
+        CPUVals = new List<CPU_Usage>();
+        MemVals = new List<Mem_Usage>();
+        .
+        .
+        .
+    }
+
+    // serialize the Metric_List into JSON in order to transmit to server
+    String output = JsonConvert.SerializeObject(list);
+    
+    // send HTTP request with appropriate data
+}
+```
  
 ### Data Presentation
 
@@ -285,7 +367,7 @@ The start and stop events of an HTTP request are matched by the HTTP request ids
 * Exception by frequency
 * Total number of exceptions
 
-To keep track of the most frequent types of exceptions, a dictionary is kept with the key being the types of exceptions and the vlues being the amount of times that exception has been seen
+To keep track of the most frequent types of exceptions, a dictionary is kept with the key being the types of exceptions and the values are the amount of times that exception has been seen. While the table that lists all the exceptions is updated continuously (through the fetch API), the exception by frequency table or the total number of exceptions is not updated continuously. As mentioned previously, the data analysis must be performed on the server side and the new data is only being received on the client side of the web application. So, to update the total number of exceptions or the exception by frequency table, the user must refresh the page or click the refresh button. 
 
 ##### Contentions
 * Duration of each contention
@@ -306,3 +388,17 @@ The _MonitorTest_ project within the solution contains C# classes that are each 
 __IMPORTANT__: When running _MonitorTest_, a console window will pop up and display the program's output. In order to safely terminate the program, press Ctrl+C before closing the window. If Ctrl+C is not pressed, the session allowing TraceEvent to run and collect events may not terminate. The next run of _MonitorTest_ would attempt to recreate the same session, and an error would be triggered. If you forget to Ctrl+C and run into this error, open up your machine's terminal or command prompt and run the command "logman stop MySession -ets". This will close the session, and you will be able to run _MonitorTest_ again.
 
 In addition to manual triggering of events through the _MonitorTest_ project, there is also a _MonitorUnitTest_ project that contains unit tests in the form of xUnit tests. There are currently two unit tests: one tests the frequency of HTTP requests being sent to the server to make sure that requests are being made as often as specified. The other tests the number of CPU data points being collected per HTTP transmission cycle to ensure an expected number of samples is being taken. Currently, both tests operate with the sampling and transmission rates specified by the _Monitor_ class instance declared at the start of the _MonitorTest_ project's Program.cs file. Tests in this file are called by the xUnit tests in order to allow the monitor to run until a steady state of performance is reached and results can be sampled.
+
+## Moving Forward
+
+### Data Presentation
+
+In the future, an useful addition to the performance monitor would be the implementation of SignalR so that the server side of the web application can continuously request new data and update both the list of objects it holds as well as any data analytics appropriately. This would allow for the tables to be updated continuously. Although not explored, but if SignalR is implemented, it is thought that the fetch API would not be needed even for the graphs (as there is no point in requesting the same data from both the client side and server side). 
+
+In addition, the UI/UX could be improved upon. Here are a few examples of changes that could be put into effect.
+* When looking at the top exceptions and selecting a specific type of exception, those types of exceptions are highlighted within the table that contains all the exceptions. This way, a user could pinpoint the specific times that these popular exceptions occured and perhaps use this information to figure out a trend. 
+* Put a toggle button on top of the exceptions by frequency that allows users to just see the top 5 exceptions or all the exceptions sorted by their frequency.
+* Allow for more customization in the CPU and memory graphs. For example, see the past 10 minutes or see the past hour. See the past 100 datapoints or see all datapoints so far. 
+* Implement a better algorithm that determines what the most relevant data is. This depends on the sending rate of the session, how long the session has been monitored for, when the monitoring took breaks, etc. 
+* Cross process analysis. This could allow users to compare multiple sessions by bringing up the data for all the sessions side by side. This could be further extended by having the graphs overlaid on top of each other to make the comparison of the sessions easier or having the tables include all the data points in an easy to read table.
+* Graphs could be implemented for metrics other than CPU and memory. For example, there could be a graph showing amount of HTTP requests made over time (this could be generalized to GC events over time, or exceptions over time). 
